@@ -58,6 +58,7 @@
 		    	<include name="*.sh"/>
 		    </fileset>
 		  </copy>
+		  <zip destfile="${dist.dir}/dist.zip" basedir="${dist.dir}" />
 	</target>
 	
 </project>

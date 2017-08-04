@@ -16,6 +16,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
 import fr.evolya.javatoolkit.code.funcint.Action;
+import java.awt.Color;
 
 public class PanelPin extends JPanel {
 	
@@ -73,11 +74,11 @@ public class PanelPin extends JPanel {
 		button8.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		
 		buttonCancel = new JButton("Cancel");
-		buttonCancel.setBackground(SystemColor.activeCaptionBorder);
+		buttonCancel.setBackground(new Color(153, 153, 153));
 		buttonCancel.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		buttonOk = new JButton("OK");
-		buttonOk.setBackground(SystemColor.textHighlight);
+		buttonOk.setBackground(new Color(51, 153, 255));
 		buttonOk.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		
 		passwordLabel = new JLabel("***");
@@ -164,7 +165,7 @@ public class PanelPin extends JPanel {
 		
 		ActionListener cb = (e) -> {
 			int value = Integer.parseInt(((JButton)e.getSource()).getText());
-			passwordLabel.setText(passwordLabel.getText() + "*");
+			passwordLabel.setText(passwordLabel.getText() + "* ");
 			passwordClear += value;
 		};
 		

@@ -1,12 +1,12 @@
 package fr.evolya.domokit;
 
 import fr.evolya.domokit.gui.SmallView;
+import fr.evolya.domokit.gui.map.StatusPanel.State;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
-import fr.evolya.javatoolkit.gui.swing.map.StatusPanel.State;
 
 public class SecurityMonitor {
 
@@ -89,6 +89,7 @@ public class SecurityMonitor {
 		view.buttonMap.setEnabled(false);
 		view.buttonLogs.setEnabled(false);
 		view.buttonSettings.setEnabled(false);
+		view.showCard("Map");
 	}
 	
 }

@@ -16,6 +16,8 @@ import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.SecurityMonitor;
 import fr.evolya.domokit.SecurityMonitor.Level;
+import fr.evolya.domokit.gui.map.MapPanel;
+import fr.evolya.domokit.gui.map.StatusPanel;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
@@ -25,8 +27,6 @@ import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.code.funcint.Action;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
-import fr.evolya.javatoolkit.gui.swing.map.MapPanel;
-import fr.evolya.javatoolkit.gui.swing.map.StatusPanel;
 
 public class SmallView extends JFrame {
 
