@@ -15,9 +15,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.SecurityMonitor;
-import fr.evolya.domokit.SecurityMonitor.Level;
 import fr.evolya.domokit.gui.map.MapPanel;
-import fr.evolya.domokit.gui.map.StatusPanel;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
@@ -35,7 +33,7 @@ public class SmallView extends JFrame {
 	@Inject
 	public App app;
 	
-	public final StatusPanel panelStatus;
+	public final PanelStatus panelStatus;
 	public final JPanel panelMain;
 	public final JPanel panelMenu;
 
@@ -127,7 +125,7 @@ public class SmallView extends JFrame {
 		panelMain.add(cardMap = new MapPanel(), "Map");
 		panelMain.add(cardPin = new PanelPin(), "Pin");
 		
-		panelStatus = new StatusPanel();
+		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);
 		panelStatus.setCartoucheInfo("LEVEL");
 		getContentPane().add(panelStatus);

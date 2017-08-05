@@ -2,9 +2,10 @@ package fr.evolya.domokit.gui.map;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 
 import javax.swing.JPanel;
+
+import fr.evolya.domokit.gui.map.iface.IMap;
 
 public class MapPanel extends JPanel {
 

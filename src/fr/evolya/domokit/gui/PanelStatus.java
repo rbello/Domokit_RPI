@@ -1,4 +1,4 @@
-package fr.evolya.domokit.gui.map;
+package fr.evolya.domokit.gui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class StatusPanel extends JPanel {
+public class PanelStatus extends JPanel {
 
 	private static final long serialVersionUID = -6855468458877911636L;
 
@@ -36,7 +36,7 @@ public class StatusPanel extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public StatusPanel() {
+	public PanelStatus() {
 		setLayout(null);
 		setBackground(Color.BLACK);
 		setForeground(Color.WHITE);
@@ -119,7 +119,7 @@ public class StatusPanel extends JPanel {
 		return state;
 	}
 
-	public StatusPanel setState(State state) {
+	public PanelStatus setState(State state) {
 		this.state = state;
 		repaint();
 		return this;
@@ -169,24 +169,24 @@ public class StatusPanel extends JPanel {
 		return cartoucheLabelCenterSmall;
 	}
 
-	public StatusPanel setCartoucheInfo(String text) {
+	public PanelStatus setCartoucheInfo(String text) {
 		cartoucheLabelLeft.setText(text);
 		cartoucheLabelRight.setText(text);
 		return this;
 	}
 
-	public StatusPanel setCartoucheLevel(int value) {
+	public PanelStatus setCartoucheLevel(int value) {
 		cartoucheValueLeft.setText("" + value);
 		cartoucheValueRight.setText("" + value);
 		return this;
 	}
 
-	public StatusPanel setMainText(String text) {
+	public PanelStatus setMainText(String text) {
 		cartoucheLabelCenterBig.setText(text);
 		return this;
 	}
 
-	public StatusPanel setInfoText(String text) {
+	public PanelStatus setInfoText(String text) {
 		cartoucheLabelCenterSmall.setText(text);
 		return this;
 	}

@@ -1,7 +1,7 @@
 package fr.evolya.domokit;
 
 import fr.evolya.domokit.gui.SmallView;
-import fr.evolya.domokit.gui.map.StatusPanel.State;
+import fr.evolya.domokit.gui.PanelStatus.State;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;

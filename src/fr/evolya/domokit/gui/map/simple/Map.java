@@ -1,4 +1,4 @@
-package fr.evolya.domokit.gui.map.buildings;
+package fr.evolya.domokit.gui.map.simple;
 
 import java.awt.Graphics;
 import java.awt.Point;
@@ -6,11 +6,12 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.evolya.domokit.gui.map.IMap;
-import fr.evolya.domokit.gui.map.IMapComponent;
 import fr.evolya.domokit.gui.map.MapPanel;
+import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
+import fr.evolya.domokit.gui.map.iface.IMap;
+import fr.evolya.domokit.gui.map.iface.IMapComponent;
 
-public class BuildingMap implements IMap {
+public class Map implements IMap {
 
 	private List<IMapComponent> components;
 	
@@ -20,7 +21,7 @@ public class BuildingMap implements IMap {
 	private int width = 10; // meters
 	private int height = 10; // meters
 	
-	public BuildingMap() {
+	public Map() {
 		this.components = new ArrayList<>();
 	}
 
@@ -42,9 +43,7 @@ public class BuildingMap implements IMap {
 
 	@Override
 	public void paint(Graphics graphic, MapPanel panel) {
-		
-		
-		
+
 		paintBackground(graphic, panel);
 		
 		double ratioX = (double)(panel.getWidth() - 20) / (double)(width);
@@ -87,9 +86,23 @@ public class BuildingMap implements IMap {
 	@Override
 	public void addComponent(IMapComponent component) {
 		this.components.add(component);
-		Rectangle r = component.getBounds();
-		width = Math.max(width, r.x + r.width);
-		height = Math.max(height, r.y + r.height);
+		if (component instanceof IAbsolutePositionningComponent) {
+			Rectangle bounds = ((IAbsolutePositionningComponent)component).getBounds();
+			width = Math.max(width, bounds.x + bounds.width);
+			height = Math.max(height, bounds.y + bounds.height);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IAbsolutePositionningComponent> T getRoomByName(String name, Class<T> type) {
+		for (IMapComponent c : components) {
+			if (c instanceof IAbsolutePositionningComponent) {
+				if (((IAbsolutePositionningComponent)c).getIdentifier().equals(name)) 
+					return (T) c;
+			}
+		}
+		return null;
 	}
 
 }

@@ -1,7 +1,7 @@
 package fr.evolya.domokit.gui;
 
+import java.awt.Color;
 import java.awt.Font;
-import java.awt.SystemColor;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
 import fr.evolya.javatoolkit.code.funcint.Action;
-import java.awt.Color;
 
 public class PanelPin extends JPanel {
 	
