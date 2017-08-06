@@ -1,5 +1,6 @@
 package fr.evolya.domokit.gui;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 
@@ -67,6 +68,17 @@ public class PanelConfirmDialog extends JPanel {
 		);
 		panel_1.setLayout(gl_panel_1);
 		setLayout(groupLayout);
+	}
+	
+	public JButton addButton(String text, boolean hightlight) {
+		JButton btn = new JButton();
+		if (hightlight) {
+			btn.setBackground(new Color(51, 153, 255));
+		}
+		btn.setText(text);
+		btn.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		panelButtons.add(btn);
+		return btn;
 	}
 
 }

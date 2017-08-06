@@ -1,9 +1,7 @@
 package fr.evolya.domokit.gui;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
@@ -139,8 +137,9 @@ public class SmallView extends JFrame {
 	@BindOnEvent(ApplicationBuilding.class)
 	@GuiTask
 	public void build(App app) {
-		cardSettings.buttonExit.addActionListener(e -> 
-			app.notify(WindowCloseIntent.class, app, this, e));
+		cardSettings.buttonExit.addActionListener(e -> {
+			app.notify(WindowCloseIntent.class, app, this, e);
+		});
 		buttonLock.addActionListener(e -> {
 			if (app.get(SecurityMonitor.class).isLocked()) {
 				app.get(SecurityMonitor.class).unlock();
@@ -220,15 +219,12 @@ public class SmallView extends JFrame {
 			callback.call(((JButton)e.getSource()).getText());
 		};
 		for (String text : answers) {
-			JButton btn = new JButton();
+			boolean highlight = false;
 			if (text.startsWith("*")) {
 				text = text.substring(1);
-				btn.setBackground(new Color(51, 153, 255));
+				highlight = true;
 			}
-			btn.setText(text);
-			btn.setFont(new Font("Tahoma", Font.PLAIN, 18));
-			btn.addActionListener(listener);
-			cardConfirm.panelButtons.add(btn);
+			cardConfirm.addButton(text, highlight).addActionListener(listener);
 		}
 	}
 
