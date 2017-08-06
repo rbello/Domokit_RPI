@@ -1,5 +1,6 @@
 package fr.evolya.domokit.gui.map.simple;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 
@@ -23,6 +24,12 @@ public class Tile extends AbstractAbsolutePositionningComponent {
 	public void paint(Graphics graphic, MapPanel panel, double ratio, Point topLeft) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Component getGraphic() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

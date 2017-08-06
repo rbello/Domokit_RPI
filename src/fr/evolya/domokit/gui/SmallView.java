@@ -1,9 +1,12 @@
 package fr.evolya.domokit.gui;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -46,6 +49,7 @@ public class SmallView extends JFrame {
 	public final PanelSettings cardSettings;
 	public final PanelLogs cardLogs;
 	public final PanelPin cardPin;
+	public final PanelConfirmDialog cardConfirm;
 	
 	@GuiTask
 	public SmallView() {
@@ -65,25 +69,25 @@ public class SmallView extends JFrame {
 		
 		buttonLock = new JButton();
 		buttonLock.setToolTipText("Lock");
-		buttonLock.setIcon(new ImageIcon(getImage("/16x16/046-closed.png")));
+		setButtonLockIcon(false);
 		
 		buttonSettings = new JButton();
 		buttonSettings.setToolTipText("Settings");
-		buttonSettings.setIcon(new ImageIcon(getImage("/16x16/005-settings.png")));
+		buttonSettings.setIcon(new ImageIcon(getImage("/24x24/047-settings.png")));
 		buttonSettings.addActionListener(e -> {
 			showCard("Settings");
 		});
 		
 		buttonLogs = new JButton();
 		buttonLogs.setToolTipText("Logs");
-		buttonLogs.setIcon(new ImageIcon(getImage("/16x16/009-message.png")));
+		buttonLogs.setIcon(new ImageIcon(getImage("/24x24/045-message.png")));
 		buttonLogs.addActionListener(e -> {
 			showCard("Logs");
 		});
 		
 		buttonMap = new JButton();
 		buttonMap.setToolTipText("Map");
-		buttonMap.setIcon(new ImageIcon(getImage("/16x16/036-placeholder.png")));
+		buttonMap.setIcon(new ImageIcon(getImage("/24x24/021-home.png")));
 		buttonMap.addActionListener(e -> {
 			showCard("Map");
 		});
@@ -124,6 +128,7 @@ public class SmallView extends JFrame {
 		panelMain.add(cardLogs = new PanelLogs(), "Logs");
 		panelMain.add(cardMap = new MapPanel(), "Map");
 		panelMain.add(cardPin = new PanelPin(), "Pin");
+		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
 		
 		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);
@@ -173,14 +178,14 @@ public class SmallView extends JFrame {
             }
         }
         cardPin.reset();
-        cardPin.handler = (pin) -> {
-        	if (pin == null) {
+        cardPin.handler = (code) -> {
+        	if (code == null) {
         		// Cancel
-        		showCard("Map");
+        		showDefaultCard();
         		app.get(SecurityMonitor.class).resetStatus();
         	}
         	else {
-        		handler.call(pin.equals(password));
+        		handler.call(code.equals(password));
         	}
         };
         showCard("Pin");
@@ -197,4 +202,34 @@ public class SmallView extends JFrame {
 	public void appendLog(String msg) {
 		SwingUtilities.invokeLater(() -> cardLogs.textArea.append(msg + "\n"));
 	}
+
+	public void setButtonLockIcon(boolean locked) {
+		buttonLock.setIcon(new ImageIcon(getImage(
+				locked ? "/24x24/003-play-button.png" : "/24x24/002-exclamation-button.png")));
+	}
+
+	public void showDefaultCard() {
+		showCard("Map");
+	}
+
+	public void showConfirmDialogCard(String message, String[] answers, Action<String> callback) {
+		showCard("ConfirmDialog");
+		cardConfirm.textLabel.setText(message);
+		cardConfirm.panelButtons.removeAll();
+		ActionListener listener = (e) -> {
+			callback.call(((JButton)e.getSource()).getText());
+		};
+		for (String text : answers) {
+			JButton btn = new JButton();
+			if (text.startsWith("*")) {
+				text = text.substring(1);
+				btn.setBackground(new Color(51, 153, 255));
+			}
+			btn.setText(text);
+			btn.setFont(new Font("Tahoma", Font.PLAIN, 18));
+			btn.addActionListener(listener);
+			cardConfirm.panelButtons.add(btn);
+		}
+	}
+
 }

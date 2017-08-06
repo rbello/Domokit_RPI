@@ -21,7 +21,7 @@ public class SecurityMonitor {
 	public static enum Level {
 		
 		ZERO   (0, "Unlocked", State.NORMAL),
-		ONE    (1, "Locked", State.NORMAL),
+		ONE    (1, "Locked", State.WARNING),
 		TWO    (2, "Suspiscious", State.WARNING),
 		THREE  (3, "Intrusion detected", State.ALERT),
 		FOUR   (4, "Alert", State.ALERT);
@@ -60,13 +60,14 @@ public class SecurityMonitor {
 	@GuiTask
 	public void unlock() {
 		if (!isLocked()) return;
-		view.showPinCard("123456", (result) -> {
+		view.showPinCard("12345", (result) -> {
 			if (result) {
 				setSecurityLevel(Level.ZERO);
-				view.showCard("Map");
+				view.showDefaultCard();
 				view.buttonMap.setEnabled(true);
 				view.buttonLogs.setEnabled(true);
 				view.buttonSettings.setEnabled(true);
+				view.setButtonLockIcon(false);
 			}
 			else {
 				view.panelStatus.setInfoText("Bad password").setState(State.WARNING);
@@ -85,11 +86,25 @@ public class SecurityMonitor {
 
 	public void lock() {
 		if (isLocked()) return;
-		setSecurityLevel(Level.ONE);
-		view.buttonMap.setEnabled(false);
-		view.buttonLogs.setEnabled(false);
-		view.buttonSettings.setEnabled(false);
-		view.showCard("Map");
+		view.showConfirmDialogCard(
+				"Please confirm the locking ?",
+				new String[]{ "*Yes", "No" },
+				(choice) -> {
+					if ("Yes".equals(choice)) {
+						view.buttonMap.setEnabled(false);
+						view.buttonLogs.setEnabled(false);
+						view.buttonSettings.setEnabled(false);
+						// TODO Placer un décompte avant
+						setSecurityLevel(Level.ONE);
+						view.setButtonLockIcon(true);
+						view.showCard("Map");
+					}
+					else {
+						view.showDefaultCard();
+					}
+				}
+		);
+		
 	}
 	
 }

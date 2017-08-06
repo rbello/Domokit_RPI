@@ -1,14 +1,18 @@
 package fr.evolya.domokit.gui.map.simple;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.awt.Rectangle;
 
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 
-public abstract class AbstractAbsolutePositionningComponent implements IAbsolutePositionningComponent {
+public abstract class AbstractAbsolutePositionningComponent
+	implements IAbsolutePositionningComponent {
 	
 	protected final Rectangle bounds;
 	protected final String label;
+	protected Color backgroundColor;
 	
 	public AbstractAbsolutePositionningComponent(Rectangle bounds, String componentLabel) {
 		this.bounds = bounds;
@@ -34,6 +38,26 @@ public abstract class AbstractAbsolutePositionningComponent implements IAbsolute
 		// TODO Auto-generated method stub
 		component.setParent(this);
 		return component;
+	}
+	
+	@Override
+	public boolean isInside(int x, int y, double ratio, Point topLeft) {
+		int x1 = (int) (bounds.x * ratio + topLeft.x);
+		int y1 = (int) (bounds.y * ratio + topLeft.y);
+		int x2 = (int) (bounds.width * ratio) + x1;
+		int y2 = (int) (bounds.height * ratio) + y1;
+		return (x >= x1 && x <= x2 && y >= y1 && y <= y2);
+	}
+	
+	@Override
+	public String toString() {
+		return label;
+	}
+	
+	@Override
+	public IAbsolutePositionningComponent setBackground(Color color) {
+		this.backgroundColor = color;
+		return this;
 	}
 
 }

@@ -1,17 +1,18 @@
 package fr.evolya.domokit.gui.map.simple;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+
+import javax.swing.JPanel;
 
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 
-public class Room implements IAbsolutePositionningComponent {
-	
-	protected final Rectangle bounds;
-	protected final String label;
+public class Room extends AbstractAbsolutePositionningComponent {
 	
 	private int borderTopWidth = 3;
 	private int borderRightWidth = 3;
@@ -19,12 +20,11 @@ public class Room implements IAbsolutePositionningComponent {
 	private int borderLeftWidth = 3;
 
 	public Room(Rectangle bounds, String componentLabel) {
-		this.bounds = bounds;
-		this.label = componentLabel;
+		super(bounds, componentLabel);
 	}
 	
 	public Room(int x, int y, int width, int height, String componentLabel) {
-		this(new Rectangle(x, y, width, height), componentLabel);
+		super(new Rectangle(x, y, width, height), componentLabel);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class Room implements IAbsolutePositionningComponent {
 		int y = (int) (bounds.y * ratio + topLeft.y);
 		int w = (int) (bounds.width * ratio);
 		int h = (int) (bounds.height * ratio);
-		graphic.setColor(panel.getBackground());
+		graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
 		graphic.fillRect(x, y, w, h);
 		graphic.setColor(panel.getForeground());
 		// Top border
@@ -46,16 +46,6 @@ public class Room implements IAbsolutePositionningComponent {
 		graphic.fillRect(x + w - borderLeftWidth, y, borderRightWidth, h);
 	}
 	
-	@Override
-	public Rectangle getBounds() {
-		return bounds;
-	}
-
-	@Override
-	public String getIdentifier() {
-		return label;
-	}
-
 	public int getBorderTopWidth() {
 		return borderTopWidth;
 	}
@@ -93,10 +83,8 @@ public class Room implements IAbsolutePositionningComponent {
 	}
 
 	@Override
-	public IBorderPositionningComponent addBorderElement(IBorderPositionningComponent component) {
-		// TODO Auto-generated method stub
-		component.setParent(this);
-		return component;
+	public Component getGraphic() {
+		return new JPanel();
 	}
 
 }

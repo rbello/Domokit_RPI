@@ -1,11 +1,11 @@
 package fr.evolya.domokit;
 
 import fr.evolya.domokit.gui.SmallView;
-import fr.evolya.domokit.gui.map.simple.Map;
-import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent.Orientation;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent.Position;
+import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.simple.Door;
+import fr.evolya.domokit.gui.map.simple.Map;
 import fr.evolya.domokit.gui.map.simple.Room;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
@@ -52,7 +52,7 @@ public class Main {
 				.setOrientation(Orientation.RIGHT)
 				.setPosition(Position.CENTER);
 		
-//		map.addComponent();
+		//map.addComponent();
 		
 		app.when(ApplicationBuilding.class).executeOnGui((appli) -> {
 			app.get(SmallView.class).cardMap.setMap(map);

@@ -5,11 +5,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.iface.IMapComponent;
+import fr.evolya.javatoolkit.code.funcint.Filter;
 
 public class Map implements IMap {
 
@@ -20,6 +22,8 @@ public class Map implements IMap {
 	
 	private int width = 10; // meters
 	private int height = 10; // meters
+
+	private MapPanel panel;
 	
 	public Map() {
 		this.components = new ArrayList<>();
@@ -42,18 +46,12 @@ public class Map implements IMap {
 	}
 
 	@Override
-	public void paint(Graphics graphic, MapPanel panel) {
+	public void paint(Graphics graphic) {
 
 		paintBackground(graphic, panel);
 		
-		double ratioX = (double)(panel.getWidth() - 20) / (double)(width);
-		double ratioY = (double)(panel.getHeight() - 20) / (double)(height);
-		double ratio = Math.min(ratioX, ratioY);
-		
-		int deltaX = panel.getWidth() - (int)(ratio * width);
-		int deltaY = panel.getHeight() - (int)(ratio * height);
-		
-		Point topLeft = new Point(deltaX / 2, deltaY / 2);
+		double ratio = getRatio(panel);
+		Point topLeft = getTopLeftPoint(panel, ratio);
 		
 //		System.out.println("Map of " + width + "x" + height + " meters");
 //		System.out.println("Panel of " + panel.getWidth() + "x" + panel.getHeight() + " meters");
@@ -64,6 +62,18 @@ public class Map implements IMap {
 		for (IMapComponent component : components) {
 			component.paint(graphic, panel, ratio, topLeft);
 		}
+	}
+
+	private Point getTopLeftPoint(MapPanel panel, double ratio) {
+		int deltaX = panel.getWidth() - (int)(ratio * width);
+		int deltaY = panel.getHeight() - (int)(ratio * height);
+		return new Point(deltaX / 2, deltaY / 2);
+	}
+
+	private double getRatio(MapPanel panel) {
+		double ratioX = (double)(panel.getWidth() - 20) / (double)(width);
+		double ratioY = (double)(panel.getHeight() - 20) / (double)(height);
+		return Math.min(ratioX, ratioY);
 	}
 
 	public void paintBackground(Graphics graphic, MapPanel panel) {
@@ -103,6 +113,45 @@ public class Map implements IMap {
 			}
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IMapComponent> void getComponents(Class<T> typeFilter, Consumer<T> consumer) {
+		for (IMapComponent component : components) {
+			if (typeFilter.isInstance(component)) {
+				consumer.accept((T)component);
+			}
+		}
+	}
+
+	@Override
+	public IAbsolutePositionningComponent getComponentAt(int x, int y) {
+		// Compute viewport
+		double ratio = getRatio(panel);
+		Point topLeft = getTopLeftPoint(panel, ratio);
+		// Fetch components
+		return getComponent(IAbsolutePositionningComponent.class, (c) -> 
+			c.isInside(x, y, ratio, topLeft)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IAbsolutePositionningComponent> T getComponent(Class<T> type, Filter<T> filter) {
+		for (IMapComponent component : components) {
+			if (type.isInstance(component)) {
+				if (filter.accept((T) component)) {
+					return (T) component;
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void setParentPanel(MapPanel parentPanel) {
+		this.panel = parentPanel;
 	}
 
 }
