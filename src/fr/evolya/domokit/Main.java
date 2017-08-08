@@ -30,7 +30,7 @@ public class Main {
 			.setProperty("Config.File", "./config.properties");
 		
 		app.add(SmallView.class);
-		app.add(NetworkWatcher.class);
+		//app.add(NetworkWatcher.class);
 		app.add(ArduinoLink.class);
 		app.add(SecurityMonitor.class);
 		

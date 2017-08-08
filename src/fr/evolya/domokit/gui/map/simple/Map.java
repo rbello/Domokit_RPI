@@ -126,7 +126,7 @@ public class Map implements IMap {
 	}
 
 	@Override
-	public IAbsolutePositionningComponent getComponentAt(int x, int y) {
+	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
 		// Compute viewport
 		double ratio = getRatio(panel);
 		Point topLeft = getTopLeftPoint(panel, ratio);

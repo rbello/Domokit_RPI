@@ -6,20 +6,30 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.lang.reflect.Method;
 
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
+import fr.evolya.domokit.gui.map.MapPanel.MapListener;
+import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.javatoolkit.code.annotations.BadQualityCode;
+import fr.evolya.javatoolkit.code.utils.ReflectionUtils;
+import fr.evolya.javatoolkit.events.basic.Dispatcher1;
+import fr.evolya.javatoolkit.events.basic.Listenable1;
 
-public class MapPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class MapPanel extends JPanel 
+	implements MouseListener, MouseMotionListener, Listenable1<MapListener, String, Point> {
 
 	private static final long serialVersionUID = -1L;
 
 	private IMap map;
 
 	private Point slide;
+
+	private boolean readonly = false;
+	
+	private Dispatcher1<MapListener, String, Point> events;
 
 	/**
 	 * Create the panel.
@@ -29,6 +39,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		setForeground(Color.WHITE);
 		addMouseListener(this);
 		addMouseMotionListener(this);
+		events = new Dispatcher1<MapListener, String, Point>() {
+			protected Method mapMethod(String methodName) {
+				return ReflectionUtils.getMethodMatching(MapListener.class, methodName);
+			}
+		};
 	}
 	
 	@Override
@@ -46,22 +61,11 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 		return this.map;
 	}
 
-	@BadQualityCode
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (readonly) return;
 		if (e.getClickCount() == 1 && map != null) {
-			System.out.println("Click on " + e.getX() + "x" + e.getY() + " = "
-					+ map.getComponentAt(e.getX(), e.getY()));
-			map.getComponentAt(e.getX(), e.getY()).setBackground(Color.RED);
-			repaint();
-			SwingUtilities.invokeLater(() -> {
-				try {
-					Thread.sleep(60);
-				} catch (InterruptedException e1) { }
-				map.getComponentAt(e.getX(), e.getY()).setBackground(null);
-				repaint();
-			});
-			
+			notifyEvent("onClick", e.getPoint());
 		}
 	}
 
@@ -83,11 +87,44 @@ public class MapPanel extends JPanel implements MouseListener, MouseMotionListen
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		if (readonly) return;
 		if (slide == null) return;
-		System.out.println("Slide from " + slide + " to " + e.getPoint());
+		notifyEvent("onSlide", slide, e.getPoint());
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) { }
+
+	public void setReadonly(boolean value) {
+		this.readonly  = value;
+	}
+	
+	public boolean isReadonly() {
+		return this.readonly;
+	}
+
+	public static interface MapListener {
+		void onClick(Point point);
+		void onSlide(Point from, Point to);
+	}
+
+	@Override
+	public boolean addListener(MapListener listener) {
+		return events.addListener(listener);
+	}
+
+	@Override
+	public boolean removeListener(MapListener listener) {
+		return events.removeListener(listener);
+	}
+
+	@Override
+	public void notifyEvent(String event, Point... args) {
+		events.notifyEvent(event, args);
+	}
+	
+	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
+		return map.getMapComponentAt(x, y);
+	}
 
 }

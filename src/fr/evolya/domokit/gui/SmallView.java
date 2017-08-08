@@ -1,8 +1,10 @@
 package fr.evolya.domokit.gui;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 
@@ -17,6 +19,8 @@ import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.SecurityMonitor;
 import fr.evolya.domokit.gui.map.MapPanel;
+import fr.evolya.domokit.gui.map.MapPanel.MapListener;
+import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
@@ -48,6 +52,7 @@ public class SmallView extends JFrame {
 	public final PanelLogs cardLogs;
 	public final PanelPin cardPin;
 	public final PanelConfirmDialog cardConfirm;
+	public final PanelCountDown cardCountdown;
 	
 	@GuiTask
 	public SmallView() {
@@ -127,6 +132,7 @@ public class SmallView extends JFrame {
 		panelMain.add(cardMap = new MapPanel(), "Map");
 		panelMain.add(cardPin = new PanelPin(), "Pin");
 		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
+		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
 		
 		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);
@@ -146,6 +152,28 @@ public class SmallView extends JFrame {
 			}
 			else {
 				app.get(SecurityMonitor.class).lock();
+			}
+		});
+		cardMap.addListener(new MapListener() {
+			@Override
+			public void onSlide(Point from, Point to) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void onClick(Point p) {
+				IAbsolutePositionningComponent target = cardMap.getMapComponentAt(p.x, p.y);
+				if (target == null) return;
+				System.out.println("Click on " + p.getX() + "x" + p.getY() + " = " + target);
+				target.setBackground(Color.RED);
+				cardMap.repaint();
+				SwingUtilities.invokeLater(() -> {
+					try {
+						Thread.sleep(60);
+					} catch (InterruptedException e1) { }
+					target.setBackground(null);
+					cardMap.repaint();
+				});
 			}
 		});
 	}
@@ -170,24 +198,21 @@ public class SmallView extends JFrame {
         cl.show(panelMain, cardName);
 	}
 	
-	public void showPinCard(String password, Action<Boolean> handler) {
-        for (Component comp : panelMain.getComponents()) {
-            if (comp.isVisible() == true && comp == cardPin) {
-                return;
+	public void showPinCard(String password, Action<String> handler) {
+        if (!isCurrentCard(cardPin)) {
+        	cardPin.reset();
+            cardPin.handler = handler;
+            showCard("Pin");
+        }
+	}
+	
+	public boolean isCurrentCard(JPanel panel) {
+		for (Component comp : panelMain.getComponents()) {
+            if (comp.isVisible() == true && comp == panel) {
+                return true;
             }
         }
-        cardPin.reset();
-        cardPin.handler = (code) -> {
-        	if (code == null) {
-        		// Cancel
-        		showDefaultCard();
-        		app.get(SecurityMonitor.class).resetStatus();
-        	}
-        	else {
-        		handler.call(code.equals(password));
-        	}
-        };
-        showCard("Pin");
+		return false;
 	}
 
 	/**
@@ -207,8 +232,9 @@ public class SmallView extends JFrame {
 				locked ? "/24x24/003-play-button.png" : "/24x24/002-exclamation-button.png")));
 	}
 
-	public void showDefaultCard() {
+	public MapPanel showDefaultCard() {
 		showCard("Map");
+		return cardMap;
 	}
 
 	public void showConfirmDialogCard(String message, String[] answers, Action<String> callback) {
@@ -226,6 +252,14 @@ public class SmallView extends JFrame {
 			}
 			cardConfirm.addButton(text, highlight).addActionListener(listener);
 		}
+	}
+
+	public void showCountdownCard(String msg, int delaySecs, Action<Boolean> callback) {
+		if (isCurrentCard(cardCountdown)) return;
+		cardCountdown.setTimeout(delaySecs);
+		cardCountdown.setMessage(msg);
+		cardCountdown.setHandler(callback);
+		showCard("CountDown");
 	}
 
 }

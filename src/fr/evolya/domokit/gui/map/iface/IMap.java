@@ -23,7 +23,7 @@ public interface IMap {
 
 	<T extends IMapComponent> void getComponents(Class<T> typeFilter, Consumer<T> consumer);
 
-	IAbsolutePositionningComponent getComponentAt(int x, int y);
+	IAbsolutePositionningComponent getMapComponentAt(int x, int y);
 	
 	<T extends IAbsolutePositionningComponent> T getComponent(Class<T> type, Filter<T> filter);
 

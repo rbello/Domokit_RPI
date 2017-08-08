@@ -60,17 +60,27 @@ public class SecurityMonitor {
 	@GuiTask
 	public void unlock() {
 		if (!isLocked()) return;
-		view.showPinCard("12345", (result) -> {
-			if (result) {
+		String password = "12345";
+		view.showPinCard(password, (code) -> {
+			// CANCEL
+			if (code == null) {
+        		view.showDefaultCard();
+        		resetStatus();
+        	}
+			// GOOD PASSWORD
+			else if (code.equals(password)) {
 				setSecurityLevel(Level.ZERO);
-				view.showDefaultCard();
 				view.buttonMap.setEnabled(true);
 				view.buttonLogs.setEnabled(true);
 				view.buttonSettings.setEnabled(true);
 				view.setButtonLockIcon(false);
+				view.showDefaultCard()
+					.setReadonly(false);
 			}
+			// BAD PASSWORD
 			else {
-				view.panelStatus.setInfoText("Bad password").setState(State.WARNING);
+				view.panelStatus.setInfoText("Bad password")
+					.setState(State.WARNING);
 				view.cardPin.clear();
 			}
 		});
@@ -94,10 +104,19 @@ public class SecurityMonitor {
 						view.buttonMap.setEnabled(false);
 						view.buttonLogs.setEnabled(false);
 						view.buttonSettings.setEnabled(false);
-						// TODO Placer un décompte avant
-						setSecurityLevel(Level.ONE);
-						view.setButtonLockIcon(true);
-						view.showCard("Map");
+						view.showCountdownCard("Message TODO", 5, (cancel) -> {
+							if (cancel) {
+								view.buttonMap.setEnabled(false);
+								view.buttonLogs.setEnabled(false);
+								view.buttonSettings.setEnabled(false);
+								view.showDefaultCard();
+							}
+							else {
+								setSecurityLevel(Level.ONE);
+								view.setButtonLockIcon(true);
+								view.showDefaultCard().setReadonly(true);
+							}
+						});
 					}
 					else {
 						view.showDefaultCard();
