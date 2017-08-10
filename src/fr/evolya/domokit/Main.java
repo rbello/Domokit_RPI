@@ -1,12 +1,14 @@
 package fr.evolya.domokit;
 
-import fr.evolya.domokit.gui.SmallView;
+import fr.evolya.domokit.gui.View480x320;
+import fr.evolya.domokit.gui.ViewController;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent.Orientation;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent.Position;
 import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.simple.Door;
 import fr.evolya.domokit.gui.map.simple.Map;
 import fr.evolya.domokit.gui.map.simple.Room;
+import fr.evolya.domokit.gui.map.simple.Tile;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
@@ -29,10 +31,11 @@ public class Main {
 			.setProperty("App.Version", "1.0.0")
 			.setProperty("Config.File", "./config.properties");
 		
-		app.add(SmallView.class);
+		app.add(View480x320.class);
 		//app.add(NetworkWatcher.class);
 		app.add(ArduinoLink.class);
 		app.add(SecurityMonitor.class);
+		app.add(ViewController.class);
 		
 		IMap map = new Map();
 		
@@ -52,13 +55,13 @@ public class Main {
 				.setOrientation(Orientation.RIGHT)
 				.setPosition(Position.CENTER);
 		
-		//map.addComponent();
+		map.addComponent(new Tile(2, 2, "Name"));
 		
 		app.when(ApplicationBuilding.class).executeOnGui((appli) -> {
-			app.get(SmallView.class).cardMap.setMap(map);
+			app.get(View480x320.class).cardMap.setMap(map);
 		});
 		app.when(GuiIsReady.class).executeOnGui((gui, appli) -> {
-			((SmallView)gui).showCard("Map");
+			((View480x320)gui).showCard("Map");
 		});
 		
 		app.start();

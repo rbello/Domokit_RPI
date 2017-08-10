@@ -1,10 +1,8 @@
 package fr.evolya.domokit.gui;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 
@@ -17,21 +15,21 @@ import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 
-import fr.evolya.domokit.SecurityMonitor;
+import fr.evolya.domokit.gui.icons.Icons;
+import fr.evolya.domokit.gui.icons.Icons.Size;
 import fr.evolya.domokit.gui.map.MapPanel;
-import fr.evolya.domokit.gui.map.MapPanel.MapListener;
-import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
+import fr.evolya.domokit.gui.panels.PanelConfirmDialog;
+import fr.evolya.domokit.gui.panels.PanelCountDown;
+import fr.evolya.domokit.gui.panels.PanelLogs;
+import fr.evolya.domokit.gui.panels.PanelPin;
+import fr.evolya.domokit.gui.panels.PanelSettings;
+import fr.evolya.domokit.gui.panels.PanelStatus;
 import fr.evolya.javatoolkit.app.App;
-import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
-import fr.evolya.javatoolkit.app.event.ApplicationStarted;
-import fr.evolya.javatoolkit.app.event.GuiIsReady;
-import fr.evolya.javatoolkit.app.event.WindowCloseIntent;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.code.funcint.Action;
-import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 
-public class SmallView extends JFrame {
+public class View480x320 extends JFrame {
 
 	private static final long serialVersionUID = -6653570811059565525L;
 	
@@ -55,7 +53,7 @@ public class SmallView extends JFrame {
 	public final PanelCountDown cardCountdown;
 	
 	@GuiTask
-	public SmallView() {
+	public View480x320() {
 		super();
 		
 		if (!SwingUtilities.isEventDispatchThread()) {
@@ -76,7 +74,7 @@ public class SmallView extends JFrame {
 		
 		buttonSettings = new JButton();
 		buttonSettings.setToolTipText("Settings");
-		buttonSettings.setIcon(new ImageIcon(getImage("/24x24/047-settings.png")));
+		buttonSettings.setIcon(Icons.SETTINGS.getIcon(Size.SIZE24X24));
 		buttonSettings.addActionListener(e -> {
 			showCard("Settings");
 		});
@@ -139,60 +137,7 @@ public class SmallView extends JFrame {
 		panelStatus.setCartoucheInfo("LEVEL");
 		getContentPane().add(panelStatus);
 	}
-	
-	@BindOnEvent(ApplicationBuilding.class)
-	@GuiTask
-	public void build(App app) {
-		cardSettings.buttonExit.addActionListener(e -> {
-			app.notify(WindowCloseIntent.class, app, this, e);
-		});
-		buttonLock.addActionListener(e -> {
-			if (app.get(SecurityMonitor.class).isLocked()) {
-				app.get(SecurityMonitor.class).unlock();
-			}
-			else {
-				app.get(SecurityMonitor.class).lock();
-			}
-		});
-		cardMap.addListener(new MapListener() {
-			@Override
-			public void onSlide(Point from, Point to) {
-				// TODO Auto-generated method stub
-				
-			}
-			@Override
-			public void onClick(Point p) {
-				IAbsolutePositionningComponent target = cardMap.getMapComponentAt(p.x, p.y);
-				if (target == null) return;
-				System.out.println("Click on " + p.getX() + "x" + p.getY() + " = " + target);
-				target.setBackground(Color.RED);
-				cardMap.repaint();
-				SwingUtilities.invokeLater(() -> {
-					try {
-						Thread.sleep(60);
-					} catch (InterruptedException e1) { }
-					target.setBackground(null);
-					cardMap.repaint();
-				});
-			}
-		});
-	}
-	
-	@BindOnEvent(ApplicationStarted.class)
-	@GuiTask
-	public void run(App app) {
-		setVisible(true);
-		app.notify(GuiIsReady.class, this, app);
-	}
-	
-	@BindOnEvent(WindowCloseIntent.class)
-	@GuiTask
-	public void close(App app) {
-		setVisible(false);
-		dispose();
-		app.stop();
-	}
-
+		
 	public void showCard(String cardName) {
 		CardLayout cl = (CardLayout)(panelMain.getLayout());
         cl.show(panelMain, cardName);
@@ -215,12 +160,10 @@ public class SmallView extends JFrame {
 		return false;
 	}
 
-	/**
-	 * Permet de charger une image se trouvant dans le package de cette classe.
-	 */
+	@Deprecated
 	public static Image getImage(String filename) {
 		return Toolkit.getDefaultToolkit().getImage(
-				SmallView.class.getResource("/fr/evolya/domokit/gui/icons" + filename));
+				View480x320.class.getResource("/fr/evolya/domokit/gui/icons" + filename));
 	}
 
 	public void appendLog(String msg) {

@@ -1,4 +1,4 @@
-package fr.evolya.domokit.gui;
+package fr.evolya.domokit.gui.panels;
 
 import java.awt.Color;
 import java.awt.Font;

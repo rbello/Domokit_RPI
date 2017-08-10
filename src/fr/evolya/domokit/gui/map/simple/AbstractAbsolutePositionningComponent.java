@@ -59,5 +59,13 @@ public abstract class AbstractAbsolutePositionningComponent
 		this.backgroundColor = color;
 		return this;
 	}
+	
+	public Rectangle getTargetBounds(double ratio, Point topLeft) {
+		int x = (int) (bounds.x * ratio + topLeft.x);
+		int y = (int) (bounds.y * ratio + topLeft.y);
+		int w = (int) (bounds.width * ratio);
+		int h = (int) (bounds.height * ratio);
+		return new Rectangle(x, y, w, h);
+	}
 
 }

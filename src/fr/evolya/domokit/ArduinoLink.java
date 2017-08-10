@@ -1,6 +1,6 @@
 package fr.evolya.domokit;
 
-import fr.evolya.domokit.gui.SmallView;
+import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
 import fr.evolya.javatoolkit.app.event.ApplicationStopping;
@@ -13,7 +13,7 @@ import fr.evolya.javatoolkit.iot.Arduino;
 public class ArduinoLink {
 	
 	@Inject
-	public SmallView view;
+	public View480x320 view;
 	
 	protected Arduilink link;
 

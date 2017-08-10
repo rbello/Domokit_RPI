@@ -1,4 +1,4 @@
-package fr.evolya.domokit.gui;
+package fr.evolya.domokit.gui.panels;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -32,13 +32,15 @@ public class PanelConfirmDialog extends JPanel {
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(panelButtons, GroupLayout.PREFERRED_SIZE, 431, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(10)
+							.addComponent(panelButtons, GroupLayout.PREFERRED_SIZE, 399, GroupLayout.PREFERRED_SIZE))
+						.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.TRAILING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -50,14 +52,13 @@ public class PanelConfirmDialog extends JPanel {
 		textLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		textLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		
-		
 		GroupLayout gl_panel_1 = new GroupLayout(panel_1);
 		gl_panel_1.setHorizontalGroup(
 			gl_panel_1.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panel_1.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(textLabel, GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
-					.addContainerGap())
+					.addGap(18)
+					.addComponent(textLabel, GroupLayout.PREFERRED_SIZE, 381, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_panel_1.setVerticalGroup(
 			gl_panel_1.createParallelGroup(Alignment.TRAILING)
@@ -68,6 +69,8 @@ public class PanelConfirmDialog extends JPanel {
 		);
 		panel_1.setLayout(gl_panel_1);
 		setLayout(groupLayout);
+		
+		textLabel.setMaximumSize(textLabel.getSize());
 	}
 	
 	public JButton addButton(String text, boolean hightlight) {

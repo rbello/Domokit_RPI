@@ -2,7 +2,7 @@ package fr.evolya.domokit;
 
 import java.net.InetAddress;
 
-import fr.evolya.domokit.gui.SmallView;
+import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.gui.swing.SwingApp;
@@ -14,11 +14,11 @@ import fr.evolya.javatoolkit.net.discover.events.OnNetworkConnected;
 
 public class NetworkWatcher extends NetworkWatcher2 {
 
-	private SmallView view;
+	private View480x320 view;
 	
 	// When the application is ready...
 	@BindOnEvent(GuiIsReady.class)
-	public void start(SmallView view, SwingApp app) {
+	public void start(View480x320 view, SwingApp app) {
 		// ...store the view instance...
 		this.view = view;
 		// ...and start network watcher service.

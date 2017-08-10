@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import fr.evolya.domokit.gui.map.MapPanel.MapListener;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IMap;
-import fr.evolya.javatoolkit.code.annotations.BadQualityCode;
 import fr.evolya.javatoolkit.code.utils.ReflectionUtils;
 import fr.evolya.javatoolkit.events.basic.Dispatcher1;
 import fr.evolya.javatoolkit.events.basic.Listenable1;
@@ -102,29 +101,29 @@ public class MapPanel extends JPanel
 	public boolean isReadonly() {
 		return this.readonly;
 	}
+	
+	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
+		return map.getMapComponentAt(x, y);
+	}
+	
+	@Override
+	public boolean addListener(MapListener listener) {
+		return events.addListener(listener);
+	}
+	
+	@Override
+	public boolean removeListener(MapListener listener) {
+		return events.removeListener(listener);
+	}
+	
+	@Override
+	public void notifyEvent(String event, Point... args) {
+		events.notifyEvent(event, args);
+	}
 
 	public static interface MapListener {
 		void onClick(Point point);
 		void onSlide(Point from, Point to);
 	}
-
-	@Override
-	public boolean addListener(MapListener listener) {
-		return events.addListener(listener);
-	}
-
-	@Override
-	public boolean removeListener(MapListener listener) {
-		return events.removeListener(listener);
-	}
-
-	@Override
-	public void notifyEvent(String event, Point... args) {
-		events.notifyEvent(event, args);
-	}
 	
-	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
-		return map.getMapComponentAt(x, y);
-	}
-
 }

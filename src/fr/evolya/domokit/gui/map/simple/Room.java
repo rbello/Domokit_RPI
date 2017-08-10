@@ -1,16 +1,11 @@
 package fr.evolya.domokit.gui.map.simple;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-import javax.swing.JPanel;
-
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
-import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 
 public class Room extends AbstractAbsolutePositionningComponent {
 	
@@ -29,21 +24,18 @@ public class Room extends AbstractAbsolutePositionningComponent {
 
 	@Override
 	public void paint(Graphics graphic, MapPanel panel, double ratio, Point topLeft) {
-		int x = (int) (bounds.x * ratio + topLeft.x);
-		int y = (int) (bounds.y * ratio + topLeft.y);
-		int w = (int) (bounds.width * ratio);
-		int h = (int) (bounds.height * ratio);
+		Rectangle b = getTargetBounds(ratio, topLeft);
 		graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
-		graphic.fillRect(x, y, w, h);
+		graphic.fillRect(b.x, b.y, b.width, b.height);
 		graphic.setColor(panel.getForeground());
 		// Top border
-		graphic.fillRect(x - borderLeftWidth, y - borderTopWidth, w + borderRightWidth, borderTopWidth);
+		graphic.fillRect(b.x - borderLeftWidth, b.y - borderTopWidth, b.width + borderRightWidth, borderTopWidth);
 		// Bottom border
-		graphic.fillRect(x - borderLeftWidth, y + h, w + borderRightWidth, borderBottomWidth);
+		graphic.fillRect(b.x - borderLeftWidth, b.y + b.height, b.width + borderRightWidth, borderBottomWidth);
 		// Left border
-		graphic.fillRect(x - borderLeftWidth, y, borderLeftWidth, h);
+		graphic.fillRect(b.x - borderLeftWidth, b.y, borderLeftWidth, b.height);
 		// Right border
-		graphic.fillRect(x + w - borderLeftWidth, y, borderRightWidth, h);
+		graphic.fillRect(b.x + b.width - borderLeftWidth, b.y, borderRightWidth, b.height);
 	}
 	
 	public int getBorderTopWidth() {
@@ -80,11 +72,6 @@ public class Room extends AbstractAbsolutePositionningComponent {
 	public IAbsolutePositionningComponent setBorderLeftWidth(int borderLeftWidth) {
 		this.borderLeftWidth = borderLeftWidth;
 		return this;
-	}
-
-	@Override
-	public Component getGraphic() {
-		return new JPanel();
 	}
 
 }
