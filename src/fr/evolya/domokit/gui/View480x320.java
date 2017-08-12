@@ -2,13 +2,10 @@ package fr.evolya.domokit.gui;
 
 import java.awt.CardLayout;
 import java.awt.Component;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -81,14 +78,14 @@ public class View480x320 extends JFrame {
 		
 		buttonLogs = new JButton();
 		buttonLogs.setToolTipText("Logs");
-		buttonLogs.setIcon(new ImageIcon(getImage("/24x24/045-message.png")));
+		buttonLogs.setIcon(Icons.MESSAGE.getIcon(Size.SIZE24X24));
 		buttonLogs.addActionListener(e -> {
 			showCard("Logs");
 		});
 		
 		buttonMap = new JButton();
 		buttonMap.setToolTipText("Map");
-		buttonMap.setIcon(new ImageIcon(getImage("/24x24/021-home.png")));
+		buttonMap.setIcon(Icons.HOME.getIcon(Size.SIZE24X24));
 		buttonMap.addActionListener(e -> {
 			showCard("Map");
 		});
@@ -160,19 +157,14 @@ public class View480x320 extends JFrame {
 		return false;
 	}
 
-	@Deprecated
-	public static Image getImage(String filename) {
-		return Toolkit.getDefaultToolkit().getImage(
-				View480x320.class.getResource("/fr/evolya/domokit/gui/icons" + filename));
-	}
-
 	public void appendLog(String msg) {
 		SwingUtilities.invokeLater(() -> cardLogs.textArea.append(msg + "\n"));
 	}
 
 	public void setButtonLockIcon(boolean locked) {
-		buttonLock.setIcon(new ImageIcon(getImage(
-				locked ? "/24x24/003-play-button.png" : "/24x24/002-exclamation-button.png")));
+		buttonLock.setIcon(
+				Icons.getIcon(locked ? Icons.PLAY : Icons.EXCLAMATION, Size.SIZE24X24)
+		);
 	}
 
 	public MapPanel showDefaultCard() {

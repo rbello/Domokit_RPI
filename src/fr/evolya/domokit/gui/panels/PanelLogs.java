@@ -10,6 +10,8 @@ import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import fr.evolya.domokit.gui.View480x320;
+import fr.evolya.domokit.gui.icons.Icons;
+import fr.evolya.domokit.gui.icons.Icons.Size;
 
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -31,7 +33,7 @@ public class PanelLogs extends JPanel {
 		JScrollPane scrollPane = new JScrollPane();
 		
 		JButton btnNewButton = new JButton();
-		btnNewButton.setIcon(new ImageIcon(View480x320.getImage("/16x16/008-equal.png")));
+		btnNewButton.setIcon(Icons.EQUALS.getIcon(Size.SIZE16X16));
 		btnNewButton.addActionListener(e -> textArea.setText(""));
 		
 		GroupLayout groupLayout = new GroupLayout(this);

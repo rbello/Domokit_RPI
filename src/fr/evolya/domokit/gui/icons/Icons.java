@@ -4,12 +4,16 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.HashMap;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 public enum Icons {
 	
 	SEARCH("search", "001", "050"),
+	MESSAGE("message", "009", "045"),
+	HOME("home", "038", "021"),
+	PLAY("play-button", "024", "003"),
+	EXCLAMATION("exclamation-button", "025", "002"),
+	EQUALS("equal", "008", "046"),
 	SETTINGS("settings", "005", "047");
 	
 	private String name;
@@ -66,20 +70,30 @@ public enum Icons {
 	}
 
 	public static Image loadImage(String filename) {
-		return Toolkit.getDefaultToolkit().getImage(
-				Icons.class.getResource(filename));
+		try {
+			return Toolkit.getDefaultToolkit().getImage(
+					Icons.class.getResource(filename));
+		}
+		catch (Throwable t) {
+			System.out.println("Unable to load icon " + filename + ": " + t.getMessage());
+			return null;
+		}
 	}
 	
 	public static enum Size {
 		SIZE16X16, SIZE24X24
 	}
 
-	public Icon getIcon(Size size) {
+	public ImageIcon getIcon(Size size) {
 		return new ImageIcon(getImage(size));
 	}
 	
-	public Icon getIcon(Size size, boolean cache) {
+	public ImageIcon getIcon(Size size, boolean cache) {
 		return new ImageIcon(getImage(size, cache));
 	}
 
+	public static ImageIcon getIcon(Icons icon, Size size) {
+		return icon.getIcon(size);
+	}
+	
 }
