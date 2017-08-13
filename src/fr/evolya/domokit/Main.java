@@ -23,7 +23,7 @@ public class Main {
 		app.get(AppConfiguration.class)
 			.setProperty("App.Name", "HouseStation")
 			.setProperty("App.Version", "1.0.0")
-			.setProperty("Config.File", "./config.properties");
+			.setProperty("Config.File", "./config/app.properties");
 		
 		app.add(ArduinoLink.class);
 		app.add(SecurityMonitor.class);

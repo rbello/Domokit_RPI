@@ -62,8 +62,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-config.properties
 dist/*
 bin/*
 
-*.config
+config/app.properties

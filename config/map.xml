@@ -1,0 +1,87 @@
+<root replacevars="true">
+	<bean name="map" class="fr.evolya.domokit.gui.map.simple.Map">
+		<list name="component" class="fr.evolya.domokit.gui.map.iface.IMapComponent">
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">0</param>
+					<param type="int">0</param>
+					<param type="int">4</param>
+					<param type="int">4</param>
+					<param type="string">Salle de bain</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">4</param>
+					<param type="int">0</param>
+					<param type="int">6</param>
+					<param type="int">4</param>
+					<param type="string">Garage</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">10</param>
+					<param type="int">0</param>
+					<param type="int">4</param>
+					<param type="int">4</param>
+					<param type="string">Chambre 1</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">14</param>
+					<param type="int">0</param>
+					<param type="int">5</param>
+					<param type="int">10</param>
+					<param type="string">Salon</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">0</param>
+					<param type="int">4</param>
+					<param type="int">2</param>
+					<param type="int">2</param>
+					<param type="string">WC</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">2</param>
+					<param type="int">4</param>
+					<param type="int">12</param>
+					<param type="int">2</param>
+					<param type="string">Couloir</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">0</param>
+					<param type="int">6</param>
+					<param type="int">4</param>
+					<param type="int">4</param>
+					<param type="string">Chambre 3</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">4</param>
+					<param type="int">6</param>
+					<param type="int">5</param>
+					<param type="int">4</param>
+					<param type="string">Chambre 2</param>
+				</constructor>
+			</bean>
+			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+				<constructor>
+					<param type="int">9</param>
+					<param type="int">6</param>
+					<param type="int">5</param>
+					<param type="int">4</param>
+					<param type="string">Cuisine</param>
+				</constructor>
+			</bean>
+		</list>
+	</bean>
+</root>

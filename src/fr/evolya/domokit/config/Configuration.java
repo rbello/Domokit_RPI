@@ -16,7 +16,7 @@ public class Configuration {
 	}
 
 	public static Configuration getInstance() {
-		File file = new File("./map.config");
+		File file = new File("./config/map.xml");
 		XmlConfig cfg = new XmlConfig();
 		try {
 			cfg.addConfiguration(file);
