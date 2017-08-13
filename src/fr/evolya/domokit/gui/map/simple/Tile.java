@@ -2,24 +2,22 @@ package fr.evolya.domokit.gui.map.simple;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 
+import fr.evolya.domokit.gui.icons.Icons;
+import fr.evolya.domokit.gui.icons.Icons.Size;
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 import fr.evolya.javatoolkit.exceptions.NotImplementedException;
 
 public class Tile extends AbstractAbsolutePositionningComponent {
 
-	private Image image;
+	private Icons icon;
+	private Color borderColor;
 	
-	private String icon;
-	private Color backgroundColor;
-
 	public Tile(int x, int y, String componentLabel) {
 		super(x, y, 1, 1, componentLabel);
 	}
@@ -32,26 +30,48 @@ public class Tile extends AbstractAbsolutePositionningComponent {
 	@Override
 	public void paint(Graphics graphic, MapPanel panel, double ratio, Point topLeft) {
 		Rectangle b = getTargetBounds(ratio, topLeft);
+		
+		// Border
+		graphic.setColor(borderColor == null ? panel.getForeground() : borderColor);
+		graphic.fillOval(b.x - 1, b.y - 1, b.width + 4, b.height + 4);
+		
+		// Background
 		graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
-		graphic.setColor(Color.BLUE);
-		image = getImage("009-message");
-		ImageIcon img = new ImageIcon(image);
-		int w = img.getIconWidth(), h = img.getIconHeight(), inset = 3;
 		graphic.fillOval(b.x, b.y, b.width + 2, b.height + 2);
 		
-		
-		graphic.drawImage(image,
+		// Icon
+		ImageIcon img = Icons.getIcon(icon, Size.SIZE16X16, true);
+		int inset = 3;
+		graphic.drawImage(img.getImage(),
 				// Target x/y
-				b.x + inset + 1, b.y + inset + 1,
+				b.x + inset, b.y + inset,
 				// Target w/h
 				b.x + inset + 16, b.y + inset + 16,
 				// Source x/y/w/h
-				0, 0, 16, 15, null);
+				0, 0, 16, 16, null);
 	}
 
-	public static Image getImage(String filename) {
-		return Toolkit.getDefaultToolkit().getImage(
-				Tile.class.getResource("/fr/evolya/domokit/gui/icons/16x16/" + filename + ".png"));
+	public Tile setIcon(Icons icon) {
+		this.icon = icon;
+		return this;
 	}
 	
+	public Icons getIcon() {
+		return this.icon;
+	}
+
+	public Color getBorderColor() {
+		return borderColor;
+	}
+
+	public Tile setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
+		return this;
+	}
+
+	@Override
+	public Tile setBackground(Color color) {
+		return (Tile) super.setBackground(color);
+	}
+
 }

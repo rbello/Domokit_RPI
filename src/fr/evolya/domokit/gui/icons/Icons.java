@@ -8,13 +8,15 @@ import javax.swing.ImageIcon;
 
 public enum Icons {
 	
-	SEARCH("search", "001", "050"),
-	MESSAGE("message", "009", "045"),
-	HOME("home", "038", "021"),
-	PLAY("play-button", "024", "003"),
-	EXCLAMATION("exclamation-button", "025", "002"),
-	EQUALS("equal", "008", "046"),
-	SETTINGS("settings", "005", "047");
+	SEARCH			("search", "001", "050"),
+	MESSAGE			("message", "009", "045"),
+	HOME			("home", "038", "021"),
+	PLAY			("play-button", "024", "003"),
+	EXCLAMATION		("exclamation-button", "025", "002"),
+	EQUALS			("equal", "008", "046"),
+	CONNECTIVITY	("connectivity", "041", "016"),
+	WIFI			("wifi-signal", "026", "001"),
+	SETTINGS		("settings", "005", "047");
 	
 	private String name;
 	
@@ -94,6 +96,18 @@ public enum Icons {
 
 	public static ImageIcon getIcon(Icons icon, Size size) {
 		return icon.getIcon(size);
+	}
+	
+	public static ImageIcon getIcon(Icons icon, Size size, boolean cache) {
+		return icon.getIcon(size, cache);
+	}
+	
+	public static Image getImage(Icons icon, Size size) {
+		return icon.getImage(size);
+	}
+	
+	public static Image getImage(Icons icon, Size size, boolean cache) {
+		return icon.getImage(size, cache);
 	}
 	
 }

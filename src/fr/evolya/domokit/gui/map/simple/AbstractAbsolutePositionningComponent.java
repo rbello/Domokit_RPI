@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
+import fr.evolya.domokit.gui.map.iface.IMap;
 
 public abstract class AbstractAbsolutePositionningComponent
 	implements IAbsolutePositionningComponent {
@@ -60,12 +61,23 @@ public abstract class AbstractAbsolutePositionningComponent
 		return this;
 	}
 	
+	@Override
+	public Color getBackground() {
+		return backgroundColor;
+	}
+	
 	public Rectangle getTargetBounds(double ratio, Point topLeft) {
 		int x = (int) (bounds.x * ratio + topLeft.x);
 		int y = (int) (bounds.y * ratio + topLeft.y);
 		int w = (int) (bounds.width * ratio);
 		int h = (int) (bounds.height * ratio);
 		return new Rectangle(x, y, w, h);
+	}
+	
+	@Override
+	public IAbsolutePositionningComponent addTo(IMap map) {
+		map.addComponent(this);
+		return this;
 	}
 
 }

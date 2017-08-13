@@ -1,14 +1,8 @@
 package fr.evolya.domokit;
 
+import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.ViewController;
-import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent.Orientation;
-import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent.Position;
-import fr.evolya.domokit.gui.map.iface.IMap;
-import fr.evolya.domokit.gui.map.simple.Door;
-import fr.evolya.domokit.gui.map.simple.Map;
-import fr.evolya.domokit.gui.map.simple.Room;
-import fr.evolya.domokit.gui.map.simple.Tile;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
@@ -31,35 +25,16 @@ public class Main {
 			.setProperty("App.Version", "1.0.0")
 			.setProperty("Config.File", "./config.properties");
 		
-		app.add(View480x320.class);
-		//app.add(NetworkWatcher.class);
 		app.add(ArduinoLink.class);
 		app.add(SecurityMonitor.class);
+
+		app.add(View480x320.class);
 		app.add(ViewController.class);
 		
-		IMap map = new Map();
-		
-		map.addComponent(new Room(0, 0, 4, 4, "Salle de bain"));
-		map.addComponent(new Room(4, 0, 6, 4, "Garage"));
-		map.addComponent(new Room(10, 0, 4, 4, "Chambre 1"));
-		map.addComponent(new Room(14, 0, 5, 10, "Salon"));
-		map.addComponent(new Room(0, 4, 2, 2, "WC"));
-		map.addComponent(new Room(2, 4, 12, 2, "Couloir"));
-		map.addComponent(new Room(0, 6, 4, 4, "Chambre 3"));
-		map.addComponent(new Room(4, 6, 5, 4, "Chambre 2"));
-		map.addComponent(new Room(9, 6, 5, 4, "Cuisine"));
-		
-		map.getRoomByName("Couloir", Room.class)
-			.setBorderRightWidth(0)
-			.addBorderElement(new Door())
-				.setOrientation(Orientation.RIGHT)
-				.setPosition(Position.CENTER);
-		
-		map.addComponent(new Tile(2, 2, "Name"));
-		
 		app.when(ApplicationBuilding.class).executeOnGui((appli) -> {
-			app.get(View480x320.class).cardMap.setMap(map);
+			app.get(View480x320.class).cardMap.setMap(Configuration.getInstance().getMap());
 		});
+		
 		app.when(GuiIsReady.class).executeOnGui((gui, appli) -> {
 			((View480x320)gui).showCard("Map");
 		});

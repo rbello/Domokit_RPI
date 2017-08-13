@@ -105,7 +105,7 @@ public class Map implements IMap {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends IAbsolutePositionningComponent> T getRoomByName(String name, Class<T> type) {
+	public <T extends IAbsolutePositionningComponent> T getComponentByName(String name, Class<T> type) {
 		for (IMapComponent c : components) {
 			if (c instanceof IAbsolutePositionningComponent) {
 				if (((IAbsolutePositionningComponent)c).getIdentifier().equals(name)) 

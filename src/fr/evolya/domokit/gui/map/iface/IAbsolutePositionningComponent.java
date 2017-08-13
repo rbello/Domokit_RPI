@@ -27,5 +27,7 @@ public interface IAbsolutePositionningComponent extends IMapComponent {
 	boolean isInside(int x, int y, double ratio, Point topLeft);
 
 	IAbsolutePositionningComponent setBackground(Color red);
+	Color getBackground();
 
+	IAbsolutePositionningComponent addTo(IMap map);
 }

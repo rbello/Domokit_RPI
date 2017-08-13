@@ -1,20 +1,18 @@
 package fr.evolya.domokit.gui.panels;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 import java.awt.Font;
+
 import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.icons.Icons;
 import fr.evolya.domokit.gui.icons.Icons.Size;
-
-import javax.swing.JTextArea;
-import javax.swing.JButton;
 
 public class PanelLogs extends JPanel {
 
