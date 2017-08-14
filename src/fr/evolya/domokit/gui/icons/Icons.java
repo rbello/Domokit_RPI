@@ -16,6 +16,9 @@ public enum Icons {
 	EQUALS			("equal", "008", "046"),
 	CONNECTIVITY	("connectivity", "041", "016"),
 	WIFI			("wifi-signal", "026", "001"),
+	LOOK			("look", "045", "023"),
+	WINDOW			("text", "004", "048"),
+	LIGHT			("sun", "014", "039"),
 	SETTINGS		("settings", "005", "047");
 	
 	private String name;

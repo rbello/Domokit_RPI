@@ -1,86 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <root replacevars="true">
-	<bean name="map" class="fr.evolya.domokit.gui.map.simple.Map">
+
+	<property name="package">fr.evolya.domokit.gui.map.simple</property>
+	<property name="features">fr.evolya.domokit.gui.map.features</property>
+
+	<bean name="map" class="${package}.Map">
 		<list name="component" class="fr.evolya.domokit.gui.map.iface.IMapComponent">
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
-				<constructor>
-					<param type="int">0</param>
-					<param type="int">0</param>
-					<param type="int">4</param>
-					<param type="int">4</param>
-					<param type="string">Salle de bain</param>
-				</constructor>
+		
+			<!--       -->
+			<!-- ROOMS -->
+			<!--       -->
+			<bean class="${package}.Room">
+				<attr name="x">0</attr>
+				<attr name="y">0</attr>
+				<attr name="width">4</attr>
+				<attr name="height">4</attr>
+				<attr name="identifier">Salle de bain</attr>
 			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
-				<constructor>
-					<param type="int">4</param>
-					<param type="int">0</param>
-					<param type="int">6</param>
-					<param type="int">4</param>
-					<param type="string">Garage</param>
-				</constructor>
+			<bean class="${package}.Room">
+				<attr name="x">4</attr>
+				<attr name="y">0</attr>
+				<attr name="width">6</attr>
+				<attr name="height">4</attr>
+				<attr name="identifier">Garage</attr>
 			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+			<bean class="${package}.Room">
+				<attr name="x">10</attr>
+				<attr name="y">0</attr>
+				<attr name="width">4</attr>
+				<attr name="height">4</attr>
+				<attr name="identifier">Chambre 1</attr>
+			</bean>
+			<bean class="${package}.Room">
+				<attr name="x">14</attr>
+				<attr name="y">0</attr>
+				<attr name="width">5</attr>
+				<attr name="height">10</attr>
+				<attr name="identifier">Salon</attr>
+			</bean>
+			<bean class="${package}.Room">
+				<attr name="x">0</attr>
+				<attr name="y">4</attr>
+				<attr name="width">2</attr>
+				<attr name="height">2</attr>
+				<attr name="identifier">WC</attr>
+			</bean>
+			<bean class="${package}.Room">
+				<attr name="x">2</attr>
+				<attr name="y">4</attr>
+				<attr name="width">12</attr>
+				<attr name="height">2</attr>
+				<attr name="identifier">Couloir</attr>
+			</bean>
+			<bean class="${package}.Room">
+				<attr name="x">0</attr>
+				<attr name="y">6</attr>
+				<attr name="width">4</attr>
+				<attr name="height">4</attr>
+				<attr name="identifier">Chambre 3</attr>
+			</bean>
+			<bean class="${package}.Room">
+				<attr name="x">4</attr>
+				<attr name="y">6</attr>
+				<attr name="width">5</attr>
+				<attr name="height">4</attr>
+				<attr name="identifier">Chambre 2</attr>
+			</bean>
+			<bean class="${package}.Room">
+				<attr name="x">9</attr>
+				<attr name="y">6</attr>
+				<attr name="width">5</attr>
+				<attr name="height">4</attr>
+				<attr name="identifier">Cuisine</attr>
+			</bean>
+			
+			<!--         -->
+			<!-- WINDOWS -->
+			<!--         -->
+			<bean class="${package}.Badge">
+				<constructor>
+					<param type="int">2</param>
+					<param type="int">0</param>
+					<param type="string">Name</param>
+				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
+			</bean>
+			<bean class="${package}.Badge">
 				<constructor>
 					<param type="int">10</param>
 					<param type="int">0</param>
-					<param type="int">4</param>
-					<param type="int">4</param>
-					<param type="string">Chambre 1</param>
+					<param type="string">Name</param>
 				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
 			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+			<bean class="${package}.Badge">
 				<constructor>
-					<param type="int">14</param>
-					<param type="int">0</param>
-					<param type="int">5</param>
-					<param type="int">10</param>
-					<param type="string">Salon</param>
-				</constructor>
-			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
-				<constructor>
-					<param type="int">0</param>
-					<param type="int">4</param>
-					<param type="int">2</param>
-					<param type="int">2</param>
-					<param type="string">WC</param>
-				</constructor>
-			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
-				<constructor>
-					<param type="int">2</param>
-					<param type="int">4</param>
 					<param type="int">12</param>
-					<param type="int">2</param>
-					<param type="string">Couloir</param>
-				</constructor>
-			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
-				<constructor>
 					<param type="int">0</param>
-					<param type="int">6</param>
-					<param type="int">4</param>
-					<param type="int">4</param>
-					<param type="string">Chambre 3</param>
+					<param type="string">Name</param>
 				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
 			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+			<bean class="${package}.Badge">
 				<constructor>
-					<param type="int">4</param>
-					<param type="int">6</param>
-					<param type="int">5</param>
-					<param type="int">4</param>
-					<param type="string">Chambre 2</param>
+					<param type="int">15</param>
+					<param type="int">0</param>
+					<param type="string">Name</param>
 				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
 			</bean>
-			<bean class="fr.evolya.domokit.gui.map.simple.Room">
+			<bean class="${package}.Badge">
 				<constructor>
+					<param type="int">2</param>
 					<param type="int">9</param>
-					<param type="int">6</param>
-					<param type="int">5</param>
-					<param type="int">4</param>
-					<param type="string">Cuisine</param>
+					<param type="string">Name</param>
 				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
+			</bean>
+			<bean class="${package}.Badge">
+				<constructor>
+					<param type="int">6</param>
+					<param type="int">9</param>
+					<param type="string">Name</param>
+				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
+			</bean>
+			<bean class="${package}.Badge">
+				<constructor>
+					<param type="int">11</param>
+					<param type="int">9</param>
+					<param type="string">Name</param>
+				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
+			</bean>
+			<bean class="${package}.Badge">
+				<constructor>
+					<param type="int">15</param>
+					<param type="int">9</param>
+					<param type="string">Name</param>
+				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
+			</bean>
+			<bean class="${package}.Badge">
+				<constructor>
+					<param type="int">17</param>
+					<param type="int">9</param>
+					<param type="string">Name</param>
+				</constructor>
+				<attr name="background">RED</attr>
+				<attr name="icon">WINDOW</attr>
+			</bean>
+			
+			<!--        -->
+			<!-- LIGHTS -->
+			<!--        -->
+			<bean class="${package}.Device">
+				<constructor>
+					<param type="int">1</param>
+					<param type="int">4</param>
+					<param type="string">Lumière WC</param>
+				</constructor>
+				<list name="feature" class="${package}.IFeature">
+					<bean class="${features}.Rf433Emitter">
+						<attr name="rfCode">784152</attr>
+					</bean>
+					<bean class="${features}.OnOffActuator">
+					</bean>
+				</list>
 			</bean>
 		</list>
 	</bean>

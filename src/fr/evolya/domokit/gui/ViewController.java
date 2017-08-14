@@ -82,5 +82,11 @@ public class ViewController {
 		view.dispose();
 		app.stop();
 	}
+	
+	@BindOnEvent(GuiIsReady.class)
+	@GuiTask
+	public void initView() {
+		view.showDefaultCard();
+	}
 
 }

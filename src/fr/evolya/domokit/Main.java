@@ -3,6 +3,8 @@ package fr.evolya.domokit;
 import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.ViewController;
+import fr.evolya.domokit.io.ArduinoLink;
+import fr.evolya.domokit.io.RF433;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
@@ -26,6 +28,7 @@ public class Main {
 			.setProperty("Config.File", "./config/app.properties");
 		
 		app.add(ArduinoLink.class);
+		app.add(RF433.class);
 		app.add(SecurityMonitor.class);
 
 		app.add(View480x320.class);
@@ -33,10 +36,6 @@ public class Main {
 		
 		app.when(ApplicationBuilding.class).executeOnGui((appli) -> {
 			app.get(View480x320.class).cardMap.setMap(Configuration.getInstance().getMap());
-		});
-		
-		app.when(GuiIsReady.class).executeOnGui((gui, appli) -> {
-			((View480x320)gui).showCard("Map");
 		});
 		
 		app.start();

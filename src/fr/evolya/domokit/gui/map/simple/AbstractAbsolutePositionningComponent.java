@@ -7,17 +7,23 @@ import java.awt.Rectangle;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IMap;
+import fr.evolya.domokit.gui.map.iface.IMapComponent;
 
 public abstract class AbstractAbsolutePositionningComponent
 	implements IAbsolutePositionningComponent {
 	
-	protected final Rectangle bounds;
-	protected final String label;
-	protected Color backgroundColor;
+	protected Rectangle bounds;
+	protected String identifier;
+	protected Color background;
+	
+	public AbstractAbsolutePositionningComponent() {
+		this.bounds = new Rectangle(0, 0, 1, 1);
+		this.identifier = "";
+	}
 	
 	public AbstractAbsolutePositionningComponent(Rectangle bounds, String componentLabel) {
 		this.bounds = bounds;
-		this.label = componentLabel;
+		this.identifier = componentLabel;
 	}
 	
 	public AbstractAbsolutePositionningComponent(int x, int y, int width, int height, String componentLabel) {
@@ -28,10 +34,16 @@ public abstract class AbstractAbsolutePositionningComponent
 	public Rectangle getBounds() {
 		return bounds;
 	}
+	
+	@Override
+	public IMapComponent setIdentifier(String label) {
+		this.identifier = label;
+		return this;
+	}
 
 	@Override
 	public String getIdentifier() {
-		return label;
+		return identifier;
 	}
 
 	@Override
@@ -52,18 +64,18 @@ public abstract class AbstractAbsolutePositionningComponent
 	
 	@Override
 	public String toString() {
-		return label;
+		return identifier;
 	}
 	
 	@Override
 	public IAbsolutePositionningComponent setBackground(Color color) {
-		this.backgroundColor = color;
+		this.background = color;
 		return this;
 	}
 	
 	@Override
 	public Color getBackground() {
-		return backgroundColor;
+		return background;
 	}
 	
 	public Rectangle getTargetBounds(double ratio, Point topLeft) {
@@ -77,6 +89,26 @@ public abstract class AbstractAbsolutePositionningComponent
 	@Override
 	public IAbsolutePositionningComponent addTo(IMap map) {
 		map.addComponent(this);
+		return this;
+	}
+	
+	public AbstractAbsolutePositionningComponent setX(int x) {
+		bounds.x = x;
+		return this;
+	}
+	
+	public AbstractAbsolutePositionningComponent setY(int y) {
+		bounds.y = y;
+		return this;
+	}
+	
+	public AbstractAbsolutePositionningComponent setWidth(int w) {
+		bounds.width = w;
+		return this;
+	}
+	
+	public AbstractAbsolutePositionningComponent setHeight(int h) {
+		bounds.height = h;
 		return this;
 	}
 

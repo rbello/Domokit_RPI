@@ -12,7 +12,7 @@ public class Configuration {
 	public Configuration(XmlConfig cfg) {
 		this.map = cfg.getBean("map", IMap.class);
 		if (this.map == null)
-			throw new NullPointerException("No map defined in map.config");
+			throw new NullPointerException("No 'map' bean defined in config file");
 	}
 
 	public static Configuration getInstance() {

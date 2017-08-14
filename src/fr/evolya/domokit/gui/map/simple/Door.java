@@ -6,6 +6,7 @@ import java.awt.Point;
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
+import fr.evolya.domokit.gui.map.iface.IMapComponent;
 
 public class Door implements IBorderPositionningComponent {
 
@@ -43,6 +44,12 @@ public class Door implements IBorderPositionningComponent {
 	@Override
 	public void setParent(IAbsolutePositionningComponent parent) {
 		this.parent = parent;
+	}
+
+	@Override
+	public IMapComponent setIdentifier(String label) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

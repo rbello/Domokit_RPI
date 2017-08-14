@@ -13,6 +13,10 @@ public class Room extends AbstractAbsolutePositionningComponent {
 	private int borderRightWidth = 3;
 	private int borderBottomWidth = 3;
 	private int borderLeftWidth = 3;
+	
+	public Room() {
+		super();
+	}
 
 	public Room(Rectangle bounds, String componentLabel) {
 		super(bounds, componentLabel);
@@ -25,7 +29,7 @@ public class Room extends AbstractAbsolutePositionningComponent {
 	@Override
 	public void paint(Graphics graphic, MapPanel panel, double ratio, Point topLeft) {
 		Rectangle b = getTargetBounds(ratio, topLeft);
-		graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
+		graphic.setColor(background == null ? panel.getBackground() : background);
 		graphic.fillRect(b.x, b.y, b.width, b.height);
 		graphic.setColor(panel.getForeground());
 		// Top border
