@@ -13,12 +13,16 @@ import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 import fr.evolya.javatoolkit.exceptions.NotImplementedException;
 
-public class Tile extends AbstractAbsolutePositionningComponent {
+public class Badge extends AbstractAbsolutePositionningComponent {
 
-	private Icons icon;
-	private Color borderColor;
+	protected Icons icon;
+	protected Color borderColor;
 	
-	public Tile(int x, int y, String componentLabel) {
+	public Badge() {
+		super();
+	}
+	
+	public Badge(int x, int y, String componentLabel) {
 		super(x, y, 1, 1, componentLabel);
 	}
 
@@ -36,10 +40,11 @@ public class Tile extends AbstractAbsolutePositionningComponent {
 		graphic.fillOval(b.x - 1, b.y - 1, b.width + 4, b.height + 4);
 		
 		// Background
-		graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
+		graphic.setColor(background == null ? panel.getBackground() : background);
 		graphic.fillOval(b.x, b.y, b.width + 2, b.height + 2);
 		
 		// Icon
+		if (icon == null) return;
 		ImageIcon img = Icons.getIcon(icon, Size.SIZE16X16, true);
 		int inset = 3;
 		graphic.drawImage(img.getImage(),
@@ -51,7 +56,7 @@ public class Tile extends AbstractAbsolutePositionningComponent {
 				0, 0, 16, 16, null);
 	}
 
-	public Tile setIcon(Icons icon) {
+	public Badge setIcon(Icons icon) {
 		this.icon = icon;
 		return this;
 	}
@@ -64,14 +69,14 @@ public class Tile extends AbstractAbsolutePositionningComponent {
 		return borderColor;
 	}
 
-	public Tile setBorderColor(Color borderColor) {
+	public Badge setBorderColor(Color borderColor) {
 		this.borderColor = borderColor;
 		return this;
 	}
 
 	@Override
-	public Tile setBackground(Color color) {
-		return (Tile) super.setBackground(color);
+	public Badge setBackground(Color color) {
+		return (Badge) super.setBackground(color);
 	}
 
 }

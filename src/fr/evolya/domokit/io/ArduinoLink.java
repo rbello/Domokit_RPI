@@ -1,4 +1,4 @@
-package fr.evolya.domokit;
+package fr.evolya.domokit.io;
 
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
