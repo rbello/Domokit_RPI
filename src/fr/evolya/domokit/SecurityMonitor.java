@@ -119,9 +119,9 @@ public class SecurityMonitor {
 							locking = false;
 							if (cancel) {
 								LOGGER.log(Logs.INFO, "Cancel secure mode");
-								view.buttonMap.setEnabled(false);
-								view.buttonLogs.setEnabled(false);
-								view.buttonSettings.setEnabled(false);
+								view.buttonMap.setEnabled(true);
+								view.buttonLogs.setEnabled(true);
+								view.buttonSettings.setEnabled(true);
 								view.showDefaultCard();
 							}
 							else {
