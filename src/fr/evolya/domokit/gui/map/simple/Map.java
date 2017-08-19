@@ -24,15 +24,14 @@ public class Map implements IMap {
 	private int height = 10; // meters
 
 	private MapPanel panel;
+
+	private List<MapArea> areas;
 	
 	public Map() {
 		this.components = new ArrayList<>();
+		this.areas = new ArrayList<>();
 	}
 
-	public void add(IMapComponent component) {
-		this.components.add(component);
-	}
-	
 	public List<IMapComponent> getComponents() {
 		return new ArrayList<>(this.components);
 	}
@@ -117,7 +116,7 @@ public class Map implements IMap {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends IMapComponent> void getComponents(Class<T> typeFilter, Consumer<T> consumer) {
+	public <T extends IMapComponent> void forEachComponents(Class<T> typeFilter, Consumer<T> consumer) {
 		for (IMapComponent component : components) {
 			if (typeFilter.isInstance(component)) {
 				consumer.accept((T)component);
@@ -126,19 +125,19 @@ public class Map implements IMap {
 	}
 
 	@Override
-	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
+	public IAbsolutePositionningComponent getComponentAt(int x, int y) {
 		// Compute viewport
 		double ratio = getRatio(panel);
 		Point topLeft = getTopLeftPoint(panel, ratio);
 		// Fetch components
-		return getComponent(IAbsolutePositionningComponent.class, (c) -> 
+		return getFirstComponent(IAbsolutePositionningComponent.class, (c) -> 
 			c.isInside(x, y, ratio, topLeft)
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends IAbsolutePositionningComponent> T getComponent(Class<T> type, Filter<T> filter) {
+	public <T extends IAbsolutePositionningComponent> T getFirstComponent(Class<T> type, Filter<T> filter) {
 		for (IMapComponent component : components) {
 			if (type.isInstance(component)) {
 				if (filter.accept((T) component)) {
@@ -148,10 +147,29 @@ public class Map implements IMap {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IAbsolutePositionningComponent> List<T> getComponents(Class<T> type, Filter<T> filter) {
+		List<T> result = new ArrayList<>();
+		for (IMapComponent component : components) {
+			if (type.isInstance(component)) {
+				if (filter.accept((T) component)) {
+					result.add((T) component);
+				}
+			}
+		}
+		return result;
+	}
 
 	@Override
 	public void setParentPanel(MapPanel parentPanel) {
 		this.panel = parentPanel;
+	}
+
+	@Override
+	public void addArea(MapArea zone) {
+		this.areas.add(zone);
 	}
 
 }

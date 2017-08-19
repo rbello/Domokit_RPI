@@ -3,9 +3,10 @@
 
 	<property name="package">fr.evolya.domokit.gui.map.simple</property>
 	<property name="features">fr.evolya.domokit.gui.map.features</property>
+	<property name="iface">fr.evolya.domokit.gui.map.iface</property>
 
 	<bean name="map" class="${package}.Map">
-		<list name="component" class="fr.evolya.domokit.gui.map.iface.IMapComponent">
+		<list name="component" class="${iface}.IMapComponent">
 		
 			<!--       -->
 			<!-- ROOMS -->
@@ -77,85 +78,80 @@
 			<!--         -->
 			<!-- WINDOWS -->
 			<!--         -->
-			<bean class="${package}.Badge">
+			<bean class="${package}.Device">
 				<constructor>
-					<param type="int">2</param>
-					<param type="int">0</param>
+					<param type="int">1</param>
+					<param type="int">1</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
+				<list name="feature" class="${iface}.IFeature">
+					<bean class="${features}.WindowOpeningSensor">
+					</bean>
+				</list>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
-					<param type="int">10</param>
-					<param type="int">0</param>
+					<param type="int">11</param>
+					<param type="int">1</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
 					<param type="int">12</param>
-					<param type="int">0</param>
+					<param type="int">1</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
 					<param type="int">15</param>
-					<param type="int">0</param>
+					<param type="int">1</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
-					<param type="int">2</param>
-					<param type="int">9</param>
+					<param type="int">1</param>
+					<param type="int">8</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
-					<param type="int">6</param>
-					<param type="int">9</param>
+					<param type="int">5</param>
+					<param type="int">8</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
-					<param type="int">11</param>
-					<param type="int">9</param>
+					<param type="int">10</param>
+					<param type="int">8</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
 					<param type="int">15</param>
-					<param type="int">9</param>
+					<param type="int">8</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			<bean class="${package}.Badge">
 				<constructor>
 					<param type="int">17</param>
-					<param type="int">9</param>
+					<param type="int">8</param>
 					<param type="string">Name</param>
 				</constructor>
-				<attr name="background">RED</attr>
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			
@@ -165,15 +161,30 @@
 			<bean class="${package}.Device">
 				<constructor>
 					<param type="int">1</param>
-					<param type="int">4</param>
+					<param type="int">5</param>
 					<param type="string">Lumière WC</param>
 				</constructor>
-				<list name="feature" class="${package}.IFeature">
+				<attr name="icon">LIGHT</attr>
+				<list name="feature" class="${iface}.IFeature">
 					<bean class="${features}.Rf433Emitter">
 						<attr name="rfCode">784152</attr>
+						<attr name="commandName">ON</attr>
+					</bean>
+					<bean class="${features}.Rf433Emitter">
+						<attr name="rfCode">648150</attr>
+						<attr name="commandName">OFF</attr>
 					</bean>
 					<bean class="${features}.OnOffActuator">
 					</bean>
+				</list>
+			</bean>
+		</list>
+		
+		<list name="area" class="${package}.MapArea">
+			<bean class="${package}.MapArea">
+				<attr name="name">Groupe 1</attr>
+				<list name="room" class="java.lang.String">
+					<value>Salon</value>
 				</list>
 			</bean>
 		</list>

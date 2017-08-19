@@ -103,7 +103,7 @@ public class MapPanel extends JPanel
 	}
 	
 	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
-		return map.getMapComponentAt(x, y);
+		return map.getComponentAt(x, y);
 	}
 	
 	@Override

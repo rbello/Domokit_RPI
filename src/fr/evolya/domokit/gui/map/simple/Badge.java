@@ -20,10 +20,12 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 	
 	public Badge() {
 		super();
+		setBackground(Color.GRAY);
 	}
 	
 	public Badge(int x, int y, String componentLabel) {
 		super(x, y, 1, 1, componentLabel);
+		setBackground(Color.GRAY);
 	}
 
 	@Override

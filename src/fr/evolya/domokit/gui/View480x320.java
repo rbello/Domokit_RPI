@@ -140,7 +140,7 @@ public class View480x320 extends JFrame {
         cl.show(panelMain, cardName);
 	}
 	
-	public void showPinCard(String password, Action<String> handler) {
+	public void showPinCard(Action<String> handler) {
         if (!isCurrentCard(cardPin)) {
         	cardPin.reset();
             cardPin.handler = handler;

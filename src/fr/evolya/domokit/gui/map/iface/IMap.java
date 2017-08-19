@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import fr.evolya.domokit.gui.map.MapPanel;
+import fr.evolya.domokit.gui.map.simple.MapArea;
 import fr.evolya.javatoolkit.code.funcint.Filter;
 
 public interface IMap {
@@ -19,10 +20,14 @@ public interface IMap {
 	
 	<T extends IAbsolutePositionningComponent> T getComponentByName(String name, Class<T> type);
 
-	<T extends IMapComponent> void getComponents(Class<T> typeFilter, Consumer<T> consumer);
+	<T extends IMapComponent> void forEachComponents(Class<T> typeFilter, Consumer<T> consumer);
 
-	IAbsolutePositionningComponent getMapComponentAt(int x, int y);
+	IAbsolutePositionningComponent getComponentAt(int x, int y);
 	
-	<T extends IAbsolutePositionningComponent> T getComponent(Class<T> type, Filter<T> filter);
+	<T extends IAbsolutePositionningComponent> T getFirstComponent(Class<T> type, Filter<T> filter);
+	
+	<T extends IAbsolutePositionningComponent> List<T> getComponents(Class<T> type, Filter<T> filter);
 
+	void addArea(MapArea zone);
+	
 }

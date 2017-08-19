@@ -40,6 +40,8 @@ public class Room extends AbstractAbsolutePositionningComponent {
 		graphic.fillRect(b.x - borderLeftWidth, b.y, borderLeftWidth, b.height);
 		// Right border
 		graphic.fillRect(b.x + b.width - borderLeftWidth, b.y, borderRightWidth, b.height);
+		
+		graphic.drawString(getIdentifier(), b.x - borderLeftWidth + 4, b.y + 12);
 	}
 	
 	public int getBorderTopWidth() {

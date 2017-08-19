@@ -2,6 +2,7 @@ package fr.evolya.domokit;
 
 import java.util.logging.Logger;
 
+import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.panels.PanelStatus.State;
 import fr.evolya.javatoolkit.app.App;
@@ -10,7 +11,9 @@ import fr.evolya.javatoolkit.code.Logs;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
+import fr.evolya.javatoolkit.events.fi.EventProvider;
 
+@EventProvider({OnSecurityLevelChanged.class})
 public class SecurityMonitor {
 
 	public static final Logger LOGGER = Logs.getLogger("Security");
@@ -21,11 +24,11 @@ public class SecurityMonitor {
 	@Inject
 	public View480x320 view;
 
-	private Level level;
+	private SecurityLevel level;
 
 	private boolean locking;
 	
-	public static enum Level {
+	public static enum SecurityLevel {
 		
 		ZERO   (0, "Unlocked", State.NORMAL),
 		ONE    (1, "Locked", State.WARNING),
@@ -37,7 +40,7 @@ public class SecurityMonitor {
 		public final String label;
 		public final State state;
 
-		private Level(int level, String label, State state) {
+		private SecurityLevel(int level, String label, State state) {
 			this.level = level;
 			this.label = label;
 			this.state = state;
@@ -45,14 +48,21 @@ public class SecurityMonitor {
 
 	}
 	
+	@FunctionalInterface
+	public static interface OnSecurityLevelChanged {
+		public void onSecurityLevelChanged(State level);
+	}
+	
 	@BindOnEvent(GuiIsReady.class)
 	public void start() {
-		setSecurityLevel(Level.ZERO);
+		setSecurityLevel(SecurityLevel.ZERO);
 	}
 
-	protected void setSecurityLevel(Level level) {
+	protected void setSecurityLevel(SecurityLevel level) {
 		if (this.level == level) return;
+		if (level == null) throw new NullPointerException("Given level is null");
 		LOGGER.log(Logs.INFO, "Security level changed to "+ level.label + " (" + level.level + ")");
+		app.notify(OnSecurityLevelChanged.class, level);
 		this.level = level;
 		resetStatus();
 	}
@@ -62,14 +72,14 @@ public class SecurityMonitor {
 	}
 
 	public boolean isLocked() {
-		return this.level != Level.ZERO;
+		return this.level != SecurityLevel.ZERO;
 	}
 
 	@GuiTask
 	public void unlock() {
 		if (!isLocked()) return;
 		String password = "12345";
-		view.showPinCard(password, (code) -> {
+		view.showPinCard((code) -> {
 			// CANCEL
 			if (code == null) {
         		view.showDefaultCard();
@@ -77,7 +87,7 @@ public class SecurityMonitor {
         	}
 			// GOOD PASSWORD
 			else if (code.equals(password)) {
-				setSecurityLevel(Level.ZERO);
+				setSecurityLevel(SecurityLevel.ZERO);
 				view.buttonMap.setEnabled(true);
 				view.buttonLogs.setEnabled(true);
 				view.buttonSettings.setEnabled(true);
@@ -126,7 +136,7 @@ public class SecurityMonitor {
 							}
 							else {
 								LOGGER.log(Logs.INFO, "Secure mode enabled!");
-								setSecurityLevel(Level.ONE);
+								setSecurityLevel(SecurityLevel.ONE);
 								view.setButtonLockIcon(true);
 								view.showDefaultCard().setReadonly(true);
 							}

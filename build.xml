@@ -16,7 +16,9 @@
 	
 	<target name="clean">
 		<delete dir="${bin.dir}" />
-		<mkdir dir="${bin.dir}"/>
+		<mkdir dir="${bin.dir}" />
+		<delete dir="${dist.dir}" />
+		<mkdir dir="${dist.dir}" />
 	</target>
 	
 	<target name="compile">
@@ -46,7 +48,7 @@
 	
 	</target>
 		
-	<target name="dist" depends="compile">
+	<target name="dist" depends="clean,compile">
 		  <!-- copy all the jar files out to the destination directory (dest.dir) -->
 		  <copy todir="${dist.dir}">
 		    <fileset dir="${lib.dir}">
@@ -58,6 +60,8 @@
 		    	<include name="*.sh"/>
 		    </fileset>
 		  </copy>
+		  <mkdir dir="${dist.dir}/config" />
+		  <copyfile src="./config/map.xml" dest="${dist.dir}/config/map.xml" />
 		  <zip destfile="${dist.dir}/dist.zip" basedir="${dist.dir}" />
 	</target>
 	

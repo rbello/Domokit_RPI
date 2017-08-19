@@ -6,8 +6,13 @@ import java.awt.Point;
 import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.SecurityMonitor;
+import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
+import fr.evolya.domokit.SecurityMonitor.SecurityLevel;
+import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.gui.map.MapPanel.MapListener;
+import fr.evolya.domokit.gui.map.features.WindowOpeningSensor;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
+import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
@@ -66,6 +71,8 @@ public class ViewController {
 				});
 			}
 		});
+		
+		app.get(View480x320.class).cardMap.setMap(Configuration.getInstance().getMap());
 	}
 	
 	@BindOnEvent(ApplicationStarted.class)
@@ -88,5 +95,16 @@ public class ViewController {
 	public void initView() {
 		view.showDefaultCard();
 	}
-
+	
+	@BindOnEvent(OnSecurityLevelChanged.class)
+	@GuiTask
+	public void toto(SecurityLevel level) {
+		if (level.level < 1) return;
+		// TODO Finish
+		view.cardMap.getMap()
+			.getComponents(Device.class, (c) -> c.hasFeature(WindowOpeningSensor.class))
+			.forEach((device) -> device.setBackground(Color.DARK_GRAY));
+		view.cardMap.repaint();
+	}
+	
 }
