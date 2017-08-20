@@ -15,8 +15,6 @@
 	</path>
 	
 	<target name="clean">
-		<delete dir="${bin.dir}" />
-		<mkdir dir="${bin.dir}" />
 		<delete dir="${dist.dir}" />
 		<mkdir dir="${dist.dir}" />
 	</target>
