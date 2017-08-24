@@ -65,4 +65,6 @@ $RECYCLE.BIN/
 dist/*
 bin/*
 
+MANIFEST.MF
+
 config/app.properties
