@@ -3,6 +3,7 @@ package fr.evolya.domokit.gui;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -20,7 +21,7 @@ import fr.evolya.domokit.gui.panels.PanelCountDown;
 import fr.evolya.domokit.gui.panels.PanelLogs;
 import fr.evolya.domokit.gui.panels.PanelPin;
 import fr.evolya.domokit.gui.panels.PanelSettings;
-import fr.evolya.domokit.gui.panels.PanelStatus;
+import fr.evolya.domokit.gui.panels.PanelStatusStateManager;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
@@ -33,7 +34,7 @@ public class View480x320 extends JFrame {
 	@Inject
 	public App app;
 	
-	public final PanelStatus panelStatus;
+	public final PanelStatusStateManager panelStatus;
 	public final JPanel panelMain;
 	public final JPanel panelMenu;
 
@@ -129,7 +130,7 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
 		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
 		
-		panelStatus = new PanelStatus();
+		panelStatus = new PanelStatusStateManager();
 		panelStatus.setBounds(3, 257, 474, 60);
 		panelStatus.setCartoucheInfo("LEVEL");
 		getContentPane().add(panelStatus);
@@ -158,7 +159,21 @@ public class View480x320 extends JFrame {
 	}
 
 	public void appendLog(String msg) {
-		SwingUtilities.invokeLater(() -> cardLogs.textArea.append(msg + "\n"));
+		StringBuilder date = new StringBuilder("[");
+		Calendar now = Calendar.getInstance();
+		date.append(now.get(Calendar.DAY_OF_MONTH));
+		date.append("/");
+		date.append(now.get(Calendar.MONTH) + 1);
+		date.append("/");
+		date.append(now.get(Calendar.YEAR));
+		date.append(" ");
+		date.append(now.get(Calendar.HOUR));
+		date.append(":");
+		date.append(now.get(Calendar.MINUTE));
+		date.append(":");
+		date.append(now.get(Calendar.SECOND));
+		date.append("]");
+		SwingUtilities.invokeLater(() -> cardLogs.textArea.append(date + msg + "\n"));
 	}
 
 	public void setButtonLockIcon(boolean locked) {

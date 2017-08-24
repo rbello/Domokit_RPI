@@ -105,7 +105,7 @@ public class Map implements IMap {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IAbsolutePositionningComponent> T getComponentByName(String name, Class<T> type) {
-		for (IMapComponent c : components) {
+		for (IMapComponent c : new ArrayList<IMapComponent>(components)) {
 			if (c instanceof IAbsolutePositionningComponent) {
 				if (((IAbsolutePositionningComponent)c).getIdentifier().equals(name)) 
 					return (T) c;
@@ -116,8 +116,16 @@ public class Map implements IMap {
 
 	@SuppressWarnings("unchecked")
 	@Override
+	public <T extends IMapComponent> void forEachComponents(Consumer<T> consumer) {
+		for (IMapComponent component : new ArrayList<IMapComponent>(components)) {
+			consumer.accept((T)component);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public <T extends IMapComponent> void forEachComponents(Class<T> typeFilter, Consumer<T> consumer) {
-		for (IMapComponent component : components) {
+		for (IMapComponent component : new ArrayList<IMapComponent>(components)) {
 			if (typeFilter.isInstance(component)) {
 				consumer.accept((T)component);
 			}
@@ -138,7 +146,7 @@ public class Map implements IMap {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IAbsolutePositionningComponent> T getFirstComponent(Class<T> type, Filter<T> filter) {
-		for (IMapComponent component : components) {
+		for (IMapComponent component : new ArrayList<IMapComponent>(components)) {
 			if (type.isInstance(component)) {
 				if (filter.accept((T) component)) {
 					return (T) component;
@@ -152,7 +160,7 @@ public class Map implements IMap {
 	@Override
 	public <T extends IAbsolutePositionningComponent> List<T> getComponents(Class<T> type, Filter<T> filter) {
 		List<T> result = new ArrayList<>();
-		for (IMapComponent component : components) {
+		for (IMapComponent component : new ArrayList<IMapComponent>(components)) {
 			if (type.isInstance(component)) {
 				if (filter.accept((T) component)) {
 					result.add((T) component);
@@ -171,5 +179,6 @@ public class Map implements IMap {
 	public void addArea(MapArea zone) {
 		this.areas.add(zone);
 	}
+
 
 }

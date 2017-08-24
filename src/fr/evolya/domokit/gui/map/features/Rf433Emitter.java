@@ -23,4 +23,9 @@ public class Rf433Emitter implements IFeature {
 		this.commandName = commandName;
 	}
 	
+	@Override
+	public String toString() {
+		return commandName;
+	}
+	
 }

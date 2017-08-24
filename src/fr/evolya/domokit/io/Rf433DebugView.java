@@ -108,8 +108,6 @@ public class Rf433DebugView extends JFrame implements ActionListener {
 	@BindOnEvent(ApplicationStarted.class)
 	@GuiTask
 	public void run(App app) {
-		setVisible(true);
-		app.notify(GuiIsReady.class, this, app);
 		Rf433Controller rf = app.get(Rf433Controller.class);
 		if (rf == null) return;
 		label.setText("RF433 Controller : OK");
@@ -122,6 +120,8 @@ public class Rf433DebugView extends JFrame implements ActionListener {
 						feature.getCommandName() + " on " + device.getIdentifier());
 				});
 			});
+		setVisible(true);
+		app.notify(GuiIsReady.class, this, app);
 	}
 
 	@Override

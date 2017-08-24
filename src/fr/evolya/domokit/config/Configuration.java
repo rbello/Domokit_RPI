@@ -8,14 +8,17 @@ import fr.evolya.javatoolkit.xmlconfig.XmlConfig;
 public class Configuration {
 
 	private IMap map;
+	private static Configuration INSTANCE;
 
 	public Configuration(XmlConfig cfg) {
+		INSTANCE = this;
 		this.map = cfg.getBean("map", IMap.class);
 		if (this.map == null)
 			throw new NullPointerException("No 'map' bean defined in config file");
 	}
 
-	public static Configuration getInstance() {
+	public static synchronized Configuration getInstance() {
+		if (INSTANCE != null) return INSTANCE;
 		File file = new File("./config/map.xml");
 		XmlConfig cfg = new XmlConfig();
 		try {

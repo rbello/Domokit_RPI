@@ -2,12 +2,12 @@ package fr.evolya.domokit;
 
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.ViewController;
+import fr.evolya.domokit.gui.panels.PanelStatusDebugView;
 import fr.evolya.domokit.io.ArduinoLink;
 import fr.evolya.domokit.io.Rf433Controller;
 import fr.evolya.domokit.io.Rf433DebugView;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
-import fr.evolya.javatoolkit.app.event.ApplicationStarted;
 import fr.evolya.javatoolkit.gui.swing.SwingApp;
 
 public class Main {
@@ -28,10 +28,6 @@ public class Main {
 
 		// RF433
 		app.add(Rf433Controller.class);
-		app.inject(Rf433Controller.class, "dispatcher", App.class);
-		app.when(ApplicationStarted.class).execute((appli) -> {
-			new Thread(app.get(Rf433Controller.class)).start();
-		});
 		
 		// View
 		app.add(View480x320.class);
@@ -42,6 +38,7 @@ public class Main {
 
 		if (debug > 0) {
 			app.add(Rf433DebugView.class);
+			app.add(PanelStatusDebugView.class);
 		}
 		
 		app.start();

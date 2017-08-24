@@ -8,30 +8,32 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+/**
+ *       .------------- Cartouche ------------.
+ *       v                                    v
+ *  ------------------------------------------------
+ * | LabelLeft |         Title         | LabelRight |
+ * |-----------|-----------------------|------------|
+ * | ValueLeft |         Status        | ValueRight |
+ *  ------------------------------------------------
+ * 
+ */
 public class PanelStatus extends JPanel {
 
 	private static final long serialVersionUID = -6855468458877911636L;
 
-	private State state;
+	protected Color borderColor = Color.WHITE;
 
-	private int borderWidth = 6;
-	private int cartoucheWidth = 50;
-	private int cartoucheHeight = 15;
+	protected int borderWidth = 6;
+	protected int cartoucheWidth = 50;
+	protected int cartoucheHeight = 15;
 
-	private JLabel cartoucheLabelLeft;
-	private JLabel cartoucheLabelRight;
-	private JLabel cartoucheValueLeft;
-	private JLabel cartoucheValueRight;
-	private JLabel cartoucheLabelCenterBig;
-	private JLabel cartoucheLabelCenterSmall;
-	
-	public static enum State {
-		NORMAL(Color.GREEN), WARNING(Color.YELLOW), ALERT(Color.RED);
-		public final Color color;
-		private State(Color color) {
-			this.color = color;
-		}
-	}
+	protected JLabel cartoucheLabelLeft;
+	protected JLabel cartoucheLabelRight;
+	protected JLabel cartoucheValueLeft;
+	protected JLabel cartoucheValueRight;
+	protected JLabel labelTitle;
+	protected JLabel labelStatus;
 	
 	/**
 	 * Create the panel.
@@ -40,7 +42,7 @@ public class PanelStatus extends JPanel {
 		setLayout(null);
 		setBackground(Color.BLACK);
 		setForeground(Color.WHITE);
-		setState(State.ALERT);
+		setBorderColor(Color.WHITE);
 		
 		cartoucheLabelLeft = new JLabel();
 		cartoucheLabelLeft.setHorizontalAlignment(SwingConstants.CENTER);
@@ -60,21 +62,21 @@ public class PanelStatus extends JPanel {
 		cartoucheValueRight.setFont(new Font("Arial", Font.BOLD, 25));
 		add(cartoucheValueRight);
 		
-		cartoucheLabelCenterBig = new JLabel();
-		cartoucheLabelCenterBig.setHorizontalAlignment(SwingConstants.CENTER);
-		cartoucheLabelCenterBig.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 35));
-		add(cartoucheLabelCenterBig);
-		cartoucheLabelCenterSmall = new JLabel();
-		cartoucheLabelCenterSmall.setHorizontalAlignment(SwingConstants.CENTER);
-		cartoucheLabelCenterSmall.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 12));
-		add(cartoucheLabelCenterSmall);
+		labelTitle = new JLabel();
+		labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
+		labelTitle.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 35));
+		add(labelTitle);
+		labelStatus = new JLabel();
+		labelStatus.setHorizontalAlignment(SwingConstants.CENTER);
+		labelStatus.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 12));
+		add(labelStatus);
 		
 		cartoucheLabelLeft.setText("LEFT");
 		cartoucheValueLeft.setText("0");
 		cartoucheLabelRight.setText("RIGHT");
 		cartoucheValueRight.setText("0");
-		cartoucheLabelCenterBig.setText("BIG");
-		cartoucheLabelCenterSmall.setText("SMALL");
+		labelTitle.setText("BIG");
+		labelStatus.setText("SMALL");
 		
 		replace();
 	}
@@ -87,8 +89,8 @@ public class PanelStatus extends JPanel {
 		cartoucheLabelRight.setBounds(getWidth() - cartoucheWidth - borderWidth, borderWidth, cartoucheWidth, cartoucheHeight);
 		cartoucheValueRight.setBounds(getWidth() - cartoucheWidth - borderWidth, borderWidth + borderWidth / 2 + cartoucheHeight, cartoucheWidth, getHeight() - borderWidth * 2 - borderWidth / 2 - cartoucheHeight);
 		
-		cartoucheLabelCenterBig.setBounds(borderWidth * 2 + cartoucheWidth, borderWidth, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, getHeight() - 2 * borderWidth - borderWidth / 2 - cartoucheHeight);
-		cartoucheLabelCenterSmall.setBounds(borderWidth * 2 + cartoucheWidth, getHeight() - borderWidth - cartoucheHeight, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, cartoucheHeight);
+		labelTitle.setBounds(borderWidth * 2 + cartoucheWidth, borderWidth, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, getHeight() - 2 * borderWidth - borderWidth / 2 - cartoucheHeight);
+		labelStatus.setBounds(borderWidth * 2 + cartoucheWidth, getHeight() - borderWidth - cartoucheHeight, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, cartoucheHeight);
 	}
 	
 	public int getBorderWidth() {
@@ -115,21 +117,61 @@ public class PanelStatus extends JPanel {
 		this.cartoucheHeight = cartoucheHeight;
 	}
 
-	public State getState() {
-		return state;
+	public Color getBorderColor() {
+		return borderColor;
 	}
 
-	public PanelStatus setState(State state) {
-		this.state = state;
-		repaint();
+	public PanelStatus setBorderColor(Color color) {
+		if (!this.borderColor.equals(color)) {
+			this.borderColor = color;
+			repaint();
+		}
 		return this;
 	}
 
+	public String getTitle() {
+		return labelTitle.getText();
+	}
+	
+	public PanelStatus setTitle(String text) {
+		labelTitle.setText(text);
+		return this;
+	}
+	
+	public String getStatus() {
+		return labelStatus.getText();
+	}
+
+	public PanelStatus setStatus(String text) {
+		labelStatus.setText(text);
+		return this;
+	}
+	
+	public String getCartoucheInfo() {
+		return cartoucheLabelLeft.getText();
+	}
+	
+	public PanelStatus setCartoucheInfo(String text) {
+		cartoucheLabelLeft.setText(text);
+		cartoucheLabelRight.setText(text);
+		return this;
+	}
+	
+	public int getCartoucheLevel() {
+		return new Integer(cartoucheLabelLeft.getText());
+	}
+	
+	public PanelStatus setCartoucheLevel(int value) {
+		cartoucheValueLeft.setText("" + value);
+		cartoucheValueRight.setText("" + value);
+		return this;
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		replace();
-		g.setColor(state.color);
+		g.setColor(borderColor);
 		// Border
 		g.fillRect(0, 0, borderWidth, getHeight());
 		g.fillRect(getWidth() - borderWidth, 0, borderWidth, getHeight());
@@ -143,52 +185,6 @@ public class PanelStatus extends JPanel {
 		g.fillRect(getWidth() - borderWidth*2 - cartoucheWidth, borderWidth, borderWidth, getHeight() - borderWidth *2);
 		// Separator
 		g.fillRect(borderWidth * 2 + cartoucheWidth, getHeight() - borderWidth - cartoucheHeight - borderWidth / 2, getWidth() - 2 * cartoucheWidth - borderWidth * 4, borderWidth / 2);
-	}
-	
-	public JLabel getCartoucheLabelLeft() {
-		return cartoucheLabelLeft;
-	}
-
-	public JLabel getCartoucheLabelRight() {
-		return cartoucheLabelRight;
-	}
-
-	public JLabel getCartoucheValueLeft() {
-		return cartoucheValueLeft;
-	}
-
-	public JLabel getCartoucheValueRight() {
-		return cartoucheValueRight;
-	}
-
-	public JLabel getCartoucheLabelCenterBig() {
-		return cartoucheLabelCenterBig;
-	}
-
-	public JLabel getCartoucheLabelCenterSmall() {
-		return cartoucheLabelCenterSmall;
-	}
-
-	public PanelStatus setCartoucheInfo(String text) {
-		cartoucheLabelLeft.setText(text);
-		cartoucheLabelRight.setText(text);
-		return this;
-	}
-
-	public PanelStatus setCartoucheLevel(int value) {
-		cartoucheValueLeft.setText("" + value);
-		cartoucheValueRight.setText("" + value);
-		return this;
-	}
-
-	public PanelStatus setMainText(String text) {
-		cartoucheLabelCenterBig.setText(text);
-		return this;
-	}
-
-	public PanelStatus setInfoText(String text) {
-		cartoucheLabelCenterSmall.setText(text);
-		return this;
 	}
 
 }

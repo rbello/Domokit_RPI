@@ -6,13 +6,13 @@ import java.awt.Point;
 import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.SecurityMonitor;
-import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
-import fr.evolya.domokit.SecurityMonitor.SecurityLevel;
 import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.gui.map.MapPanel.MapListener;
-import fr.evolya.domokit.gui.map.features.WindowOpeningSensor;
+import fr.evolya.domokit.gui.map.features.Rf433Emitter;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.simple.Device;
+import fr.evolya.domokit.io.Rf433Controller;
+import fr.evolya.domokit.io.Rf433Controller.OnRf433CommandReceived;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
@@ -21,6 +21,7 @@ import fr.evolya.javatoolkit.app.event.WindowCloseIntent;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
+import fr.evolya.javatoolkit.events.fi.EventArgClassFilter;
 
 public class ViewController {
 
@@ -31,7 +32,7 @@ public class ViewController {
 	public View480x320 view;
 	
 	@BindOnEvent(ApplicationBuilding.class)
-	@GuiTask
+	//Not a @GuiTask
 	public void build(App app) {
 		
 		// Exit
@@ -91,20 +92,30 @@ public class ViewController {
 	}
 	
 	@BindOnEvent(GuiIsReady.class)
+	@EventArgClassFilter(View480x320.class)
 	@GuiTask
 	public void initView() {
 		view.showDefaultCard();
 	}
 	
-	@BindOnEvent(OnSecurityLevelChanged.class)
+//	@BindOnEvent(OnSecurityLevelChanged.class)
+//	@GuiTask
+//	public void onSecurityLevelChanged(SecurityLevel level) {
+//		if (level.level < 1) return;
+//		// TODO Finish
+//		view.cardMap.getMap()
+//			.getComponents(Device.class, (c) -> c.hasFeature(WindowOpeningSensor.class))
+//			.forEach((device) -> device.setBackground(Color.DARK_GRAY));
+//		view.cardMap.repaint();
+//	}
+	
+	/**
+	 * Displays received RF433 commands in logs card.
+	 */
+	@BindOnEvent(OnRf433CommandReceived.class)
 	@GuiTask
-	public void toto(SecurityLevel level) {
-		if (level.level < 1) return;
-		// TODO Finish
-		view.cardMap.getMap()
-			.getComponents(Device.class, (c) -> c.hasFeature(WindowOpeningSensor.class))
-			.forEach((device) -> device.setBackground(Color.DARK_GRAY));
-		view.cardMap.repaint();
-	}
+	public void onRf433CommandReceived(Device device, Rf433Emitter command, int code, Rf433Controller ctrl) {
+		view.appendLog("[RF433] Rcvd: " + device + " -> " + command);
+	};
 	
 }
