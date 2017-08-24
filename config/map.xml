@@ -82,11 +82,15 @@
 				<constructor>
 					<param type="int">1</param>
 					<param type="int">1</param>
-					<param type="string">Name</param>
+					<param type="string">Fenêtre </param>
 				</constructor>
 				<attr name="icon">WINDOW</attr>
 				<list name="feature" class="${iface}.IFeature">
 					<bean class="${features}.WindowOpeningSensor">
+					</bean>
+					<bean class="${features}.Rf433Emitter">
+						<attr name="rfCode">893534720</attr>
+						<attr name="commandName">ON</attr>
 					</bean>
 				</list>
 			</bean>
@@ -167,13 +171,22 @@
 				<attr name="icon">LIGHT</attr>
 				<list name="feature" class="${iface}.IFeature">
 					<bean class="${features}.Rf433Emitter">
-						<attr name="rfCode">784152</attr>
+						<attr name="rfCode">548356188</attr>
 						<attr name="commandName">ON</attr>
 					</bean>
 					<bean class="${features}.Rf433Emitter">
-						<attr name="rfCode">648150</attr>
+						<attr name="rfCode">682573916</attr>
 						<attr name="commandName">OFF</attr>
 					</bean>
+<!-- 					<bean class="${features}.Rf433Receiver"> -->
+<!-- 						<attr name="rfCode">784152</attr> -->
+<!-- 						<attr name="commandName">ON</attr> -->
+<!-- 						<attr name="execute"></attr> -->
+<!-- 					</bean> -->
+<!-- 					<bean class="${features}.Rf433Receiver"> -->
+<!-- 						<attr name="rfCode">648150</attr> -->
+<!-- 						<attr name="commandName">OFF</attr> -->
+<!-- 					</bean> -->
 					<bean class="${features}.OnOffActuator">
 					</bean>
 				</list>
