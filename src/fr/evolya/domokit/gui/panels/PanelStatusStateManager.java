@@ -1,7 +1,9 @@
 package fr.evolya.domokit.gui.panels;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,71 +20,104 @@ public class PanelStatusStateManager extends PanelStatus {
 
 	private static final long serialVersionUID = 1922468828133750465L;
 	
-	private Map<Integer, String> registredCategories = new HashMap<>();
-	private Map<String, State> currentStates = new HashMap<>();
+	private Map<Integer, Category> registredCategories = new HashMap<>();
 	
 	public PanelStatusStateManager() {
 		super();
 		setCartoucheInfo("LEVEL");
-		createCategory("Error", 10);
+		createCategory("Alert", 10, 10);
+		createCategory("Warning", 5, 10);
 	}
 	
 	public void createCategory(String category, int priority) {
-		registredCategories.put(priority, category);
-		currentStates.put(category, null);
+		createCategory(category, priority, 0);
 	}
-
-	public boolean setState(State state) {
-		if (state == null)
+	
+	public void createCategory(String category, int priority, int maxLength) {
+		//System.out.println("[PanelStatus] Create category " + category + " priority " + priority);
+		if (registredCategories.containsKey(priority)) {
+			throw new IllegalArgumentException("Priority " + priority + " is allready used by category"
+					+ "'" + registredCategories.get(priority) + "'");
+		}
+		registredCategories.put(priority, new Category(category, priority, maxLength));
+	}
+	
+	private Category getCategory(String name) {
+		for (Category cat : registredCategories.values()) {
+			if (cat.name.equals(name)) return cat;
+		}
+		return null;
+	}
+	
+	public boolean addState(State state) {
+		
+		// Check state
+		if (state == null) {
 			throw new NullPointerException();
-		String category = state.getStateCategory();
-		if (!currentStates.containsKey(category)) {
+		}
+		
+		// Check category
+		final Category category = getCategory(state.getStateCategory());
+		if (category == null) {
 			throw new IllegalArgumentException("Please create state category '" + category + "' before use setState()");
 		}
-		State old = currentStates.get(state.getStateCategory());
-		if (old != null) {
-			// State are equals
-			if (old.equals(state)) return false;
-			// Less priority
-			if (old.getPriority() > state.getPriority()) return false;
-			// TODO Event onStateRemoved ?
+		
+		// State is already added
+		if (category.contains(state)) {
+			return false;
 		}
-		System.out.println("[PanelStatus] Change state '" + category + "' with '" + state + "'");
-		currentStates.put(state.getStateCategory(), state);
+		
+		// Log
+		System.out.println("[PanelStatus] Add state '" + state + "' to '" + category + "'");
+		
+		// Add state to category
+		category.add(state);
+		
+		// Update display
 		updateDisplay();
+		
 		return true;
 	}
 	
 	public void updateDisplay() {
-		State state = null;
-		for (int i = 0, found = 0, count = registredCategories.size(); found < count; i++) {
-			String category = registredCategories.get(i);
-			if (category == null) continue;
-			state = currentStates.get(category);
-			if (state != null) break;
-		}
+		Category category = getCurrentCategory();
+		State state = category.getFirstState();
 		if (state == null) return;
-		System.out.println("[PanelStatus] Display category '" + state.getStateCategory() 
-			+ "' state '" + state + "'");
+//		System.out.println("[PanelStatus] Display category '" + state.getStateCategory() 
+//			+ "' state '" + state + "'");
 		setTitle(state.getStateName());
 		setBorderColor(state.getColor());
 		setStatus(state.getMessage());
-		setCartoucheLevel(state.getPriority());
+//		setCartoucheLevel(state.getPriority());
 		repaint();
 	}
 	
-	public void removeByCategory(String category) {
-		if (!currentStates.containsKey(category)) {
-			throw new IllegalArgumentException("Please create state category '" + category + "' before use removeByCategory()");
+	public Category getCurrentCategory() {
+		for (int i = 100, found = 0, count = registredCategories.size();
+				found < count && i >= 0; i--) {
+			if (!registredCategories.containsKey(i)) continue;
+			Category category = registredCategories.get(i);
+			//System.out.println("Category " + category + " priority " + i);
+			if (category.empty()) continue;
+			return category;
+			//State state = currentStates.get(category);
+			//if (state == null) continue;
+			//System.out.println("Choosen " + category + " state " + currentStates.get(category));
+			//return currentStates.get(category);
 		}
-		currentStates.put(category, null);
+		return null;
+	}
+	
+	public void removeByCategory(String categoryName) {
+		Category category = getCategory(categoryName);
+		if (category == null) {
+			throw new IllegalArgumentException("Please create state category '" + categoryName
+					+ "' before use removeByCategory()");
+		}
+		category.clear();
 		updateDisplay();
 	}
 
-	public State getStateByCategory(String category) {
-		return currentStates.get(category);
-	}
-	
 	public static abstract class State {
 		
 		public abstract String getStateCategory();
@@ -123,7 +158,7 @@ public class PanelStatusStateManager extends PanelStatus {
 			return "Error";
 		}
 		public String getStateCategory() {
-			return "Error";
+			return "Alert";
 		}
 		public boolean isAllwaysOnTop() {
 			return true;
@@ -151,7 +186,7 @@ public class PanelStatusStateManager extends PanelStatus {
 			return "Warning";
 		}
 		public String getStateCategory() {
-			return "Error";
+			return "Warning";
 		}
 		public boolean isAllwaysOnTop() {
 			return true;
@@ -165,6 +200,64 @@ public class PanelStatusStateManager extends PanelStatus {
 		public int getPriority() {
 			return priority;
 		}
+	}
+
+	public void clearAlertAndWarning() {
+		removeByCategory("Alert");
+		removeByCategory("Warning");
+	}
+	
+	private class Category {
+
+		public final String name;
+		public final int priority;
+		public final int length;
+		private final List<State> states;
+
+		public Category(String category, int priority, int maxLength) {
+			this.name = category;
+			this.priority = priority;
+			this.length = maxLength;
+			this.states = new ArrayList<>();
+		}
+		
+		public State getFirstState() {
+			return empty() ? null : states.get(0);
+		}
+
+		public void clear() {
+			states.clear();
+		}
+
+		public void add(State state) {
+			if (length > 0 && length == states.size()) {
+				states.remove(0);
+			}
+			states.add(state);
+		}
+
+		public boolean contains(State state) {
+			for (State s : states) {
+				if (s.equals(state)) return true;
+			}
+			return states.contains(state);
+		}
+
+		public boolean empty() {
+			return states.size() == 0;
+		}
+
+		@Override
+		public String toString() {
+			return "Category " + name + " priority " + priority;
+		}
+		
+	}
+
+	public State getStateByCategory(String categoryName) {
+		Category category = getCategory(categoryName);
+		if (category == null) return null;
+		return category.getFirstState();
 	}
 
 }

@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import fr.evolya.domokit.SecurityMonitor;
+import fr.evolya.domokit.SecurityMonitor.StateUnlocked;
+import fr.evolya.domokit.SecurityMonitor.StateLocked;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.panels.PanelStatusStateManager.AlertState;
 import fr.evolya.domokit.gui.panels.PanelStatusStateManager.WarningState;
@@ -38,7 +40,7 @@ public class PanelStatusDebugView extends JFrame {
 	@GuiTask
 	public PanelStatusDebugView() {
 		setTitle("State tester");
-		setBounds(10, 340, 220, 200);
+		setBounds(10, 340, 230, 200);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JButton btnShowAlert = new JButton("Show warning");
@@ -52,7 +54,7 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnReset = new JButton("Reset");
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.panelStatus.removeByCategory("Error");
+				view.panelStatus.clearAlertAndWarning();
 			}
 		});
 		btnReset.setBackground(Color.BLUE);
@@ -65,37 +67,42 @@ public class PanelStatusDebugView extends JFrame {
 		});
 		btnShowError.setBackground(Color.RED);
 		
-		JButton btnState0 = new JButton("0");
+		JButton btnState0 = new JButton("Unlocked");
 		btnState0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				monitor.setState(new StateUnlocked());
 			}
 		});
 		
 		JLabel lblSecurityLevels = new JLabel("Security levels :");
 		
-		JButton btnState1 = new JButton("1");
-		
-		JButton btnState2 = new JButton("2");
+		JButton btnState1 = new JButton("Locked");
+		btnState1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				monitor.setState(new StateLocked());
+			}
+		});
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnShowAlert)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnShowError, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE))
-						.addComponent(btnReset)
-						.addComponent(lblSecurityLevels)
+							.addContainerGap()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblSecurityLevels, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnShowAlert)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnShowError, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE))
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(btnState0)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnState1))))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnState0)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnState1, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnState2, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(35, Short.MAX_VALUE))
+							.addGap(59)
+							.addComponent(btnReset)))
+					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -109,11 +116,10 @@ public class PanelStatusDebugView extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnState0)
-						.addComponent(btnState1)
-						.addComponent(btnState2))
-					.addPreferredGap(ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+						.addComponent(btnState1))
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addComponent(btnReset)
-					.addContainerGap())
+					.addContainerGap(24, Short.MAX_VALUE))
 		);
 		getContentPane().setLayout(groupLayout);
 	}

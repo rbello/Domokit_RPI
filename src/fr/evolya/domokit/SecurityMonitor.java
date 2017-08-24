@@ -33,31 +33,25 @@ public class SecurityMonitor {
 	
 	private boolean locking = false;
 
-	private State currentState = null;
-
 	public SecurityMonitor() {
 	}
 	
 	public void setState(State level) {
 		if (level == null) throw new NullPointerException("Given level is null");
-		if (!view.panelStatus.setState(level)) {
+		if (!view.panelStatus.addState(level)) {
 			System.out.println("Rejected: " + level);
 			return;
 		}
 		State state = view.panelStatus.getStateByCategory("SecurityLevel");
-		if (state != null && state.equals(currentState )) {
+		if (state != level) {
 			return;
 		}
 		LOGGER.log(Logs.INFO, "Security level changed to "+ level.getStateName() + " (" + level.getPriority() + ")");
-		app.notify(OnSecurityLevelChanged.class, level);
-		resetStatus();
+		view.panelStatus.setCartoucheLevel(level.getPriority());
+		app.notify(OnSecurityLevelChanged.class, state);
 	}
 	
-	private void resetStatus() {
-		// TODO Auto-generated method stub
-	}
-
-	public static class StateDefault extends State {
+	public static class StateUnlocked extends State {
 		public String getStateName() {
 			return "Unlocked";
 		}
@@ -115,20 +109,13 @@ public class SecurityMonitor {
 	@BindOnEvent(GuiIsReady.class)
 	@EventArgClassFilter(View480x320.class)
 	public void start() {
-		
-		view.panelStatus.createCategory("Information", 5);
-		view.panelStatus.createCategory("SecurityLevel", 1);
-		
-		setState(new StateDefault());
-		
-	}
-
-	public String getCurrentInfoMessage() {
-		return "Default";
+		view.panelStatus.createCategory("Information", 2);
+		view.panelStatus.createCategory("SecurityLevel", 1, 1);
+		setState(new StateUnlocked());
 	}
 
 	public boolean isLocked() {
-		return !(view.panelStatus.getStateByCategory("SecurityLevel") instanceof StateDefault);
+		return !(view.panelStatus.getStateByCategory("SecurityLevel") instanceof StateUnlocked);
 	}
 
 	@GuiTask
@@ -139,11 +126,10 @@ public class SecurityMonitor {
 			// CANCEL
 			if (code == null) {
         		view.showDefaultCard();
-        		resetStatus();
         	}
 			// GOOD PASSWORD
 			else if (code.equals(password)) {
-				setState(new StateDefault());
+				setState(new StateUnlocked());
 				view.buttonMap.setEnabled(true);
 				view.buttonLogs.setEnabled(true);
 				view.buttonSettings.setEnabled(true);
