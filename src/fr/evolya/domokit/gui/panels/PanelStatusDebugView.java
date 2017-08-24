@@ -12,11 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import fr.evolya.domokit.SecurityMonitor;
-import fr.evolya.domokit.SecurityMonitor.StateUnlocked;
-import fr.evolya.domokit.SecurityMonitor.StateLocked;
 import fr.evolya.domokit.gui.View480x320;
-import fr.evolya.domokit.gui.panels.PanelStatusStateManager.AlertState;
-import fr.evolya.domokit.gui.panels.PanelStatusStateManager.WarningState;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
@@ -46,7 +42,7 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnShowAlert = new JButton("Show warning");
 		btnShowAlert.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monitor.setState(new WarningState("A warning", 5));
+				monitor.showWarning("The warning's message");
 			}
 		});
 		btnShowAlert.setBackground(Color.YELLOW);
@@ -54,7 +50,8 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnReset = new JButton("Reset");
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				view.panelStatus.clearAlertAndWarning();
+				monitor.clearAlert();
+				monitor.clearWarning();
 			}
 		});
 		btnReset.setBackground(Color.BLUE);
@@ -62,7 +59,7 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnShowError = new JButton("Show alert");
 		btnShowError.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monitor.setState(new AlertState("An alert", 5));
+				monitor.showAlert("An alert !!");
 			}
 		});
 		btnShowError.setBackground(Color.RED);
@@ -70,7 +67,8 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnState0 = new JButton("Unlocked");
 		btnState0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monitor.setState(new StateUnlocked());
+//				monitor.setState(new StateUnlocked());
+				monitor.setSecurityLevel(0, "Unlocked");
 			}
 		});
 		
@@ -79,7 +77,8 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnState1 = new JButton("Locked");
 		btnState1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monitor.setState(new StateLocked());
+//				monitor.setState(new StateLocked());
+				monitor.setSecurityLevel(1, "Locked");
 			}
 		});
 		GroupLayout groupLayout = new GroupLayout(getContentPane());

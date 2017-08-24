@@ -21,7 +21,7 @@ import fr.evolya.domokit.gui.panels.PanelCountDown;
 import fr.evolya.domokit.gui.panels.PanelLogs;
 import fr.evolya.domokit.gui.panels.PanelPin;
 import fr.evolya.domokit.gui.panels.PanelSettings;
-import fr.evolya.domokit.gui.panels.PanelStatusStateManager;
+import fr.evolya.domokit.gui.panels.PanelStatus;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
@@ -34,7 +34,7 @@ public class View480x320 extends JFrame {
 	@Inject
 	public App app;
 	
-	public final PanelStatusStateManager panelStatus;
+	public final PanelStatus panelStatus;
 	public final JPanel panelMain;
 	public final JPanel panelMenu;
 
@@ -130,7 +130,7 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
 		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
 		
-		panelStatus = new PanelStatusStateManager();
+		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);
 		panelStatus.setCartoucheInfo("LEVEL");
 		getContentPane().add(panelStatus);

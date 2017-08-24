@@ -33,7 +33,7 @@ public class PanelStatus extends JPanel {
 	protected JLabel cartoucheValueLeft;
 	protected JLabel cartoucheValueRight;
 	protected JLabel labelTitle;
-	protected JLabel labelStatus;
+	protected JLabel labelMessage;
 	
 	/**
 	 * Create the panel.
@@ -66,17 +66,17 @@ public class PanelStatus extends JPanel {
 		labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
 		labelTitle.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 35));
 		add(labelTitle);
-		labelStatus = new JLabel();
-		labelStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		labelStatus.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 12));
-		add(labelStatus);
+		labelMessage = new JLabel();
+		labelMessage.setHorizontalAlignment(SwingConstants.CENTER);
+		labelMessage.setFont(new Font("Arial", Font.BOLD | Font.ITALIC, 12));
+		add(labelMessage);
 		
 		cartoucheLabelLeft.setText("LEFT");
 		cartoucheValueLeft.setText("0");
 		cartoucheLabelRight.setText("RIGHT");
 		cartoucheValueRight.setText("0");
 		labelTitle.setText("BIG");
-		labelStatus.setText("SMALL");
+		labelMessage.setText("SMALL");
 		
 		replace();
 	}
@@ -90,7 +90,7 @@ public class PanelStatus extends JPanel {
 		cartoucheValueRight.setBounds(getWidth() - cartoucheWidth - borderWidth, borderWidth + borderWidth / 2 + cartoucheHeight, cartoucheWidth, getHeight() - borderWidth * 2 - borderWidth / 2 - cartoucheHeight);
 		
 		labelTitle.setBounds(borderWidth * 2 + cartoucheWidth, borderWidth, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, getHeight() - 2 * borderWidth - borderWidth / 2 - cartoucheHeight);
-		labelStatus.setBounds(borderWidth * 2 + cartoucheWidth, getHeight() - borderWidth - cartoucheHeight, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, cartoucheHeight);
+		labelMessage.setBounds(borderWidth * 2 + cartoucheWidth, getHeight() - borderWidth - cartoucheHeight, getWidth() - 4 * borderWidth - 2 * cartoucheWidth, cartoucheHeight);
 	}
 	
 	public int getBorderWidth() {
@@ -138,12 +138,12 @@ public class PanelStatus extends JPanel {
 		return this;
 	}
 	
-	public String getStatus() {
-		return labelStatus.getText();
+	public String getMessage() {
+		return labelMessage.getText();
 	}
 
-	public PanelStatus setStatus(String text) {
-		labelStatus.setText(text);
+	public PanelStatus setMessage(String text) {
+		labelMessage.setText(text);
 		return this;
 	}
 	

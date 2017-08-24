@@ -87,7 +87,7 @@ public class PanelStatusStateManager extends PanelStatus {
 //			+ "' state '" + state + "'");
 		setTitle(state.getStateName());
 		setBorderColor(state.getColor());
-		setStatus(state.getMessage());
+		setMessage(state.getMessage());
 //		setCartoucheLevel(state.getPriority());
 		repaint();
 	}

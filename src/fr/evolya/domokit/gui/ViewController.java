@@ -6,6 +6,7 @@ import java.awt.Point;
 import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.SecurityMonitor;
+import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
 import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.gui.map.MapPanel.MapListener;
 import fr.evolya.domokit.gui.map.features.Rf433Emitter;
@@ -117,5 +118,16 @@ public class ViewController {
 	public void onRf433CommandReceived(Device device, Rf433Emitter command, int code, Rf433Controller ctrl) {
 		view.appendLog("[RF433] Rcvd: " + device + " -> " + command);
 	};
+	
+	@BindOnEvent(OnSecurityLevelChanged.class)
+	@GuiTask
+	public void onSecurityLevelChanged(int level, String label) {
+		boolean enabled = (level == 0);
+		view.buttonMap.setEnabled(enabled);
+		view.buttonLogs.setEnabled(enabled);
+		view.buttonSettings.setEnabled(enabled);
+		view.setButtonLockIcon(!enabled);
+		view.showDefaultCard().setReadonly(!enabled);
+	}
 	
 }

@@ -1,6 +1,7 @@
 package fr.evolya.domokit;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.util.logging.Logger;
 
 import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
@@ -8,7 +9,6 @@ import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.map.features.Rf433Emitter;
 import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.gui.panels.PanelStatusStateManager.State;
-import fr.evolya.domokit.gui.panels.PanelStatusStateManager.WarningState;
 import fr.evolya.domokit.io.Rf433Controller;
 import fr.evolya.domokit.io.Rf433Controller.OnRf433CommandReceived;
 import fr.evolya.javatoolkit.app.App;
@@ -33,22 +33,71 @@ public class SecurityMonitor {
 	
 	private boolean locking = false;
 
+	private int securityLevel;
+	private String securityLabel;
+	private String alertLabel;
+	private String warningMsg;
+	
 	public SecurityMonitor() {
 	}
 	
-	public void setState(State level) {
-		if (level == null) throw new NullPointerException("Given level is null");
-		if (!view.panelStatus.addState(level)) {
-			System.out.println("Rejected: " + level);
+	public void setSecurityLevel(int level, String label) {
+		if (securityLevel == level && label.equals(securityLabel)) return;
+		securityLevel = level;
+		securityLabel = label;
+		view.panelStatus.setCartoucheLevel(level);
+		view.panelStatus.setTitle(label);
+		app.notify(OnSecurityLevelChanged.class, level, label);
+		updateStatusPanel();
+	}
+	
+	public void showAlert(String label) {
+		if (label.equals(alertLabel)) return;
+		alertLabel = label;
+		view.panelStatus.setTitle(label);
+		updateStatusPanel();
+	}
+	
+	public void clearAlert() {
+		alertLabel = null;
+		updateStatusPanel();
+	}
+	
+	public void showWarning(String message) {
+		warningMsg = message;
+		view.panelStatus.setMessage(message);
+		updateStatusPanel();
+	}
+	
+	public void clearWarning() {
+		warningMsg = null;
+		updateStatusPanel();
+		EventQueue.invokeLater(() -> view.panelStatus.setMessage("-"));
+	}
+	
+	public void updateStatusPanel() {
+		if (!EventQueue.isDispatchThread()) {
+			EventQueue.invokeLater(() -> updateStatusPanel());
 			return;
 		}
-		State state = view.panelStatus.getStateByCategory("SecurityLevel");
-		if (state != level) {
-			return;
+		if (alertLabel != null) {
+			view.panelStatus.setBorderColor(Color.RED);
+			view.panelStatus.setTitle(alertLabel);
 		}
-		LOGGER.log(Logs.INFO, "Security level changed to "+ level.getStateName() + " (" + level.getPriority() + ")");
-		view.panelStatus.setCartoucheLevel(level.getPriority());
-		app.notify(OnSecurityLevelChanged.class, state);
+		else if (warningMsg != null) {
+			view.panelStatus.setBorderColor(Color.YELLOW);
+			view.panelStatus.setMessage(warningMsg);
+		}
+		else if (securityLevel > 0) {
+			view.panelStatus.setBorderColor(Color.YELLOW);
+			view.panelStatus.setTitle(securityLabel);
+		}
+		else if (securityLevel == 0) {
+			view.panelStatus.setBorderColor(Color.GREEN);
+			view.panelStatus.setTitle(securityLabel);
+		}
+		view.panelStatus.setCartoucheLevel(securityLevel);
+		view.panelStatus.repaint();
 	}
 	
 	public static class StateUnlocked extends State {
@@ -103,19 +152,17 @@ public class SecurityMonitor {
 	
 	@FunctionalInterface
 	public static interface OnSecurityLevelChanged {
-		public void onSecurityLevelChanged(State level);
+		public void onSecurityLevelChanged(int level, String label);
 	}
 	
 	@BindOnEvent(GuiIsReady.class)
 	@EventArgClassFilter(View480x320.class)
 	public void start() {
-		view.panelStatus.createCategory("Information", 2);
-		view.panelStatus.createCategory("SecurityLevel", 1, 1);
-		setState(new StateUnlocked());
+		setSecurityLevel(0, "Unlocked");
 	}
 
 	public boolean isLocked() {
-		return !(view.panelStatus.getStateByCategory("SecurityLevel") instanceof StateUnlocked);
+		return securityLevel > 0;
 	}
 
 	@GuiTask
@@ -125,21 +172,16 @@ public class SecurityMonitor {
 		view.showPinCard((code) -> {
 			// CANCEL
 			if (code == null) {
+				clearWarning();
         		view.showDefaultCard();
         	}
 			// GOOD PASSWORD
 			else if (code.equals(password)) {
-				setState(new StateUnlocked());
-				view.buttonMap.setEnabled(true);
-				view.buttonLogs.setEnabled(true);
-				view.buttonSettings.setEnabled(true);
-				view.setButtonLockIcon(false);
-				view.showDefaultCard()
-					.setReadonly(false);
+				setSecurityLevel(0, "Unlocked");
 			}
 			// BAD PASSWORD
 			else {
-				setState(new WarningState("Bad password", 6));
+				showWarning("Invalid password");
 				view.cardPin.clear();
 			}
 		});
@@ -169,9 +211,7 @@ public class SecurityMonitor {
 							}
 							else {
 								LOGGER.log(Logs.INFO, "Secure mode enabled!");
-								setState(new StateLocked());
-								view.setButtonLockIcon(true);
-								view.showDefaultCard().setReadonly(true);
+								setSecurityLevel(1, "Locked");
 							}
 						});
 					}
@@ -202,7 +242,5 @@ public class SecurityMonitor {
 		}
 		view.cardMap.repaint();
 	};
-	
-	
 	
 }
