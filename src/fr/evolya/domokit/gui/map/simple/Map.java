@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
+import fr.evolya.domokit.gui.map.iface.IFeature;
 import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.iface.IMapComponent;
 import fr.evolya.javatoolkit.code.funcint.Filter;
@@ -180,5 +181,18 @@ public class Map implements IMap {
 		this.areas.add(zone);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IFeature> void forEachFeatures(Class<T> type, 
+			DeviceFeatureConsumer<T> consumer) {
+		for (IMapComponent component : new ArrayList<IMapComponent>(components)) {
+			if (!(component instanceof Device)) continue;
+			Device device = (Device) component;
+			for (IFeature feature : new ArrayList<IFeature>(device.getFeatures())) {
+				if (!type.isInstance(feature)) continue;
+				consumer.accept(device, (T) feature);
+			}
+		}
+	}
 
 }

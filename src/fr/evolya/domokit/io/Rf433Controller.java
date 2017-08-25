@@ -5,12 +5,13 @@ import fr.evolya.domokit.gui.map.features.Rf433Emitter;
 import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.io.Rf433Controller.OnRf433CodeEmitted;
 import fr.evolya.domokit.io.Rf433Controller.OnRf433CodeReceived;
+import fr.evolya.domokit.io.Rf433Controller.OnRf433CommandReceived;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.events.fi.EventProvider;
 
-@EventProvider({OnRf433CodeReceived.class, OnRf433CodeEmitted.class})
+@EventProvider({OnRf433CodeReceived.class, OnRf433CodeEmitted.class, OnRf433CommandReceived.class})
 public class Rf433Controller {
 	
 	@Inject

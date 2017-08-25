@@ -6,11 +6,9 @@ import java.util.logging.Logger;
 
 import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
 import fr.evolya.domokit.gui.View480x320;
-import fr.evolya.domokit.gui.map.features.Rf433Emitter;
+import fr.evolya.domokit.gui.map.features.Rf433SecurityTrigger;
 import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.gui.panels.PanelStatusStateManager.State;
-import fr.evolya.domokit.io.Rf433Controller;
-import fr.evolya.domokit.io.Rf433Controller.OnRf433CommandReceived;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.code.Logs;
@@ -19,6 +17,8 @@ import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.events.fi.EventArgClassFilter;
 import fr.evolya.javatoolkit.events.fi.EventProvider;
+import fr.evolya.javatoolkit.iot.Arduino;
+import fr.evolya.javatoolkit.time.Timer;
 
 @EventProvider({OnSecurityLevelChanged.class})
 public class SecurityMonitor {
@@ -49,6 +49,19 @@ public class SecurityMonitor {
 		view.panelStatus.setTitle(label);
 		app.notify(OnSecurityLevelChanged.class, level, label);
 		updateStatusPanel();
+		if (level == 0) {
+			view.cardMap.getMap()
+				.forEachFeatures(Rf433SecurityTrigger.class, (device, feature) ->
+					feature.resetCounter());
+		}
+	}
+	
+	public int getSecurityLevel() {
+		return securityLevel;
+	}
+	
+	public String getSecurityLevelLabel() {
+		return securityLabel;
 	}
 	
 	public void showAlert(String label) {
@@ -63,6 +76,10 @@ public class SecurityMonitor {
 		updateStatusPanel();
 	}
 	
+	public String getAlert() {
+		return alertLabel;
+	}
+	
 	public void showWarning(String message) {
 		warningMsg = message;
 		view.panelStatus.setMessage(message);
@@ -73,6 +90,10 @@ public class SecurityMonitor {
 		warningMsg = null;
 		updateStatusPanel();
 		EventQueue.invokeLater(() -> view.panelStatus.setMessage("-"));
+	}
+	
+	public String getWarning() {
+		return warningMsg;
 	}
 	
 	public void updateStatusPanel() {
@@ -177,7 +198,15 @@ public class SecurityMonitor {
         	}
 			// GOOD PASSWORD
 			else if (code.equals(password)) {
+				clearWarning();
+				if ("Intrusion detected!!".equals(getAlert())) {
+					clearAlert();
+				}
+				if ("!!! Alarm !!!".equals(getAlert())) {
+					clearAlert();
+				}
 				setSecurityLevel(0, "Unlocked");
+				Timer.stopCountdown();
 			}
 			// BAD PASSWORD
 			else {
@@ -190,7 +219,6 @@ public class SecurityMonitor {
 	public void lock() {
 		if (isLocked()) return;
 		if (isLocking()) return;
-		locking = true;
 		view.showConfirmDialogCard(
 				"<html>You are going to arm the secure system, are you sure ?</html>",
 				new String[]{ "*Yes", "No" },
@@ -200,6 +228,7 @@ public class SecurityMonitor {
 						view.buttonMap.setEnabled(false);
 						view.buttonLogs.setEnabled(false);
 						view.buttonSettings.setEnabled(false);
+						locking = true;
 						view.showCountdownCard("<html>Enabling secure mode, <b>please close the building before leaving</b>...</html>", 7, (cancel) -> {
 							locking = false;
 							if (cancel) {
@@ -228,19 +257,46 @@ public class SecurityMonitor {
 		return locking;
 	}
 	
-	/**
-	 * Execute commands on devices using RF433
-	 */
-	@BindOnEvent(OnRf433CommandReceived.class)
+	public void notifySecurityTrigger(Device device, String commandName) {
+		if (!isLocked()) return;
+		if (!"TRIGGER".equals(commandName.toUpperCase())) return;
+		int count = device.getFirstFeature(Rf433SecurityTrigger.class)
+				.addSuspiciousTrigger();
+		LOGGER.log(Logs.WARNING, "Suspicious trigger on device '" + device + "' (command " + commandName + ") -> " + count);
+		EventQueue.invokeLater(() -> {
+			if (count >= 3) {
+				device.setState(Device.State.ALERT);
+				showAlert("Intrusion detected!!");
+				Timer.startCountdown(10, (remaining) -> {
+					EventQueue.invokeLater(() -> 
+						showWarning("Enter the code to unlock : " + remaining + " seconds remaining"));
+					if (remaining == 0) {
+						showAlert("!!! Alarm !!!");
+						showWarning("Police was called !");
+					}
+				});
+			}
+			else {
+				device.setState(Device.State.INTERMEDIATE);
+			}
+			view.cardMap.repaint();
+		});
+	}
+	
+	@BindOnEvent(Arduino.OnDisconnected.class)
 	@GuiTask
-	public void onRf433CommandReceived(Device device, Rf433Emitter command, int code, Rf433Controller ctrl) {
-		if ("ON".equals(command.getCommandName())) {
-			device.setBackground(Color.GREEN);
+	public void arduinoDisconnected() {
+		showAlert("Arduino disconnected!");
+		showWarning("All security systems are disabled !");
+	}
+	
+	@BindOnEvent(Arduino.OnConnected.class)
+	@GuiTask
+	public void arduinoConnected() {
+		if ("Arduino disconnected!".equals(getAlert())) {
+			clearAlert();
+			clearWarning();
 		}
-		if ("OFF".equals(command.getCommandName())) {
-			device.setBackground(Color.RED);
-		}
-		view.cardMap.repaint();
-	};
+	}
 	
 }

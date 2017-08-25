@@ -34,15 +34,18 @@ public class ArduinoLink {
 		
 		if (!arduino.isBound()) {
 			view.appendLog("No arduino connected");
+			app.notify(Arduino.OnDisconnected.class, null, null);
 		}
 		
 		// Connection event
 		arduino.when(Arduino.OnConnected.class)
 			.execute((port) -> {
+				app.notify(Arduino.OnConnected.class, port);
 				view.appendLog("[Arduino] Connected to " + port.getName());
 			});
 		arduino.when(Arduino.OnDisconnected.class)
 			.execute((port, ex) -> {
+				app.notify(Arduino.OnDisconnected.class, port, ex);
 				view.appendLog("[Arduino] Disconnected from " + port);
 			});
 		

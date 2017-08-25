@@ -1,8 +1,6 @@
 package fr.evolya.domokit.gui.map.features;
 
-import fr.evolya.domokit.gui.map.iface.IFeature;
-
-public class Rf433Emitter implements IFeature {
+public class Rf433Emitter extends AbstractFeature {
 
 	protected int rfCode = 0;
 	protected String commandName = "NO_NAME";
@@ -27,5 +25,5 @@ public class Rf433Emitter implements IFeature {
 	public String toString() {
 		return commandName;
 	}
-	
+
 }

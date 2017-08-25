@@ -10,6 +10,7 @@ import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
 import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.gui.map.MapPanel.MapListener;
 import fr.evolya.domokit.gui.map.features.Rf433Emitter;
+import fr.evolya.domokit.gui.map.features.Rf433SecurityTrigger;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.io.Rf433Controller;
@@ -99,17 +100,6 @@ public class ViewController {
 		view.showDefaultCard();
 	}
 	
-//	@BindOnEvent(OnSecurityLevelChanged.class)
-//	@GuiTask
-//	public void onSecurityLevelChanged(SecurityLevel level) {
-//		if (level.level < 1) return;
-//		// TODO Finish
-//		view.cardMap.getMap()
-//			.getComponents(Device.class, (c) -> c.hasFeature(WindowOpeningSensor.class))
-//			.forEach((device) -> device.setBackground(Color.DARK_GRAY));
-//		view.cardMap.repaint();
-//	}
-	
 	/**
 	 * Displays received RF433 commands in logs card.
 	 */
@@ -122,12 +112,18 @@ public class ViewController {
 	@BindOnEvent(OnSecurityLevelChanged.class)
 	@GuiTask
 	public void onSecurityLevelChanged(int level, String label) {
+		// Buttons
 		boolean enabled = (level == 0);
 		view.buttonMap.setEnabled(enabled);
 		view.buttonLogs.setEnabled(enabled);
 		view.buttonSettings.setEnabled(enabled);
 		view.setButtonLockIcon(!enabled);
 		view.showDefaultCard().setReadonly(!enabled);
+		// Map
+		view.cardMap.getMap()
+			.getComponents(Device.class, (c) -> c.hasFeature(Rf433SecurityTrigger.class))
+			.forEach((device) -> device.setState(Device.State.IDLE));
+		view.cardMap.repaint();
 	}
 	
 }

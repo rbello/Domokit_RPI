@@ -64,7 +64,7 @@ public class PanelStatus extends JPanel {
 		
 		labelTitle = new JLabel();
 		labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
-		labelTitle.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 35));
+		labelTitle.setFont(new Font("Arial", Font.ITALIC | Font.BOLD, 28));
 		add(labelTitle);
 		labelMessage = new JLabel();
 		labelMessage.setHorizontalAlignment(SwingConstants.CENTER);

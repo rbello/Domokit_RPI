@@ -1,5 +1,7 @@
 package fr.evolya.domokit.gui.map.iface;
 
-public interface IFeature {
+import fr.evolya.domokit.gui.map.simple.Device;
 
+public interface IFeature {
+	void setDevice(Device device);
 }
