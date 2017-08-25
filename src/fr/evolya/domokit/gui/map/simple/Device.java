@@ -13,6 +13,10 @@ public class Device extends Badge {
 	
 	private State state = State.UNKNOWN;
 	
+	public Device() {
+		this(0, 0, "");
+	}
+	
 	public Device(int x, int y, String componentLabel) {
 		super(x, y, componentLabel);
 		features = new ArrayList<>();
@@ -76,10 +80,13 @@ public class Device extends Badge {
 		super.setBackground(state.color);
 	}
 	
+	/**
+	 * Use setState() instead
+	 */
 	@Override
 	@Deprecated
-	public Badge setBackground(Color color) {
-		return super.setBackground(color);
+	public void setBackground(Color color) {
+		super.setBackground(color);
 	}
 
 }

@@ -1,4 +1,4 @@
-package fr.evolya.domokit;
+package fr.evolya.domokit.ctrl;
 
 import java.awt.Color;
 import java.net.InetAddress;

@@ -2,32 +2,18 @@ package fr.evolya.domokit.gui.map.iface;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.awt.Rectangle;
 
 public interface IAbsolutePositionningComponent extends IMapComponent {
 	
-	Rectangle getBounds();
+	// Background color
+	void setBackground(Color red);
+	Color getBackground();
 	
-//	int getBorderTopWidth();
-//	int getBorderRightWidth();
-//	int getBorderBottomWidth();
-//	int getBorderLeftWidth();
-//	
-//	IAbsolutePositionningComponent setBorderTopWidth(int value);
-//	IAbsolutePositionningComponent setBorderRightWidth(int value);
-//	IAbsolutePositionningComponent setBorderBottomWidth(int value);
-//	IAbsolutePositionningComponent setBorderLeftWidth(int value);
-
-	
-//	Component getGraphic();
-
 	// TODO Déplacer dans une interface spécifique aux host ?
-	IBorderPositionningComponent addBorderElement(IBorderPositionningComponent component);
+	void addBorderElement(IBorderPositionningComponent component);
 	
 	boolean isInside(int x, int y, double ratio, Point topLeft);
 
-	IAbsolutePositionningComponent setBackground(Color red);
-	Color getBackground();
-
-	IAbsolutePositionningComponent addTo(IMap map);
+	void addTo(IMap map);
+	
 }

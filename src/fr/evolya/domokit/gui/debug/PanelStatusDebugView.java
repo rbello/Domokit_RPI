@@ -1,4 +1,4 @@
-package fr.evolya.domokit.gui.panels;
+package fr.evolya.domokit.gui.debug;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -11,7 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
-import fr.evolya.domokit.SecurityMonitor;
+import fr.evolya.domokit.ctrl.ModuleSecurity;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
@@ -28,7 +28,7 @@ public class PanelStatusDebugView extends JFrame {
 	public App app;
 	
 	@Inject
-	public SecurityMonitor monitor;
+	public ModuleSecurity monitor;
 	
 	@Inject
 	public View480x320 view;
@@ -50,7 +50,7 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnReset = new JButton("Reset");
 		btnReset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monitor.clearAlert();
+				monitor.clearAlerts();
 				monitor.clearWarning();
 			}
 		});
@@ -59,7 +59,12 @@ public class PanelStatusDebugView extends JFrame {
 		JButton btnShowError = new JButton("Show alert");
 		btnShowError.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				monitor.showAlert("An alert !!");
+				if (monitor.isAlertActive("An alert !!")) {
+					monitor.clearAlert("An alert !!");
+				}
+				else {
+					monitor.alert("An alert !!");
+				}
 			}
 		});
 		btnShowError.setBackground(Color.RED);

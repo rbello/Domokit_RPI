@@ -2,6 +2,7 @@ package fr.evolya.domokit.gui.map.simple;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
@@ -50,6 +51,42 @@ public class Door implements IBorderPositionningComponent {
 	public IMapComponent setIdentifier(String label) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setParent(IMapComponent parent) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setX(int x) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setY(int y) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setWidth(int w) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setHeight(int h) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

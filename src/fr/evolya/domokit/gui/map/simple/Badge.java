@@ -29,13 +29,28 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 	}
 
 	@Override
-	public IBorderPositionningComponent addBorderElement(IBorderPositionningComponent component) {
+	public void addBorderElement(IBorderPositionningComponent component) {
 		throw new NotImplementedException();
 	}
 
 	@Override
 	public void paint(Graphics graphic, MapPanel panel, double ratio, Point topLeft) {
-		Rectangle b = getTargetBounds(ratio, topLeft);
+		
+		// Relative positionning (x/y in pixels from parent top left)
+		Rectangle b = null;
+		if (getParent() != null) {
+			Rectangle bounds = getParent().getBounds();
+			int x = (int) (bounds.x * ratio + topLeft.x) + this.bounds.x;
+			int y = (int) (bounds.y * ratio + topLeft.y) + this.bounds.y;
+			int w = (int) (this.bounds.width * ratio);
+			int h = (int) (this.bounds.height * ratio);
+			b = new Rectangle(x, y, w, h);
+		}
+		
+		// Absolute positionning (x/y in meters)
+		else {
+			b = getTargetBounds(ratio, topLeft);
+		}
 		
 		// Border
 		graphic.setColor(borderColor == null ? panel.getForeground() : borderColor);
@@ -74,11 +89,6 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 	public Badge setBorderColor(Color borderColor) {
 		this.borderColor = borderColor;
 		return this;
-	}
-
-	@Override
-	public Badge setBackground(Color color) {
-		return (Badge) super.setBackground(color);
 	}
 
 }

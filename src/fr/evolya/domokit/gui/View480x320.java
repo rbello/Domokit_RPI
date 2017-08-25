@@ -23,17 +23,12 @@ import fr.evolya.domokit.gui.panels.PanelNetwork;
 import fr.evolya.domokit.gui.panels.PanelPin;
 import fr.evolya.domokit.gui.panels.PanelSettings;
 import fr.evolya.domokit.gui.panels.PanelStatus;
-import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
-import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.code.funcint.Action;
 
 public class View480x320 extends JFrame {
 
 	private static final long serialVersionUID = -6653570811059565525L;
-	
-	@Inject
-	public App app;
 	
 	public final PanelStatus panelStatus;
 	public final JPanel panelMain;
@@ -172,6 +167,10 @@ public class View480x320 extends JFrame {
 	}
 
 	public void appendLog(String msg) {
+		appendLog(msg, 0);
+	}
+	
+	public void appendLog(String msg, int level) {
 		StringBuilder date = new StringBuilder("[");
 		Calendar now = Calendar.getInstance();
 		date.append(now.get(Calendar.DAY_OF_MONTH));
@@ -185,8 +184,10 @@ public class View480x320 extends JFrame {
 		date.append(now.get(Calendar.MINUTE));
 		date.append(":");
 		date.append(now.get(Calendar.SECOND));
-		date.append("]");
-		SwingUtilities.invokeLater(() -> cardLogs.textArea.append(date + msg + "\n"));
+		date.append("] ");
+		SwingUtilities.invokeLater(() -> {
+			cardLogs.append(date + msg + "\n", level);
+		});
 	}
 
 	public void setButtonLockIcon(boolean locked) {

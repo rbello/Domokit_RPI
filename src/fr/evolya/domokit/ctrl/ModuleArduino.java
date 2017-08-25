@@ -1,19 +1,23 @@
-package fr.evolya.domokit.io;
+package fr.evolya.domokit.ctrl;
 
+import java.awt.Color;
+
+import fr.evolya.domokit.ctrl.ModuleRf433.OnRf433CodeReceived;
 import fr.evolya.domokit.gui.View480x320;
-import fr.evolya.domokit.io.Rf433Controller.OnRf433CodeReceived;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
 import fr.evolya.javatoolkit.app.event.ApplicationStopping;
+import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.iot.arduilink.Arduilink;
 import fr.evolya.javatoolkit.iot.arduilink.ArduilinkEvents;
 import fr.evolya.javatoolkit.iot.arduino.Arduino;
 import fr.evolya.javatoolkit.iot.arduino.ArduinoEvents;
+import gnu.io.CommPortIdentifier;
 
-public class ArduinoLink {
+public class ModuleArduino {
 	
 	@Inject
 	public View480x320 view;
@@ -28,7 +32,6 @@ public class ArduinoLink {
 		arduino = Arduino.getFirst();
 		
 		if (!arduino.isBound()) {
-			view.appendLog("No arduino connected");
 			app.notify(ArduinoEvents.OnDisconnected.class, null, null);
 		}
 		
@@ -84,6 +87,20 @@ public class ArduinoLink {
 	@BindOnEvent(ApplicationStarted.class)
 	public void onApplicationStarted(App app) {
 		arduino.start();
+	}
+	
+	@BindOnEvent(ArduinoEvents.OnConnected.class)
+	@GuiTask
+	public void updateRf433ConnectionStateIntoSettings(CommPortIdentifier port) {
+		view.cardSettings.fieldRf433Status.setText("Connected " + port.getName());
+		view.cardSettings.fieldRf433Status.setForeground(Color.GREEN);
+	}
+	
+	@BindOnEvent(ArduinoEvents.OnDisconnected.class)
+	@GuiTask
+	public void updateRf433ConnectionStateIntoSettings() {
+		view.cardSettings.fieldRf433Status.setText("Disconnected");
+		view.cardSettings.fieldRf433Status.setForeground(Color.RED);
 	}
 	
 }

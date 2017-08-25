@@ -8,6 +8,7 @@ import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IBorderPositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.iface.IMapComponent;
+import fr.evolya.javatoolkit.exceptions.NotImplementedException;
 
 public abstract class AbstractAbsolutePositionningComponent
 	implements IAbsolutePositionningComponent {
@@ -15,6 +16,7 @@ public abstract class AbstractAbsolutePositionningComponent
 	protected Rectangle bounds;
 	protected String identifier;
 	protected Color background;
+	protected IMapComponent parent;
 	
 	public AbstractAbsolutePositionningComponent() {
 		this.bounds = new Rectangle(0, 0, 1, 1);
@@ -47,10 +49,10 @@ public abstract class AbstractAbsolutePositionningComponent
 	}
 
 	@Override
-	public IBorderPositionningComponent addBorderElement(IBorderPositionningComponent component) {
+	public void addBorderElement(IBorderPositionningComponent component) {
 		// TODO Auto-generated method stub
 		component.setParent(this);
-		return component;
+		throw new NotImplementedException();
 	}
 	
 	@Override
@@ -68,9 +70,8 @@ public abstract class AbstractAbsolutePositionningComponent
 	}
 	
 	@Override
-	public IAbsolutePositionningComponent setBackground(Color color) {
+	public void setBackground(Color color) {
 		this.background = color;
-		return this;
 	}
 	
 	@Override
@@ -87,29 +88,38 @@ public abstract class AbstractAbsolutePositionningComponent
 	}
 	
 	@Override
-	public IAbsolutePositionningComponent addTo(IMap map) {
+	public void addTo(IMap map) {
 		map.addComponent(this);
-		return this;
 	}
 	
-	public AbstractAbsolutePositionningComponent setX(int x) {
+	@Override
+	public void setX(int x) {
 		bounds.x = x;
-		return this;
 	}
 	
-	public AbstractAbsolutePositionningComponent setY(int y) {
+	@Override
+	public void setY(int y) {
 		bounds.y = y;
-		return this;
 	}
 	
-	public AbstractAbsolutePositionningComponent setWidth(int w) {
+	@Override
+	public void setWidth(int w) {
 		bounds.width = w;
-		return this;
 	}
 	
-	public AbstractAbsolutePositionningComponent setHeight(int h) {
+	@Override
+	public void setHeight(int h) {
 		bounds.height = h;
-		return this;
+	}
+	
+	@Override
+	public void setParent(IMapComponent parent) {
+		this.parent = parent;
+	}
+
+	@Override
+	public IMapComponent getParent() {
+		return parent;
 	}
 
 }

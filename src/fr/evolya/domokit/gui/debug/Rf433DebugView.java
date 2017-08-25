@@ -1,5 +1,6 @@
-package fr.evolya.domokit.io;
+package fr.evolya.domokit.gui.debug;
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -14,22 +15,17 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.SwingConstants;
 
-import fr.evolya.domokit.config.Configuration;
-import fr.evolya.domokit.gui.map.features.Rf433Emitter;
-import fr.evolya.domokit.gui.map.iface.IMap;
-import fr.evolya.domokit.gui.map.simple.Device;
-import fr.evolya.domokit.io.Rf433Controller.OnRf433CodeReceived;
+import fr.evolya.domokit.ctrl.ModuleRf433;
+import fr.evolya.domokit.ctrl.ModuleRf433.OnRf433CodeReceived;
+import fr.evolya.domokit.gui.map.iface.IMapComponent;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
-import javax.swing.SwingConstants;
-import java.awt.Font;
 
 public class Rf433DebugView extends JFrame implements ActionListener {
 
@@ -39,7 +35,7 @@ public class Rf433DebugView extends JFrame implements ActionListener {
 	public App app;
 	
 	@Inject
-	public Rf433Controller rf433;
+	public ModuleRf433 rf433;
 
 	private JLabel label;
 
@@ -101,25 +97,23 @@ public class Rf433DebugView extends JFrame implements ActionListener {
 	}
 
 	private void initialize() {
-		setBounds(500, 30, 287, 336);
+		setBounds(500, 30, 380, 336);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	@BindOnEvent(ApplicationStarted.class)
 	@GuiTask
 	public void run(App app) {
-		Rf433Controller rf = app.get(Rf433Controller.class);
+		ModuleRf433 rf = app.get(ModuleRf433.class);
 		if (rf == null) return;
 		label.setText("RF433 Controller : OK");
-		Configuration.getInstance()
-			.getMap()
-			.getComponents(Device.class, (c) -> c.hasFeature(Rf433Emitter.class))
-			.forEach((device) -> {
-				device.getFeatures(Rf433Emitter.class).stream().forEach((feature) -> {
-					model.addElement(feature.getRfCode() + " = " + 
-						feature.getCommandName() + " on " + device.getIdentifier());
-				});
-			});
+		rf433.forEachRf433Emitters((emitter) -> {
+			String id = "";
+			IMapComponent parent = emitter.getDevice().getParent();
+			if (parent != null) id += parent.getIdentifier() + "/";
+			id += emitter.getDevice().getIdentifier() + "/";
+			model.addElement(emitter.getRfCode() + " = " + id + emitter.getCommandName());
+		});
 		setVisible(true);
 		app.notify(GuiIsReady.class, this, app);
 	}

@@ -1,11 +1,13 @@
 package fr.evolya.domokit;
 
+import fr.evolya.domokit.ctrl.ModuleArduino;
+import fr.evolya.domokit.ctrl.ModuleMap;
+import fr.evolya.domokit.ctrl.ModuleRf433;
+import fr.evolya.domokit.ctrl.ModuleSecurity;
+import fr.evolya.domokit.ctrl.ViewController;
 import fr.evolya.domokit.gui.View480x320;
-import fr.evolya.domokit.gui.ViewController;
-import fr.evolya.domokit.gui.panels.PanelStatusDebugView;
-import fr.evolya.domokit.io.ArduinoLink;
-import fr.evolya.domokit.io.Rf433Controller;
-import fr.evolya.domokit.io.Rf433DebugView;
+import fr.evolya.domokit.gui.debug.PanelStatusDebugView;
+import fr.evolya.domokit.gui.debug.Rf433DebugView;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
 import fr.evolya.javatoolkit.gui.swing.SwingApp;
@@ -22,20 +24,21 @@ public class Main {
 			.setProperty("Config.File", "./config/app.properties");
 		
 		// Arduilink
-		app.add(ArduinoLink.class);
+		app.add(ModuleArduino.class);
 
 		// RF433
-		app.add(Rf433Controller.class);
+		app.add(ModuleRf433.class);
 		
 		// View
 		app.add(View480x320.class);
+		app.add(ModuleMap.class);
 		app.add(ViewController.class);
 		
 		// Business object
-		app.add(SecurityMonitor.class);
+		app.add(ModuleSecurity.class);
 		
 		// Network monitor
-		app.add(ModuleNetworkWatcher.class);
+//		app.add(ModuleNetworkWatcher.class);
 
 		// Debug views
 		if (app.getDebugLevel() > 2) {
