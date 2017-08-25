@@ -19,6 +19,7 @@ import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.panels.PanelConfirmDialog;
 import fr.evolya.domokit.gui.panels.PanelCountDown;
 import fr.evolya.domokit.gui.panels.PanelLogs;
+import fr.evolya.domokit.gui.panels.PanelNetwork;
 import fr.evolya.domokit.gui.panels.PanelPin;
 import fr.evolya.domokit.gui.panels.PanelSettings;
 import fr.evolya.domokit.gui.panels.PanelStatus;
@@ -42,6 +43,7 @@ public class View480x320 extends JFrame {
 	public final JButton buttonSettings;
 	public final JButton buttonLogs;
 	public final JButton buttonMap;
+	public final JButton buttonNetwork;
 
 	public final MapPanel cardMap;
 	public final PanelSettings cardSettings;
@@ -49,6 +51,7 @@ public class View480x320 extends JFrame {
 	public final PanelPin cardPin;
 	public final PanelConfirmDialog cardConfirm;
 	public final PanelCountDown cardCountdown;
+	public final PanelNetwork cardNetwork;
 	
 	@GuiTask
 	public View480x320() {
@@ -91,16 +94,24 @@ public class View480x320 extends JFrame {
 			showCard("Map");
 		});
 		
+		buttonNetwork = new JButton();
+		buttonNetwork.setToolTipText("Network");
+		buttonNetwork.setIcon(Icons.CONNECTIVITY.getIcon(Size.SIZE24X24));
+		buttonNetwork.addActionListener(e -> {
+			showCard("Network");
+		});
+		
 		GroupLayout gl_panelMenu = new GroupLayout(panelMenu);
 		gl_panelMenu.setHorizontalGroup(
 			gl_panelMenu.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_panelMenu.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_panelMenu.createParallelGroup(Alignment.LEADING)
+						.addComponent(buttonSettings, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonLock, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonMap, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-						.addComponent(buttonSettings, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
+						.addComponent(buttonNetwork, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_panelMenu.setVerticalGroup(
@@ -113,8 +124,9 @@ public class View480x320 extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(buttonSettings, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(44, Short.MAX_VALUE))
+					.addComponent(buttonNetwork, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(buttonSettings, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
 		);
 		panelMenu.setLayout(gl_panelMenu);
 		
@@ -129,6 +141,7 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardPin = new PanelPin(), "Pin");
 		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
 		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
+		panelMain.add(cardNetwork = new PanelNetwork(), "Network");
 		
 		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);

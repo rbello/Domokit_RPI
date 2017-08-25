@@ -26,7 +26,7 @@ public class PanelLogs extends JPanel {
 	public PanelLogs() {
 		
 		JLabel lblLogs = new JLabel("Logs");
-		lblLogs.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblLogs.setFont(new Font("Tahoma", Font.BOLD, 16));
 		
 		JScrollPane scrollPane = new JScrollPane();
 		
@@ -43,7 +43,7 @@ public class PanelLogs extends JPanel {
 						.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(lblLogs)
-							.addPreferredGap(ComponentPlacement.RELATED, 359, Short.MAX_VALUE)
+							.addPreferredGap(ComponentPlacement.RELATED, 355, Short.MAX_VALUE)
 							.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
@@ -51,11 +51,11 @@ public class PanelLogs extends JPanel {
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblLogs)
-						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 18, GroupLayout.PREFERRED_SIZE))
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(lblLogs, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		

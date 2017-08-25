@@ -91,6 +91,7 @@
 						<attr name="rfCode">893534720</attr>
 						<attr name="commandName">TRIGGER</attr>
 					</bean>
+					<!-- Off code: 672768092 -->
 				</list>
 			</bean>
 			<bean class="${package}.Badge">

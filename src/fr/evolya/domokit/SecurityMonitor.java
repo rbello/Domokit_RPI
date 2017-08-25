@@ -221,7 +221,7 @@ public class SecurityMonitor {
 		return locking;
 	}
 	
-	public void notifySecurityTrigger(Device device, String commandName) {
+	public void notifySecurityTrigger(final Device device, String commandName) {
 
 		if (!"TRIGGER".equals(commandName.toUpperCase())) return;
 		
@@ -245,6 +245,7 @@ public class SecurityMonitor {
 			if (count >= 3) {
 				device.setState(Device.State.ALERT);
 				showAlert("Intrusion detected!!");
+				if (Timer.isCountdown("delayToEnterPassword")) return;
 				Timer.startCountdown("delayToEnterPassword", 10, (remaining) -> {
 					EventQueue.invokeLater(() -> 
 						showWarning("Enter the code to unlock : " + remaining + " seconds remaining"));

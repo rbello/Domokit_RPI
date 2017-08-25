@@ -131,6 +131,7 @@ public class ViewController {
 		boolean enabled = (level == 0);
 		view.buttonMap.setEnabled(enabled);
 		view.buttonLogs.setEnabled(enabled);
+		view.buttonNetwork.setEnabled(enabled);
 		view.buttonSettings.setEnabled(enabled);
 		view.setButtonLockIcon(!enabled);
 		view.showDefaultCard().setReadonly(!enabled);
