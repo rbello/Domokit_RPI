@@ -158,6 +158,23 @@
 				<attr name="icon">WINDOW</attr>
 			</bean>
 			
+			
+			<bean class="${package}.Device">
+				<constructor>
+					<param type="int">5</param>
+					<param type="int">2</param>
+					<param type="string">Detecteur garage</param>
+				</constructor>
+				<attr name="icon">LOOK</attr>
+				<list name="feature" class="${iface}.IFeature">
+					<bean class="${features}.Rf433SecurityTrigger" />
+					<bean class="${features}.Rf433Emitter">
+						<attr name="rfCode">538550364</attr>
+						<attr name="commandName">TRIGGER</attr>
+					</bean>
+				</list>
+			</bean>
+			
 			<!--        -->
 			<!-- LIGHTS -->
 			<!--        -->

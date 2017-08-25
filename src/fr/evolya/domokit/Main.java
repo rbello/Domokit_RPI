@@ -14,9 +14,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		int debug = App.init(args);
-		
-		App app = new SwingApp();
+		App app = new SwingApp(args);
 		
 		app.get(AppConfiguration.class)
 			.setProperty("App.Name", "HouseStation")
@@ -35,8 +33,12 @@ public class Main {
 		
 		// Business object
 		app.add(SecurityMonitor.class);
+		
+		// Network monitor
+		app.add(ModuleNetworkWatcher.class);
 
-		if (debug > 0) {
+		// Debug views
+		if (app.getDebugLevel() > 2) {
 			app.add(Rf433DebugView.class);
 			app.add(PanelStatusDebugView.class);
 		}

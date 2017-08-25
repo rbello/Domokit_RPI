@@ -8,7 +8,6 @@ import fr.evolya.domokit.SecurityMonitor.OnSecurityLevelChanged;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.map.features.Rf433SecurityTrigger;
 import fr.evolya.domokit.gui.map.simple.Device;
-import fr.evolya.domokit.gui.panels.PanelStatusStateManager.State;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.code.Logs;
@@ -17,7 +16,7 @@ import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.events.fi.EventArgClassFilter;
 import fr.evolya.javatoolkit.events.fi.EventProvider;
-import fr.evolya.javatoolkit.iot.Arduino;
+import fr.evolya.javatoolkit.iot.arduino.ArduinoEvents;
 import fr.evolya.javatoolkit.time.Timer;
 
 @EventProvider({OnSecurityLevelChanged.class})
@@ -109,6 +108,10 @@ public class SecurityMonitor {
 			view.panelStatus.setBorderColor(Color.YELLOW);
 			view.panelStatus.setMessage(warningMsg);
 		}
+		else if (securityLevel > 1) {
+			view.panelStatus.setBorderColor(Color.ORANGE);
+			view.panelStatus.setTitle(securityLabel);
+		}
 		else if (securityLevel > 0) {
 			view.panelStatus.setBorderColor(Color.YELLOW);
 			view.panelStatus.setTitle(securityLabel);
@@ -119,56 +122,6 @@ public class SecurityMonitor {
 		}
 		view.panelStatus.setCartoucheLevel(securityLevel);
 		view.panelStatus.repaint();
-	}
-	
-	public static class StateUnlocked extends State {
-		public String getStateName() {
-			return "Unlocked";
-		}
-		public boolean isAllwaysOnTop() {
-			return false;
-		}
-		@Override
-		public String getMessage() {
-			return "Everything OK";
-		}
-		@Override
-		public String getStateCategory() {
-			return "SecurityLevel";
-		}
-		@Override
-		public Color getColor() {
-			return Color.GREEN;
-		}
-		@Override
-		public int getPriority() {
-			return 0;
-		}
-	}
-	
-	public static class StateLocked extends State {
-		public String getStateName() {
-			return "Locked";
-		}
-		public boolean isAllwaysOnTop() {
-			return false;
-		}
-		@Override
-		public String getMessage() {
-			return "Home is locked";
-		}
-		@Override
-		public String getStateCategory() {
-			return "SecurityLevel";
-		}
-		@Override
-		public Color getColor() {
-			return Color.YELLOW;
-		}
-		@Override
-		public int getPriority() {
-			return 1;
-		}
 	}
 	
 	@FunctionalInterface
@@ -206,7 +159,7 @@ public class SecurityMonitor {
 					clearAlert();
 				}
 				setSecurityLevel(0, "Unlocked");
-				Timer.stopCountdown();
+				Timer.stopCountdown("delayToEnterPassword");
 			}
 			// BAD PASSWORD
 			else {
@@ -220,34 +173,45 @@ public class SecurityMonitor {
 		if (isLocked()) return;
 		if (isLocking()) return;
 		view.showConfirmDialogCard(
-				"<html>You are going to arm the secure system, are you sure ?</html>",
-				new String[]{ "*Yes", "No" },
+				"<html>You are going to arm the secure system, choose the area to secure:</html>",
+				new String[]{ "*All", "*Partial", "Cancel" },
 				(choice) -> {
-					if ("Yes".equals(choice)) {
-						LOGGER.log(Logs.INFO, "Enabling secure mode");
-						view.buttonMap.setEnabled(false);
-						view.buttonLogs.setEnabled(false);
-						view.buttonSettings.setEnabled(false);
-						locking = true;
-						view.showCountdownCard("<html>Enabling secure mode, <b>please close the building before leaving</b>...</html>", 7, (cancel) -> {
-							locking = false;
-							if (cancel) {
-								LOGGER.log(Logs.INFO, "Cancel secure mode");
-								view.buttonMap.setEnabled(true);
-								view.buttonLogs.setEnabled(true);
-								view.buttonSettings.setEnabled(true);
-								view.showDefaultCard();
-							}
-							else {
-								LOGGER.log(Logs.INFO, "Secure mode enabled!");
-								setSecurityLevel(1, "Locked");
-							}
-						});
-					}
-					else {
+					// Cancel
+					if ("Cancel".equals(choice)) {
 						view.showDefaultCard();
 						locking = false;
+						return;
 					}
+					// Protected mode
+					if ("Partial".equals(choice)) {
+						LOGGER.log(Logs.INFO, "Enabling secure mode: protected");
+						setSecurityLevel(1, "Protected");
+						return;
+					}
+					// Lock mode
+					LOGGER.log(Logs.INFO, "Enabling secure mode: locked");
+					view.buttonMap.setEnabled(false);
+					view.buttonLogs.setEnabled(false);
+					view.buttonSettings.setEnabled(false);
+					locking = true;
+					showWarning("Locking building, please leave now");
+					view.showCountdownCard("<html>Enabling secure mode, <b>please close the building before leaving</b>...</html>", 7, (cancel) -> {
+						locking = false;
+						if ("Locking building, please leave now".equals(getWarning())) {
+							clearWarning();
+						}
+						if (cancel) {
+							LOGGER.log(Logs.INFO, "Cancel secure mode");
+							view.buttonMap.setEnabled(true);
+							view.buttonLogs.setEnabled(true);
+							view.buttonSettings.setEnabled(true);
+							view.showDefaultCard();
+						}
+						else {
+							LOGGER.log(Logs.INFO, "Secure mode enabled!");
+							setSecurityLevel(2, "Locked");
+						}
+					});
 				}
 		);
 		
@@ -258,8 +222,22 @@ public class SecurityMonitor {
 	}
 	
 	public void notifySecurityTrigger(Device device, String commandName) {
-		if (!isLocked()) return;
+
 		if (!"TRIGGER".equals(commandName.toUpperCase())) return;
+		
+		if (!isLocked()) {
+			device.setState(Device.State.INTERMEDIATE);
+			view.cardMap.repaint();
+			// TODO Faire mieux en timer
+			Timer.startCountdown("resetDevice" + device.hashCode(), 10, (remaining) -> {
+				if (remaining == 0) {
+					device.setState(Device.State.IDLE);
+					EventQueue.invokeLater(() -> view.cardMap.repaint());
+				}
+			});
+			return;
+		}
+		
 		int count = device.getFirstFeature(Rf433SecurityTrigger.class)
 				.addSuspiciousTrigger();
 		LOGGER.log(Logs.WARNING, "Suspicious trigger on device '" + device + "' (command " + commandName + ") -> " + count);
@@ -267,7 +245,7 @@ public class SecurityMonitor {
 			if (count >= 3) {
 				device.setState(Device.State.ALERT);
 				showAlert("Intrusion detected!!");
-				Timer.startCountdown(10, (remaining) -> {
+				Timer.startCountdown("delayToEnterPassword", 10, (remaining) -> {
 					EventQueue.invokeLater(() -> 
 						showWarning("Enter the code to unlock : " + remaining + " seconds remaining"));
 					if (remaining == 0) {
@@ -283,14 +261,14 @@ public class SecurityMonitor {
 		});
 	}
 	
-	@BindOnEvent(Arduino.OnDisconnected.class)
+	@BindOnEvent(ArduinoEvents.OnDisconnected.class)
 	@GuiTask
 	public void arduinoDisconnected() {
 		showAlert("Arduino disconnected!");
 		showWarning("All security systems are disabled !");
 	}
 	
-	@BindOnEvent(Arduino.OnConnected.class)
+	@BindOnEvent(ArduinoEvents.OnConnected.class)
 	@GuiTask
 	public void arduinoConnected() {
 		if ("Arduino disconnected!".equals(getAlert())) {

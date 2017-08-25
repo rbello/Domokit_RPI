@@ -1,7 +1,6 @@
 package fr.evolya.domokit.io;
 
 import fr.evolya.domokit.gui.View480x320;
-import fr.evolya.domokit.gui.panels.PanelStatusStateManager.AlertState;
 import fr.evolya.domokit.io.Rf433Controller.OnRf433CodeReceived;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
@@ -9,16 +8,12 @@ import fr.evolya.javatoolkit.app.event.ApplicationStarted;
 import fr.evolya.javatoolkit.app.event.ApplicationStopping;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
-import fr.evolya.javatoolkit.iot.Arduilink;
-import fr.evolya.javatoolkit.iot.Arduino;
+import fr.evolya.javatoolkit.iot.arduilink.Arduilink;
+import fr.evolya.javatoolkit.iot.arduilink.ArduilinkEvents;
+import fr.evolya.javatoolkit.iot.arduino.Arduino;
+import fr.evolya.javatoolkit.iot.arduino.ArduinoEvents;
 
 public class ArduinoLink {
-	
-	public static class ArduinoNotConnectedAlert extends AlertState {
-		public ArduinoNotConnectedAlert(String message, int priority) {
-			super("Arduino is not connected", 10);
-		}
-	}
 	
 	@Inject
 	public View480x320 view;
@@ -34,21 +29,30 @@ public class ArduinoLink {
 		
 		if (!arduino.isBound()) {
 			view.appendLog("No arduino connected");
-			app.notify(Arduino.OnDisconnected.class, null, null);
+			app.notify(ArduinoEvents.OnDisconnected.class, null, null);
 		}
 		
 		// Connection event
-		arduino.when(Arduino.OnConnected.class)
+		arduino.when(ArduinoEvents.OnConnected.class)
 			.execute((port) -> {
-				app.notify(Arduino.OnConnected.class, port);
+				// Route to application
+				app.notify(ArduinoEvents.OnConnected.class, port);
 				view.appendLog("[Arduino] Connected to " + port.getName());
 			});
-		arduino.when(Arduino.OnDisconnected.class)
+		arduino.when(ArduinoEvents.OnDisconnected.class)
 			.execute((port, ex) -> {
-				app.notify(Arduino.OnDisconnected.class, port, ex);
+				// Route to application
+				app.notify(ArduinoEvents.OnDisconnected.class, port, ex);
 				view.appendLog("[Arduino] Disconnected from " + port);
 			});
 		
+		// When an error occured
+		arduino.when(ArduinoEvents.OnReceiveError.class)
+			.execute((ex) -> {
+				view.appendLog("[Arduino] Error " + ex.getClass().getSimpleName()
+						+ ": " + ex.getMessage());
+			});
+				
 		// Convert to an Arduilink instance
 		arduilink = new Arduilink(arduino);
 		
@@ -66,29 +70,20 @@ public class ArduinoLink {
 				}
 			});
 		
+		// When a RF433 sensor send a data
+		arduilink.when(ArduilinkEvents.OnDataReceived.class)
+		.execute((data) -> {
+			if (data.sensor == null) return;
+			if ("RF433Receiver".equals(data.sensor.name)) {
+				app.notify(OnRf433CodeReceived.class, new Integer(data.value));
+			}
+		});
+		
 	}
 	
 	@BindOnEvent(ApplicationStarted.class)
 	public void onApplicationStarted(App app) {
-		
 		arduino.start();
-
-		// When a sensor send a data
-		arduilink.when(Arduilink.OnDataReceived.class)
-			.execute((data) -> {
-				if (data.sensor == null) return;
-				if ("RF433Receiver".equals(data.sensor.name)) {
-					app.notify(OnRf433CodeReceived.class, new Integer(data.value));
-				}
-			});
-		
-		// When an error occured
-		arduino.when(Arduino.OnReceiveError.class)
-			.execute((ex) -> {
-				view.appendLog("[Arduino] Error " + ex.getClass().getSimpleName()
-						+ ": " + ex.getMessage());
-			});
-			
 	}
 	
 }

@@ -24,6 +24,8 @@ import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.events.fi.EventArgClassFilter;
+import fr.evolya.javatoolkit.iot.arduino.ArduinoEvents;
+import gnu.io.CommPortIdentifier;
 
 public class ViewController {
 
@@ -40,6 +42,19 @@ public class ViewController {
 		// Exit
 		view.cardSettings.buttonExit.addActionListener(e -> {
 			app.notify(WindowCloseIntent.class, app, this, e);
+		});
+		
+		// Reboot
+		view.cardSettings.buttonReboot.addActionListener(e -> {
+			try {
+				Process p = Runtime.getRuntime().exec("sudo reboot");
+				int result = p.waitFor();
+				if (result != 0) throw new Exception("return " + result);
+			}
+			catch (Exception ex) {
+				app.get(SecurityMonitor.class).showWarning("Failure: "
+						+ ex.getMessage());
+			}
 		});
 		
 		// Lock button
@@ -124,6 +139,20 @@ public class ViewController {
 			.getComponents(Device.class, (c) -> c.hasFeature(Rf433SecurityTrigger.class))
 			.forEach((device) -> device.setState(Device.State.IDLE));
 		view.cardMap.repaint();
+	}
+	
+	@BindOnEvent(ArduinoEvents.OnConnected.class)
+	@GuiTask
+	public void onArduinoConnected(CommPortIdentifier port) {
+		view.cardSettings.fieldRf433Status.setText("Connected " + port.getName());
+		view.cardSettings.fieldRf433Status.setForeground(Color.GREEN);
+	}
+	
+	@BindOnEvent(ArduinoEvents.OnDisconnected.class)
+	@GuiTask
+	public void onArduinoDisconnected() {
+		view.cardSettings.fieldRf433Status.setText("Disconnected");
+		view.cardSettings.fieldRf433Status.setForeground(Color.RED);
 	}
 	
 }

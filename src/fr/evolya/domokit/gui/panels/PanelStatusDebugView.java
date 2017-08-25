@@ -36,7 +36,7 @@ public class PanelStatusDebugView extends JFrame {
 	@GuiTask
 	public PanelStatusDebugView() {
 		setTitle("State tester");
-		setBounds(10, 340, 230, 200);
+		setBounds(10, 340, 230, 235);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JButton btnShowAlert = new JButton("Show warning");
@@ -64,21 +64,26 @@ public class PanelStatusDebugView extends JFrame {
 		});
 		btnShowError.setBackground(Color.RED);
 		
-		JButton btnState0 = new JButton("Unlocked");
+		JLabel lblSecurityLevels = new JLabel("Security levels :");
+
+		JButton btnState0 = new JButton("0 - Unlocked");
 		btnState0.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				monitor.setState(new StateUnlocked());
 				monitor.setSecurityLevel(0, "Unlocked");
 			}
 		});
 		
-		JLabel lblSecurityLevels = new JLabel("Security levels :");
-		
-		JButton btnState1 = new JButton("Locked");
+		JButton btnState1 = new JButton("1 - Protected");
 		btnState1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				monitor.setState(new StateLocked());
-				monitor.setSecurityLevel(1, "Locked");
+				monitor.setSecurityLevel(1, "Protected");
+			}
+		});
+		
+		JButton btnState2 = new JButton("2 - Locked");
+		btnState2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				monitor.setSecurityLevel(2, "Locked");
 			}
 		});
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
@@ -95,12 +100,15 @@ public class PanelStatusDebugView extends JFrame {
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnShowError, GroupLayout.PREFERRED_SIZE, 97, GroupLayout.PREFERRED_SIZE))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnState0)
+									.addComponent(btnState0, GroupLayout.PREFERRED_SIZE, 91, GroupLayout.PREFERRED_SIZE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnState1))))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addGap(59)
-							.addComponent(btnReset)))
+							.addGap(69)
+							.addComponent(btnReset))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addContainerGap()
+							.addComponent(btnState2)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -116,9 +124,11 @@ public class PanelStatusDebugView extends JFrame {
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnState0)
 						.addComponent(btnState1))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(btnState2)
+					.addPreferredGap(ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
 					.addComponent(btnReset)
-					.addContainerGap(24, Short.MAX_VALUE))
+					.addContainerGap())
 		);
 		getContentPane().setLayout(groupLayout);
 	}

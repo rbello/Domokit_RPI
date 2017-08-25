@@ -20,10 +20,12 @@ public class Rf433SecurityTrigger extends AbstractFeature {
 		monitor.notifySecurityTrigger(device, command.commandName);
 	}
 
+	@Deprecated
 	public int addSuspiciousTrigger() {
 		return ++level ;
 	}
 
+	@Deprecated
 	public void resetCounter() {
 		level = 0;
 	}
