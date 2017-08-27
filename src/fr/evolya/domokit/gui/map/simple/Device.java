@@ -12,7 +12,7 @@ public class Device extends Badge {
 	private List<IFeature> features;
 	
 	private State state = State.UNKNOWN;
-	
+
 	public Device() {
 		this(0, 0, "");
 	}
@@ -88,5 +88,5 @@ public class Device extends Badge {
 	public void setBackground(Color color) {
 		super.setBackground(color);
 	}
-
+	
 }

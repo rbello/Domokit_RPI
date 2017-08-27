@@ -10,6 +10,7 @@ import java.util.List;
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
 import fr.evolya.domokit.gui.map.iface.IMapComponent;
+import fr.evolya.javatoolkit.code.funcint.Filter;
 
 public class Room extends AbstractAbsolutePositionningComponent implements IMapContainer {
 	
@@ -39,7 +40,7 @@ public class Room extends AbstractAbsolutePositionningComponent implements IMapC
 	@Override
 	public void paint(Graphics graphic, MapPanel panel, double ratio, Point topLeft) {
 		Rectangle b = getTargetBounds(ratio, topLeft);
-		graphic.setColor(background == null ? panel.getBackground() : background);
+		graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
 		graphic.fillRect(b.x, b.y, b.width, b.height);
 		
 		graphic.setColor(borderColor == null ? panel.getForeground() : borderColor);
@@ -116,6 +117,8 @@ public class Room extends AbstractAbsolutePositionningComponent implements IMapC
 	
 	@Override
 	public void addComponent(IMapComponent component) {
+		if (component == null)
+			throw new NullPointerException();
 		this.components.add(component);
 		component.setParent(this);
 	}
@@ -123,6 +126,27 @@ public class Room extends AbstractAbsolutePositionningComponent implements IMapC
 	@Override
 	public List<IMapComponent> getComponents() {
 		return this.components;
+	}
+
+	@Override
+	public IAbsolutePositionningComponent getMapComponentAt(int x, int y) {
+		// Fetch components
+		return getLastComponent(IAbsolutePositionningComponent.class, (c) -> 
+			c.isInside(x, y)
+		);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends IAbsolutePositionningComponent> T getLastComponent(Class<T> type, Filter<T> filter) {
+		T object = null;
+		for (IMapComponent component : new ArrayList<IMapComponent>(components)) {
+			if (type.isInstance(component)) {
+				if (filter.accept((T) component)) {
+					object = (T) component;
+				}
+			}
+		}
+		return object;
 	}
 
 }

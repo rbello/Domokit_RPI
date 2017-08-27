@@ -15,7 +15,7 @@ public abstract class AbstractAbsolutePositionningComponent
 	
 	protected Rectangle bounds;
 	protected String identifier;
-	protected Color background;
+	protected Color backgroundColor;
 	protected IMapComponent parent;
 	
 	public AbstractAbsolutePositionningComponent() {
@@ -56,6 +56,11 @@ public abstract class AbstractAbsolutePositionningComponent
 	}
 	
 	@Override
+	public boolean isInside(int x, int y) {
+		return isInside(x, y, 1, new Point(0, 0));
+	}
+	
+	@Override
 	public boolean isInside(int x, int y, double ratio, Point topLeft) {
 		int x1 = (int) (bounds.x * ratio + topLeft.x);
 		int y1 = (int) (bounds.y * ratio + topLeft.y);
@@ -71,14 +76,15 @@ public abstract class AbstractAbsolutePositionningComponent
 	
 	@Override
 	public void setBackground(Color color) {
-		this.background = color;
+		this.backgroundColor = color;
 	}
 	
 	@Override
 	public Color getBackground() {
-		return background;
+		return backgroundColor;
 	}
 	
+	@Override
 	public Rectangle getTargetBounds(double ratio, Point topLeft) {
 		int x = (int) (bounds.x * ratio + topLeft.x);
 		int y = (int) (bounds.y * ratio + topLeft.y);

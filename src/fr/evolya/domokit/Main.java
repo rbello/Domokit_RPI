@@ -10,13 +10,13 @@ import fr.evolya.domokit.gui.debug.PanelStatusDebugView;
 import fr.evolya.domokit.gui.debug.Rf433DebugView;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
-import fr.evolya.javatoolkit.gui.swing.SwingApp;
+import fr.evolya.javatoolkit.gui.swing.DarkSwingApp;
 
 public class Main {
 
 	public static void main(String[] args) {
 
-		App app = new SwingApp(args);
+		App app = new DarkSwingApp(args);
 		
 		app.get(AppConfiguration.class)
 			.setProperty("App.Name", "HouseStation")

@@ -1,6 +1,7 @@
 package fr.evolya.domokit.gui.map.iface;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -40,5 +41,7 @@ public interface IMap {
 	public static interface DeviceFeatureConsumer<T extends IFeature> {
 		void accept(Device device, T feature);
 	}
+
+	Rectangle getComponentBounds(IAbsolutePositionningComponent component);
 	
 }

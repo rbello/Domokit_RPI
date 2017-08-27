@@ -27,7 +27,7 @@ public class Map implements IMap {
 	private MapPanel panel;
 
 	private List<MapArea> areas;
-	
+
 	public Map() {
 		this.components = new ArrayList<>();
 		this.areas = new ArrayList<>();
@@ -62,6 +62,7 @@ public class Map implements IMap {
 		for (IMapComponent component : components) {
 			component.paint(graphic, panel, ratio, topLeft);
 		}
+		
 	}
 
 	private Point getTopLeftPoint(MapPanel panel, double ratio) {
@@ -193,6 +194,13 @@ public class Map implements IMap {
 				consumer.accept(device, (T) feature);
 			}
 		}
+	}
+
+	@Override
+	public Rectangle getComponentBounds(IAbsolutePositionningComponent component) {
+		double ratio = getRatio(panel);
+		Point topLeft = getTopLeftPoint(panel, ratio);
+		return component.getTargetBounds(ratio, topLeft);
 	}
 
 }

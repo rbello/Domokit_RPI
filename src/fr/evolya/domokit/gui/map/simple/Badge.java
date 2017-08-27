@@ -17,6 +17,7 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 
 	protected Icons icon;
 	protected Color borderColor;
+	protected boolean enabled = true;
 	
 	public Badge() {
 		super();
@@ -24,13 +25,21 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 	}
 	
 	public Badge(int x, int y, String componentLabel) {
-		super(x, y, 1, 1, componentLabel);
+		super(x, y, 20, 20, componentLabel);
 		setBackground(Color.GRAY);
 	}
 
 	@Override
 	public void addBorderElement(IBorderPositionningComponent component) {
 		throw new NotImplementedException();
+	}
+	
+	public void setEnabled(boolean enabled) {
+		this.enabled  = enabled;
+	}
+	
+	public boolean isEnabled() {
+		return this.enabled;
 	}
 
 	@Override
@@ -42,8 +51,8 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 			Rectangle bounds = getParent().getBounds();
 			int x = (int) (bounds.x * ratio + topLeft.x) + this.bounds.x;
 			int y = (int) (bounds.y * ratio + topLeft.y) + this.bounds.y;
-			int w = (int) (this.bounds.width * ratio);
-			int h = (int) (this.bounds.height * ratio);
+			int w = (int) 20;
+			int h = (int) 20;
 			b = new Rectangle(x, y, w, h);
 		}
 		
@@ -53,11 +62,13 @@ public class Badge extends AbstractAbsolutePositionningComponent {
 		}
 		
 		// Border
-		graphic.setColor(borderColor == null ? panel.getForeground() : borderColor);
+		if (!enabled) graphic.setColor(panel.getForeground());
+		else graphic.setColor(borderColor == null ? panel.getForeground() : borderColor);
 		graphic.fillOval(b.x - 1, b.y - 1, b.width + 4, b.height + 4);
 		
 		// Background
-		graphic.setColor(background == null ? panel.getBackground() : background);
+		if (!enabled) graphic.setColor(Color.GRAY);
+		else graphic.setColor(backgroundColor == null ? panel.getBackground() : backgroundColor);
 		graphic.fillOval(b.x, b.y, b.width + 2, b.height + 2);
 		
 		// Icon
