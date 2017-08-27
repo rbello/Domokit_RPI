@@ -1,6 +1,7 @@
 package fr.evolya.domokit.ctrl;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Point;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.map.MapPanel.MapListener;
 import fr.evolya.domokit.gui.map.features.Rf433SecurityTrigger;
 import fr.evolya.domokit.gui.map.iface.IAbsolutePositionningComponent;
+import fr.evolya.domokit.gui.map.iface.IMap;
 import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.gui.map.simple.Room;
 import fr.evolya.javatoolkit.app.App;
@@ -54,7 +56,10 @@ public class ModuleMap {
 			}
 		});
 		
-		app.get(View480x320.class).cardMap.setMap(Configuration.getInstance().getMap());
+		IMap map = Configuration.getInstance().getMap();
+		app.get(View480x320.class).cardMap
+			.setMap(map)
+			.setEnableDisplayMouseXY(app.getDebugLevel() > 0);
 		
 	}
 	
@@ -68,9 +73,19 @@ public class ModuleMap {
 	@BindOnEvent(OnSecurityLevelChanged.class)
 	@GuiTask
 	public void resetMapColorsWhenSecurityLevelChanged(int level, String label) {
+
+		// Reset devices TODO Faire que getComponents() renvoie les composants nested
 		view.cardMap.getMap()
-			.getComponents(Device.class, (room) -> room.hasFeature(Rf433SecurityTrigger.class))
-			.forEach((device) -> device.setState(Device.State.IDLE));
+			.getComponents(Device.class, (device) -> true)
+			.forEach((device) -> {
+				if (device.hasFeature(Rf433SecurityTrigger.class)) {
+					device.setState(Device.State.IDLE);
+				}
+				else {
+					device.setEnabled(level == 0);
+					System.out.println("Set enabled " + device + " " + level);
+				}
+			});
 		
 		// Reset rooms
 		view.cardMap.getMap().getComponents(Room.class, (room) -> true)
@@ -80,10 +95,9 @@ public class ModuleMap {
 			});
 	}
 	
-	// TODO Déplacer dansmodule security ?
 	@BindOnEvent(OnSecurityLevelChanged.class)
-	@GuiTask
-	public void onSecurityLevelChanged(int level, String label) {
+	public void highlightSecuredRooms(int level, String label) {
+		if (level == 0) return;
 		// Highlight rooms
 		List<Room> target = null;
 		Color color = null;
@@ -98,9 +112,12 @@ public class ModuleMap {
 		}
 		if (target != null) {
 			final Color colorCopy = color;
-			target.forEach((room) -> room.setBorderColor(colorCopy));
+			final List<Room> targetCopy = target;
+			EventQueue.invokeLater(() -> {
+				targetCopy.forEach((room) -> room.setBorderColor(colorCopy));
+				view.cardMap.repaint();
+			});
 		}
-		view.cardMap.repaint();
 	}
 	
 }
