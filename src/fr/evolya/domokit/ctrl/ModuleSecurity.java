@@ -4,17 +4,23 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import fr.evolya.domokit.config.Configuration;
 import fr.evolya.domokit.ctrl.ModuleSecurity.OnSecurityAlertCleared;
 import fr.evolya.domokit.ctrl.ModuleSecurity.OnSecurityAlertRaised;
 import fr.evolya.domokit.ctrl.ModuleSecurity.OnSecurityLevelChanged;
 import fr.evolya.domokit.gui.View480x320;
+import fr.evolya.domokit.gui.map.iface.IFeature;
+import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.gui.map.simple.Room;
 import fr.evolya.domokit.gui.panels.PanelLogs;
 import fr.evolya.javatoolkit.app.App;
+import fr.evolya.javatoolkit.app.config.AppConfiguration;
 import fr.evolya.javatoolkit.app.event.GuiIsReady;
 import fr.evolya.javatoolkit.code.Logs;
+import fr.evolya.javatoolkit.code.annotations.AsynchOperation;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
@@ -57,6 +63,9 @@ public class ModuleSecurity {
 	@Inject
 	public View480x320 view;
 	
+	@Inject
+	public AppConfiguration conf;
+	
 	private boolean locking = false;
 
 	private int securityLevel;
@@ -64,7 +73,7 @@ public class ModuleSecurity {
 	private String alertLabel;
 	private String warningMsg;
 
-	private int securityTriggers = 0;
+	private int securityThreats = 0;
 	
 	private Color alertHighlightColor = new Color(255, 100, 100);
 	
@@ -80,7 +89,11 @@ public class ModuleSecurity {
 		app.notify(OnSecurityLevelChanged.class, level, label);
 		updateStatusPanel();
 		if (level == 0) {
-			securityTriggers  = 0;
+			securityThreats  = 0;
+			clearWarning();
+			clearAlert("Intrusion !");
+			clearAlert("!!! Alarm !!!");
+			Timer.stop("delayToEnterPassword");
 		}
 	}
 	
@@ -171,8 +184,12 @@ public class ModuleSecurity {
 	public void clearAlerts() {
 
 		// Events
-		if (alertLabel != null) app.notify(OnSecurityAlertCleared.class, alertLabel);
+		if (alertLabel != null) {
+			app.notify(OnSecurityAlertCleared.class, alertLabel);
+			LOGGER.log(Logs.INFO, "ALERT CLEARED: " + alertLabel);
+		}
 		alerts.stream().forEach((alert) -> {
+			LOGGER.log(Logs.INFO, "ALERT CLEARED: " + alert);
 			app.notify(OnSecurityAlertCleared.class, alert);
 		});
 		// Clear
@@ -257,7 +274,7 @@ public class ModuleSecurity {
 	@GuiTask
 	public void unlock() {
 		if (!isLocked()) return;
-		String password = "12345";
+		Map<String, String> passwords = Configuration.getInstance().getPasswords();
 		view.showPinCard((code) -> {
 			// CANCEL
 			if (code == null) {
@@ -265,12 +282,11 @@ public class ModuleSecurity {
         		view.showDefaultCard();
         	}
 			// GOOD PASSWORD
-			else if (code.equals(password)) {
-				clearWarning();
-				clearAlert("Intrusion detected!!");
-				clearAlert("!!! Alarm !!!");
+			else if (passwords.containsKey(code)) {
+				String log = "Successfull unlock with code '" + passwords.get(code) + "'";
+				LOGGER.log(Logs.INFO, log);
+				view.appendLog(log, PanelLogs.SUCCESS);
 				setSecurityLevel(0, "Unlocked");
-				Timer.stop("delayToEnterPassword");
 			}
 			// BAD PASSWORD
 			else {
@@ -304,25 +320,30 @@ public class ModuleSecurity {
 					view.buttonMap.setEnabled(false);
 					view.buttonLogs.setEnabled(false);
 					view.buttonSettings.setEnabled(false);
+					view.buttonNetwork.setEnabled(false);
 					locking = true;
 					showWarning("Locking building, please leave now");
-					view.showCountdownCard("<html>Enabling secure mode, <b>please close the building before leaving</b>...</html>", 7, (cancel) -> {
-						locking = false;
-						if ("Locking building, please leave now".equals(getWarning())) {
-							clearWarning();
-						}
-						if (cancel) {
-							LOGGER.log(Logs.INFO, "Cancel secure mode");
-							view.buttonMap.setEnabled(true);
-							view.buttonLogs.setEnabled(true);
-							view.buttonSettings.setEnabled(true);
-							view.showDefaultCard();
-						}
-						else {
-							LOGGER.log(Logs.INFO, "Secure mode enabled!");
-							setSecurityLevel(2, "Locked");
-						}
-					});
+					view.showCountdownCard(
+							"<html>Enabling secure mode, <b>please close the building before leaving</b>...</html>",
+							(int) app.get(AppConfiguration.class).getPropertyInt("Security.DelayToLeaveBeforeLock"),
+							(cancel) -> {
+								locking = false;
+								if ("Locking building, please leave now".equals(getWarning())) {
+									clearWarning();
+								}
+								if (cancel) {
+									LOGGER.log(Logs.INFO, "Cancel secure mode");
+									view.buttonMap.setEnabled(true);
+									view.buttonLogs.setEnabled(true);
+									view.buttonSettings.setEnabled(true);
+									view.buttonNetwork.setEnabled(true);
+									view.showDefaultCard();
+								}
+								else {
+									LOGGER.log(Logs.INFO, "Secure mode enabled!");
+									setSecurityLevel(2, "Locked");
+								}
+							});
 				}
 		);
 		
@@ -331,53 +352,7 @@ public class ModuleSecurity {
 	private boolean isLocking() {
 		return locking;
 	}
-	
-//	/**
-//	 * Displays received RF433 commands in logs card.
-//	 */
-//	@BindOnEvent(OnRf433CommandReceived.class)
-//	@GuiTask
-//	public void onRf433CommandReceived(Device device, Rf433Emitter command, int code, Rf433Controller ctrl) {
-//
-//		// If unlocked
-//		if (!isLocked()) {
-//			if (!"TRIGGER".equals(command.getCommandName())) return;
-//			device.setState(Device.State.INTERMEDIATE);
-//			view.cardMap.repaint();
-//			Timer.startCountdown("resetDevice" + device.hashCode(), 20, (remaining) -> {
-//				if (remaining == 0) {
-//					device.setState(Device.State.IDLE);
-//					EventQueue.invokeLater(() -> view.cardMap.repaint());
-//				}
-//			});
-//			return;
-//		}
-//		
-//		int count = 1;
-////		int count = device.getFirstFeature(Rf433SecurityTrigger.class)
-////				.addSuspiciousTrigger();
-//		LOGGER.log(Logs.WARNING, "Suspicious trigger on device '" + device + "' (command " + commandName + ") -> " + count);
-//		EventQueue.invokeLater(() -> {
-//			if (count >= 3) {
-//				device.setState(Device.State.ALERT);
-//				showAlert("Intrusion detected!!");
-//				if (Timer.isCountdown("delayToEnterPassword")) return;
-//				Timer.startCountdown("delayToEnterPassword", 20, (remaining) -> {
-//					EventQueue.invokeLater(() -> 
-//						showWarning("Enter the code to unlock : " + remaining + " seconds remaining"));
-//					if (remaining == 0) {
-//						showAlert("!!! Alarm !!!");
-//						showWarning("Police was called !");
-//					}
-//				});
-//			}
-//			else {
-//				device.setState(Device.State.INTERMEDIATE);
-//			}
-//			view.cardMap.repaint();
-//		});
-//	}
-//	
+
 	@BindOnEvent(ArduinoEvents.OnDisconnected.class)
 	@GuiTask
 	public void arduinoDisconnected() {
@@ -407,6 +382,40 @@ public class ModuleSecurity {
 	@BindOnEvent(OnSecurityAlertCleared.class)
 	public void onSecurityAlertCleared(String alert) {
 		view.appendLog("Alert cleared: " + alert, PanelLogs.SUCCESS);
+	}
+
+	@AsynchOperation
+	public void notifySecurityThreat(Device device, Room room, IFeature emitter) {
+		new Thread(() -> {
+			String log = "Warning: suspicious activity in room " + 
+				room.getIdentifier() + " (sensor " + device.getClass().getSimpleName()
+				+ " " + device.getIdentifier() + ")";
+			view.appendLog(log, PanelLogs.WARNING);
+			LOGGER.log(Logs.INFO, log);
+			securityThreats++;
+			if (securityThreats == conf.getPropertyInt("Security.ThreatsThresholdForIntrusion")) {
+				alert("Intrusion !");
+				if (Timer.isActive("delayToEnterPassword")) return;
+				Timer.startCountdown(
+						"delayToEnterPassword",
+						(int) conf.getPropertyInt("Security.DelayToEnterCodeBeforeAlarm"),
+						(remaining) -> {
+					if (remaining == 0) {
+						showWarning("Police was called !");
+						alert("!!! Alarm !!!");
+						EventQueue.invokeLater(() -> {
+							view.cardMap.getMap()
+								.getComponents(Room.class, (r) -> true)
+								.forEach((r) -> r.setBorderColor(Color.RED));
+							view.cardMap.repaint();
+						});
+					}
+					else EventQueue.invokeLater(() -> 
+						showWarning("Enter the code to unlock : " + remaining 
+								+ " seconds remaining"));
+				});
+			}
+		}).start();
 	}
 	
 }
