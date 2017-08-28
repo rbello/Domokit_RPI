@@ -64,6 +64,7 @@ $RECYCLE.BIN/
 
 dist/*
 bin/*
+logs/*
 
 MANIFEST.MF
 

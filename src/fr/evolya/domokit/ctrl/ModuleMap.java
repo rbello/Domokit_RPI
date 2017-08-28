@@ -93,11 +93,14 @@ public class ModuleMap {
 				room.setBorderColor(null);
 				room.setBackground(null);
 			});
+		
+		view.cardMap.repaint();
+		
+		if (level > 0)
+			highlightSecuredRooms(level);
 	}
 	
-	@BindOnEvent(OnSecurityLevelChanged.class)
-	public void highlightSecuredRooms(int level, String label) {
-		if (level == 0) return;
+	public void highlightSecuredRooms(int level) {
 		// Highlight rooms
 		List<Room> target = null;
 		Color color = null;

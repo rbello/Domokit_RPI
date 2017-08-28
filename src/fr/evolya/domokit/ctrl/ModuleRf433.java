@@ -51,8 +51,10 @@ public class ModuleRf433 {
 	public void onRf433CodeReceived(int code) {
 		Rf433Emitter emitter = searchRf433Emitter(code);
 		if (emitter == null) return;
-		// RF code was sent by this device
-		app.notify(OnRf433CommandReceived.class, emitter.getDevice(), emitter, code, this);
+		if (emitter.accept(code)) {
+			// RF code was sent by this device
+			app.notify(OnRf433CommandReceived.class, emitter.getDevice(), emitter, code, this);
+		}
 	}
 	
 	public Rf433Emitter searchRf433Emitter(int code) {
@@ -110,5 +112,5 @@ public class ModuleRf433 {
 	public void printLogOnRf433CommandReceived(Device device, Rf433Emitter command, int code, ModuleRf433 ctrl) {
 		view.appendLog("[RF433] Rcvd: " + device + " -> " + command);
 	};
-
+	
 }

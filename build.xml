@@ -5,6 +5,7 @@
 	<property name="lib.dir" value="./lib/" />
 	<property name="bin.dir" value="./bin/" />
 	<property name="dist.dir" value="./dist/" />
+	<property name="logs.dir" value="./logs/" />
 	<property name="dist.file" value="${dist.dir}/HouseStation.jar" />
 	
 	<!-- First, I create my classpath (build.classpath) from all the jar files in my lib directory -->
@@ -17,6 +18,8 @@
 	<target name="clean">
 		<delete dir="${dist.dir}" />
 		<mkdir dir="${dist.dir}" />
+		<delete dir="${logs.dir}" />
+		<mkdir dir="${logs.dir}" />
 	</target>
 	
 	<target name="compile">
@@ -58,9 +61,10 @@
 		    	<include name="*.sh"/>
 		    </fileset>
 		  </copy>
-		  <mkdir dir="${dist.dir}/config" />
-		  <copyfile src="./config/map.xml" dest="${dist.dir}/config/map.xml" />
-		  <zip destfile="${dist.dir}/dist.zip" basedir="${dist.dir}" />
+		<mkdir dir="${dist.dir}/config" />
+		<mkdir dir="${dist.dir}/logs" />
+		<copyfile src="./config/map.xml" dest="${dist.dir}/config/map.xml" />
+		<zip destfile="${dist.dir}/dist.zip" basedir="${dist.dir}" />
 	</target>
 	
 </project>

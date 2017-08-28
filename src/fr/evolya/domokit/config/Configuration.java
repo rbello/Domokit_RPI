@@ -1,70 +1,64 @@
 package fr.evolya.domokit.config;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.evolya.domokit.gui.map.iface.IMap;
+import fr.evolya.javatoolkit.app.App;
+import fr.evolya.javatoolkit.code.Logs;
 import fr.evolya.javatoolkit.xmlconfig.XmlConfig;
 
 public class Configuration {
 
-	private IMap map;
 	private static Configuration INSTANCE;
 
+	private IMap map;
+	private Map<String, String> passwords;
+
 	public Configuration(XmlConfig cfg) {
-		INSTANCE = this;
+		// Map
+		if (!cfg.hasBean("map")) {
+			throw new NullPointerException("Missing 'map' bean defined in config file");
+		}
 		this.map = cfg.getBean("map", IMap.class);
-		if (this.map == null)
-			throw new NullPointerException("No 'map' bean defined in config file");
+		
+		// Passwords
+		if (!cfg.hasBean("passwords")) {
+			throw new NullPointerException("Missing 'passwords' bean defined in config file");
+		}
+		HashMap<?, ?> passwords = cfg.getBean("passwords", HashMap.class);
+		this.passwords = new HashMap<>();
+		for (Object key : passwords.keySet()) {
+			Object value = passwords.get(key);
+			if (!(key instanceof String) || !(value instanceof String)) {
+				throw new IllegalArgumentException("All keys and values of 'passwords' bean must have type string");
+			}
+			this.passwords.put((String)key, (String)value);
+		}
 	}
 
 	public static synchronized Configuration getInstance() {
-		if (INSTANCE != null) return INSTANCE;
-		File file = new File("./config/map.xml");
-		XmlConfig cfg = new XmlConfig();
+		if (INSTANCE != null) {
+			return INSTANCE;
+		}
 		try {
-			cfg.addConfiguration(file);
+			// TODO Déplacer le chemin dans le main la config
+			INSTANCE = new Configuration(new XmlConfig(new File("./config/map.xml")));
+			return INSTANCE;
 		}
 		catch (Exception e) {
+			App.LOGGER.log(Logs.ERROR, "Unable to load XML configuration file", e);
 			throw new RuntimeException(e);
 		}
-		return new Configuration(cfg);
 	}
 
 	public IMap getMap() {
-//		IMap map = new Map();
-//		
-//		map.addComponent(new Room(0, 0, 4, 4, "Salle de bain"));
-//		map.addComponent(new Room(4, 0, 6, 4, "Garage"));
-//		map.addComponent(new Room(10, 0, 4, 4, "Chambre 1"));
-//		map.addComponent(new Room(14, 0, 5, 10, "Salon"));
-//		map.addComponent(new Room(0, 4, 2, 2, "WC"));
-//		map.addComponent(new Room(2, 4, 12, 2, "Couloir"));
-//		map.addComponent(new Room(0, 6, 4, 4, "Chambre 3"));
-//		map.addComponent(new Room(4, 6, 5, 4, "Chambre 2"));
-//		map.addComponent(new Room(9, 6, 5, 4, "Cuisine"));
-//		
-//		map.getComponentByName("Couloir", Room.class)
-//			.setBorderRightWidth(0)
-//			.addBorderElement(new Door())
-//				.setOrientation(Orientation.RIGHT)
-//				.setPosition(Position.CENTER);
-//		
-//		new Tile(2, 2, "Name")
-//			.setBackground(Color.RED)
-//			.setIcon(Icons.HOME)
-//			.addTo(map);
-//		
-//		new Tile(4, 4, "Name")
-//			.setBackground(Color.BLUE)
-//			.setIcon(Icons.WIFI)
-//			.addTo(map);
-//		
-//		new Tile(6, 6, "Name")
-//			.setBackground(Color.ORANGE)
-//			.setIcon(Icons.CONNECTIVITY)
-//			.addTo(map);
-		
 		return map;
+	}
+	
+	public Map<String, String> getPasswords() {
+		return passwords;
 	}
 
 }

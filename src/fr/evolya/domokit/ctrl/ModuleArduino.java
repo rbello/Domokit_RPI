@@ -7,7 +7,9 @@ import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
+import fr.evolya.javatoolkit.app.event.ApplicationStopped;
 import fr.evolya.javatoolkit.app.event.ApplicationStopping;
+import fr.evolya.javatoolkit.code.Logs;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
@@ -85,7 +87,7 @@ public class ModuleArduino {
 	}
 	
 	@BindOnEvent(ApplicationStarted.class)
-	public void onApplicationStarted(App app) {
+	public void startArduinoOnRuntime(App app) {
 		arduino.start();
 	}
 	
