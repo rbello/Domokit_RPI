@@ -282,10 +282,15 @@
 							<bean class="${features}.Rf433SecurityTrigger" />
 							<bean class="${features}.Rf433Emitter">
 								<attr name="rfCode">538550364</attr>
-								<attr name="commandName">TRIGGER</attr>
+								<attr name="commandName">ON</attr>
 							</bean>
+							<bean class="${features}.Rf433Emitter">
+								<attr name="rfCode">672768092</attr>
+								<attr name="commandName">OFF</attr>
+							</bean>
+							<bean class="${features}.Rf433OnOffStates" />
 						</list>
-					</bean>				
+					</bean>
 					<bean class="${package}.Device">
 						<attr name="identifier">Porte entrée</attr>
 						<attr name="x">73</attr>

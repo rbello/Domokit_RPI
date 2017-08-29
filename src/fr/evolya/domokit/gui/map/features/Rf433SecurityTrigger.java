@@ -31,6 +31,10 @@ public class Rf433SecurityTrigger extends AbstractFeature {
 			.onlyOn((device) -> device == getDevice())
 			.execute((device, command, code, ctrl) -> {
 				
+				if (!"ON".equals(command.commandName) && !"TRIGGER".equals(command.commandName)) {
+					return;
+				}
+				
 				int duration = (int) app.get(AppConfiguration.class)
 						.getPropertyInt("Map.DeviceHighlightDelay");
 
@@ -45,6 +49,8 @@ public class Rf433SecurityTrigger extends AbstractFeature {
 				
 				device.setState(Device.State.INTERMEDIATE);
 				EventQueue.invokeLater(() -> view.cardMap.repaint());
+				
+				if (!"TRIGGER".equals(command.commandName)) return;
 				
 				Timer.startCountdown("resetDevice" + device.hashCode(), duration, (remaining) -> {
 					if (remaining == 0) {

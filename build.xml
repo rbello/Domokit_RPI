@@ -18,8 +18,8 @@
 	<target name="clean">
 		<delete dir="${dist.dir}" />
 		<mkdir dir="${dist.dir}" />
-		<delete dir="${logs.dir}" />
-		<mkdir dir="${logs.dir}" />
+<!--		<delete dir="${logs.dir}" />
+		<mkdir dir="${logs.dir}" />-->
 	</target>
 	
 	<target name="compile">

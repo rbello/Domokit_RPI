@@ -22,7 +22,7 @@ public class Rf433OnOffStates extends AbstractFeature {
 		app
 			.when(OnRf433CommandReceived.class)
 			.onlyOn((device) -> device == getDevice())
-			.execute((device, command, code, ctrl) -> {
+			.executeOnGui((device, command, code, ctrl) -> {
 				if ("ON".equals(command.getCommandName())) {
 					device.setState(Device.State.ON);
 				}
