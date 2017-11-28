@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.9.6
 Created-By: www.evolya.fr
 Implementation-Version: 1
-Built-Date: August 19 2017
+Built-Date: August 28 2017
 Main-Class: fr.evolya.domokit.Main
-Class-Path: RXTXcomm.jar java-toolkit-4.0.0.jar substance-lite-feel.ja
+Class-Path: RXTXcomm.jar java-toolkit-4.1.0.jar substance-lite-feel.ja
  r substance-swingx.jar swingx.jar
 
