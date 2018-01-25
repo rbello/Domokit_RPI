@@ -21,6 +21,7 @@ import fr.evolya.domokit.gui.panels.PanelCountDown;
 import fr.evolya.domokit.gui.panels.PanelLogs;
 import fr.evolya.domokit.gui.panels.PanelNetwork;
 import fr.evolya.domokit.gui.panels.PanelPin;
+import fr.evolya.domokit.gui.panels.PanelPrinter;
 import fr.evolya.domokit.gui.panels.PanelSettings;
 import fr.evolya.domokit.gui.panels.PanelStatus;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
@@ -36,7 +37,7 @@ public class View480x320 extends JFrame {
 
 	public final JButton buttonLock;
 	public final JButton buttonSettings;
-	public final JButton buttonLogs;
+	public final JButton buttonPrinter;
 	public final JButton buttonMap;
 	public final JButton buttonNetwork;
 
@@ -47,6 +48,7 @@ public class View480x320 extends JFrame {
 	public final PanelConfirmDialog cardConfirm;
 	public final PanelCountDown cardCountdown;
 	public final PanelNetwork cardNetwork;
+	public final PanelPrinter cardPrinter;
 	
 	@GuiTask
 	public View480x320() {
@@ -75,11 +77,12 @@ public class View480x320 extends JFrame {
 			showCard("Settings");
 		});
 		
-		buttonLogs = new JButton();
-		buttonLogs.setToolTipText("Logs");
-		buttonLogs.setIcon(Icons.MESSAGE.getIcon(Size.SIZE24X24));
-		buttonLogs.addActionListener(e -> {
-			showCard("Logs");
+		buttonPrinter = new JButton();
+		buttonPrinter.setToolTipText("Printer");
+		buttonPrinter.setIcon(Icons.MESSAGE.getIcon(Size.SIZE24X24));
+		buttonPrinter.addActionListener(e -> {
+			// TODO showCard("Logs");
+			showCard("Printer");
 		});
 		
 		buttonMap = new JButton();
@@ -105,7 +108,7 @@ public class View480x320 extends JFrame {
 						.addComponent(buttonSettings, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonLock, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonMap, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-						.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+						.addComponent(buttonPrinter, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonNetwork, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
@@ -117,7 +120,7 @@ public class View480x320 extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(buttonMap, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+					.addComponent(buttonPrinter, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(buttonNetwork, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
@@ -137,6 +140,7 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
 		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
 		panelMain.add(cardNetwork = new PanelNetwork(), "Network");
+		panelMain.add(cardPrinter = new PanelPrinter(), "Printer");
 		
 		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);

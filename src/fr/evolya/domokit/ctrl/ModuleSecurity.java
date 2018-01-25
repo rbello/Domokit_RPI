@@ -318,7 +318,7 @@ public class ModuleSecurity {
 					// Lock mode
 					LOGGER.log(Logs.INFO, "Enabling secure mode: locked");
 					view.buttonMap.setEnabled(false);
-					view.buttonLogs.setEnabled(false);
+					view.buttonPrinter.setEnabled(false);
 					view.buttonSettings.setEnabled(false);
 					view.buttonNetwork.setEnabled(false);
 					locking = true;
@@ -334,7 +334,7 @@ public class ModuleSecurity {
 								if (cancel) {
 									LOGGER.log(Logs.INFO, "Cancel secure mode");
 									view.buttonMap.setEnabled(true);
-									view.buttonLogs.setEnabled(true);
+									view.buttonPrinter.setEnabled(true);
 									view.buttonSettings.setEnabled(true);
 									view.buttonNetwork.setEnabled(true);
 									view.showDefaultCard();

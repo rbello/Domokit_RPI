@@ -74,7 +74,7 @@ public class ViewController {
 		// Buttons
 		boolean enabled = (level == 0);
 		view.buttonMap.setEnabled(enabled);
-		view.buttonLogs.setEnabled(enabled);
+		view.buttonPrinter.setEnabled(enabled);
 		view.buttonNetwork.setEnabled(enabled);
 		view.buttonSettings.setEnabled(enabled);
 		view.setButtonLockIcon(!enabled);
