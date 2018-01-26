@@ -19,6 +19,7 @@ public enum Icons {
 	LOOK			("look", "045", "023"),
 	WINDOW			("text", "004", "048"),
 	LIGHT			("sun", "014", "039"),
+	TEXT			("text", "004", "048"),
 	SETTINGS		("settings", "005", "047");
 	
 	private String name;
