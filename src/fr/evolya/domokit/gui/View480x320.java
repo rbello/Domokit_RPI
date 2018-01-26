@@ -18,6 +18,7 @@ import fr.evolya.domokit.gui.icons.Icons.Size;
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.panels.PanelConfirmDialog;
 import fr.evolya.domokit.gui.panels.PanelCountDown;
+import fr.evolya.domokit.gui.panels.PanelKeyboard;
 import fr.evolya.domokit.gui.panels.PanelLogs;
 import fr.evolya.domokit.gui.panels.PanelNetwork;
 import fr.evolya.domokit.gui.panels.PanelPin;
@@ -49,6 +50,7 @@ public class View480x320 extends JFrame {
 	public final PanelCountDown cardCountdown;
 	public final PanelNetwork cardNetwork;
 	public final PanelPrinter cardPrinter;
+	public final PanelKeyboard cardKeyboard;
 	
 	@GuiTask
 	public View480x320() {
@@ -140,6 +142,7 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
 		panelMain.add(cardNetwork = new PanelNetwork(), "Network");
 		panelMain.add(cardPrinter = new PanelPrinter(), "Printer");
+		panelMain.add(cardKeyboard = new PanelKeyboard(), "Keyboard");
 		
 		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);
@@ -158,6 +161,18 @@ public class View480x320 extends JFrame {
             cardPin.handler = handler;
             showCard("Pin");
         }
+	}
+	
+	public void showKeyboardCard(String layout, Action<String> handler) {
+        if (!isCurrentCard(cardPin)) {
+        	cardKeyboard.reset(layout);
+        	cardKeyboard.handler = handler;
+            showCard("Keyboard");
+        }
+	}
+	
+	public void showKeyboardCard(Action<String> handler) {
+        showKeyboardCard("default", handler);
 	}
 	
 	public boolean isCurrentCard(JPanel panel) {
