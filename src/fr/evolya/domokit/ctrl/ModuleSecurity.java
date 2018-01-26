@@ -318,9 +318,9 @@ public class ModuleSecurity {
 					// Lock mode
 					LOGGER.log(Logs.INFO, "Enabling secure mode: locked");
 					view.buttonMap.setEnabled(false);
-					view.buttonPrinter.setEnabled(false);
+					view.buttonLogs.setEnabled(false);
 					view.buttonSettings.setEnabled(false);
-					view.buttonNetwork.setEnabled(false);
+					view.buttonLogs.setEnabled(false);
 					locking = true;
 					showWarning("Locking building, please leave now");
 					view.showCountdownCard(
@@ -334,9 +334,9 @@ public class ModuleSecurity {
 								if (cancel) {
 									LOGGER.log(Logs.INFO, "Cancel secure mode");
 									view.buttonMap.setEnabled(true);
-									view.buttonPrinter.setEnabled(true);
+									view.buttonLogs.setEnabled(true);
 									view.buttonSettings.setEnabled(true);
-									view.buttonNetwork.setEnabled(true);
+									view.buttonLogs.setEnabled(true);
 									view.showDefaultCard();
 								}
 								else {

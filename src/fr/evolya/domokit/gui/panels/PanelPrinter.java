@@ -6,10 +6,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
+import java.util.Random;
+import java.util.logging.Logger;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.imageio.ImageIO;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -24,23 +46,23 @@ import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import fr.evolya.javatoolkit.code.KeyValue;
+import fr.evolya.javatoolkit.code.Logs;
 import fr.evolya.javatoolkit.code.funcint.Callback;
 import fr.evolya.javatoolkit.iot.ImageScanner;
+import sun.net.www.content.image.jpeg;
 
 public class PanelPrinter extends JPanel {
+	
+	public static final Logger LOGGER = Logs.getLogger("Scanner");
 
 	private static final long serialVersionUID = 7514787488936339595L;
 
 	private KeyValue<String, String> scanner = null;
 
 	private JToggleButton buttonModeColor;
-
 	private JToggleButton buttonModeBW;
-
 	private JToggleButton buttonModeGray;
-
 	private JComboBox<String> resolutionComboBox;
-
 	private JComboBox<String> fileEncodingComboBox;
 
 	private String sharedFolder = "/home/shuttle/Bureau/tmpscan/";
@@ -58,10 +80,10 @@ public class PanelPrinter extends JPanel {
 							new Callback<KeyValue<String, String>, String>() {
 						public void onSuccess(KeyValue<String, String> result) {
 							scanner = result;
+							LOGGER.log(Logs.INFO, "Scanner found: " + result);
 						}
 						public void onFailure(String error) {
-							// TODO Auto-generated method stub
-							System.out.println("Error findFirstScanner(): " + error);
+							LOGGER.log(Logs.WARNING, "No scanner found (" + error + ")");
 						}
 					});
 				}
@@ -80,11 +102,15 @@ public class PanelPrinter extends JPanel {
 					String colorMode = ImageScanner.MODE_COLOR;
 					if (buttonModeGray.isSelected()) colorMode = ImageScanner.MODE_GRAYSCALE;
 					if (buttonModeBW.isSelected()) colorMode = ImageScanner.MODE_BW;
+					final String colorMode2 = colorMode;
 					int dpi = new Integer(("" + resolutionComboBox.getSelectedItem()).substring(0, 3));
-					String format = fileEncodingComboBox.getSelectedItem() + "";
+					String format = (fileEncodingComboBox.getSelectedItem() + "").toLowerCase();
 					String output = "shared-folder";
 					String path = sharedFolder + "Scan_" + sdf.format(new Date()) + "." + format.toLowerCase();
 
+					LOGGER.log(Logs.DEBUG, String.format("Run scan task (mode=%s; dpi=%s; format=%s; output=%s)",
+							colorMode, dpi, format, output));
+					
 					ImageScanner.scan(
 							new File(path), // output file
 							scanner.getKey(), // scanner id
@@ -93,10 +119,94 @@ public class PanelPrinter extends JPanel {
 							format, // file encoding format
 							// callback
 							new Callback<File, String>() {
-								public void onSuccess(File file) {
-									// TODO Auto-generated method stub
-									System.out.println("Write to " + output + ":" + file);
+								public void onSuccess(File outputFile) {
 									
+									File jpegFile = new File(outputFile.getAbsolutePath() + ".jpeg");
+									System.out.println("from " + outputFile + " (" + outputFile.length() + ")");
+									System.out.println("to   " + jpegFile);
+									
+									try {
+										try (InputStream is = new FileInputStream(outputFile)) {
+										    BufferedImage image = ImageIO.read(is);
+										    try (OutputStream os = new FileOutputStream(jpegFile)) {
+										        ImageIO.write(image, "jpg", os);
+										    } catch (Exception exp) {
+										        exp.printStackTrace();
+										    }
+										} catch (Exception exp) {
+										    exp.printStackTrace();
+										}
+									}
+									catch (Exception ex) {
+										System.err.println("Unable to convert TIFF to JPEG");
+										ex.printStackTrace();
+									}
+									
+									///- -----------------
+									
+									String to = "test@evolya.fr";
+									
+									LOGGER.log(Logs.DEBUG, String.format("Send scan file to: " + to));
+									
+									final String username = "scanner@evolya.fr";
+								    final String password = "";
+
+								    Properties props = new Properties();
+								    
+								    props.put("mail.smtp.auth", true);
+								    props.put("mail.smtp.ehlo", true);
+								    props.put("mail.smtp.ssl.enable", true);
+								    props.put("mail.smtp.starttls.enable", true);
+								    props.put("mail.smtp.host", "SSL0.OVH.NET");
+								    props.put("mail.smtp.port", "465");
+								    props.put("mail.smtp.connectiontimeout", "10000");
+								    
+								    Session session = Session.getInstance(props,
+								            new javax.mail.Authenticator() {
+								                protected PasswordAuthentication getPasswordAuthentication() {
+								                    return new PasswordAuthentication(username, password);
+								                }
+								            });
+								    
+								    if (LOGGER.isLoggable(Logs.DEBUG)) {
+								    	session.setDebug(true);
+								    }
+
+								    try {
+
+								        Message message = new MimeMessage(session);
+								        message.setFrom(new InternetAddress("contact@evolya.fr"));
+								        message.setRecipients(Message.RecipientType.TO,
+								                InternetAddress.parse(to));
+								        message.setSubject("Scan from " + scanner.getValue());
+								        message.setText("Please find attached file.\n\n"
+								        		+ "Date: " + sdf.format(new Date()) + "\n"
+								        		+ "Color mode: " + colorMode2 + "\n"
+								        		+ "Resolution: " + dpi + "dpi\n"
+								        		+ "Format: " + format + "\n"
+								        );
+
+								        MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+								        Multipart multipart = new MimeMultipart();
+
+								        messageBodyPart = new MimeBodyPart();
+								        String file = outputFile.getAbsolutePath();
+								        String fileName = "ScanImage-" + new Random().nextInt(99999);
+								        DataSource source = new FileDataSource(file);
+								        messageBodyPart.setDataHandler(new DataHandler(source));
+								        messageBodyPart.setFileName(fileName);
+								        multipart.addBodyPart(messageBodyPart);
+
+								        message.setContent(multipart);
+
+								        LOGGER.log(Logs.DEBUG, "Sending...");
+								        Transport.send(message);
+								        LOGGER.log(Logs.DEBUG, "Done!");
+
+								    } catch (MessagingException e) {
+								        e.printStackTrace();
+								    }
 									
 									
 									

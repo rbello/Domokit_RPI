@@ -37,9 +37,9 @@ public class View480x320 extends JFrame {
 
 	public final JButton buttonLock;
 	public final JButton buttonSettings;
-	public final JButton buttonPrinter;
+	public final JButton buttonLogs;
 	public final JButton buttonMap;
-	public final JButton buttonNetwork;
+	public final JButton buttonPrintScan;
 
 	public final MapPanel cardMap;
 	public final PanelSettings cardSettings;
@@ -77,12 +77,11 @@ public class View480x320 extends JFrame {
 			showCard("Settings");
 		});
 		
-		buttonPrinter = new JButton();
-		buttonPrinter.setToolTipText("Printer");
-		buttonPrinter.setIcon(Icons.MESSAGE.getIcon(Size.SIZE24X24));
-		buttonPrinter.addActionListener(e -> {
-			// TODO showCard("Logs");
-			showCard("Printer");
+		buttonLogs = new JButton();
+		buttonLogs.setToolTipText("Logs");
+		buttonLogs.setIcon(Icons.MESSAGE.getIcon(Size.SIZE24X24));
+		buttonLogs.addActionListener(e -> {
+			showCard("Logs");
 		});
 		
 		buttonMap = new JButton();
@@ -92,11 +91,11 @@ public class View480x320 extends JFrame {
 			showCard("Map");
 		});
 		
-		buttonNetwork = new JButton();
-		buttonNetwork.setToolTipText("Network");
-		buttonNetwork.setIcon(Icons.CONNECTIVITY.getIcon(Size.SIZE24X24));
-		buttonNetwork.addActionListener(e -> {
-			showCard("Network");
+		buttonPrintScan = new JButton();
+		buttonPrintScan.setToolTipText("Printer");
+		buttonPrintScan.setIcon(Icons.TEXT.getIcon(Size.SIZE24X24));
+		buttonPrintScan.addActionListener(e -> {
+			showCard("Printer");
 		});
 		
 		GroupLayout gl_panelMenu = new GroupLayout(panelMenu);
@@ -108,8 +107,8 @@ public class View480x320 extends JFrame {
 						.addComponent(buttonSettings, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonLock, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonMap, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-						.addComponent(buttonPrinter, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
-						.addComponent(buttonNetwork, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
+						.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+						.addComponent(buttonPrintScan, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_panelMenu.setVerticalGroup(
@@ -120,9 +119,9 @@ public class View480x320 extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(buttonMap, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(buttonPrinter, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+					.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(buttonNetwork, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+					.addComponent(buttonPrintScan, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(buttonSettings, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE))
 		);
