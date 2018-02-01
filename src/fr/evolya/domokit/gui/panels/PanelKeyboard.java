@@ -1,6 +1,10 @@
 package fr.evolya.domokit.gui.panels;
 
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -18,6 +22,8 @@ public class PanelKeyboard extends JPanel {
 	private static final long serialVersionUID = 572740134788430503L;
 	private JTextField textField;
 	public Action<String> handler = null;
+	private boolean shifted = true;
+	private final JButton[] normalKeys;
 
 	/**
 	 * Create the panel.
@@ -28,6 +34,12 @@ public class PanelKeyboard extends JPanel {
 		textField.setHorizontalAlignment(SwingConstants.CENTER);
 		textField.setFont(new Font("Dialog", Font.PLAIN, 14));
 		textField.setColumns(10);
+		
+		addComponentListener(new ComponentAdapter() {
+			public void componentShown(ComponentEvent e) {
+				textField.requestFocus();
+			}
+		});
 		
 		JPanel panel = new JPanel();
 		
@@ -69,8 +81,8 @@ public class PanelKeyboard extends JPanel {
 		JButton key15 = new JButton("E");
 		JButton key16 = new JButton("F");
 		JButton key17 = new JButton("G");
-		JButton Key18 = new JButton("H");
-		JButton key19 = new JButton("<--");
+		JButton key18 = new JButton("H");
+		JButton key19 = new JButton("<");
 		JButton key20 = new JButton("Enter");
 
 		JButton key21 = new JButton("I");
@@ -95,25 +107,47 @@ public class PanelKeyboard extends JPanel {
 		
 		JButton key39 = new JButton("SHIFT");
 		JButton key40 = new JButton("@");
-		JButton key41 = new JButton("");
+		JButton key41 = new JButton(" ");
 		JButton key42 = new JButton(".");
-		JButton key43 = new JButton(",");
+		JButton key43 = new JButton("-");
+		
+		normalKeys = new JButton[] {
+				key1, key2, key3, key4, key5, key6, key7, key8, key9, key10,
+				key11, key12, key13, key14, key15, key16, key17, key18, /*key19, key20,*/
+				key21, key22, key23, key24, key25, key26, key27, key28, key29, key30,
+				key31, key32, key33, key34, key35, key36, key37, key38, /*key39,*/ key40,
+				key41, key42, key43
+		};
+		
+		ActionListener listener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String chr = ((JButton)e.getSource()).getText();
+				textField.setText(textField.getText() + chr);
+				textField.requestFocus();
+			}
+		};
+		
+		for (JButton btn : normalKeys) {
+			btn.addActionListener(listener);
+		}
 		
 		// Return
 		key19.addActionListener((e) -> {
-			
+			String txt = textField.getText();
+			textField.setText(txt.isEmpty() ? "" : txt.substring(0, txt.length() - 1));
+			textField.requestFocus();
 		});
 		
 		// Enter
 		key20.addActionListener((e) -> {
-//			showKeyboardCard((str) -> {
-//				System.out.println("Typed: " + str);
-//			});
+			if (handler != null) {
+				handler.call(textField.getText());
+			}
 		});
 		
 		// Shift
-		key19.addActionListener((e) -> {
-			
+		key39.addActionListener((e) -> {
+			shift();
 		});
 
 		GroupLayout gl_panel = new GroupLayout(panel);
@@ -189,7 +223,7 @@ public class PanelKeyboard extends JPanel {
 								.addPreferredGap(ComponentPlacement.RELATED)
 								.addComponent(key17, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(Key18, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+								.addComponent(key18, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(ComponentPlacement.RELATED)
 								.addComponent(key19, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 							.addGroup(Alignment.LEADING, gl_panel.createSequentialGroup()
@@ -237,7 +271,7 @@ public class PanelKeyboard extends JPanel {
 						.addComponent(key15, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
 						.addComponent(key16, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
 						.addComponent(key17, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
-						.addComponent(Key18, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+						.addComponent(key18, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
 						.addComponent(key19, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_panel.createParallelGroup(Alignment.LEADING)
@@ -275,11 +309,25 @@ public class PanelKeyboard extends JPanel {
 		);
 		panel.setLayout(gl_panel);
 		setLayout(groupLayout);
+		
+		shift();
 
+	}
+	
+	public void shift() {
+		setShift(!shifted);
+	}
+	
+	public void setShift(boolean enabled) {
+		if (enabled == shifted) return;
+		this.shifted = enabled;
+		for (JButton btn : normalKeys) {
+			btn.setText(enabled ? btn.getText().toUpperCase() : btn.getText().toLowerCase());
+		}
 	}
 
 	public void reset(String layout) {
-		// TODO Auto-generated method stub
-		
+		textField.setText("");
+		setShift(false);
 	}
 }

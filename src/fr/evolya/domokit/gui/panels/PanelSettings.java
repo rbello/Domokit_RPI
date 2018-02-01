@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class PanelSettings extends JPanel {
 	
@@ -20,6 +22,7 @@ public class PanelSettings extends JPanel {
 	public final JLabel fieldRf433Status;
 	public final JLabel fieldLANStatus;
 	public final JLabel fieldWANStatus;
+	public final JButton buttonLogs;
 
 	/**
 	 * Create the panel.
@@ -58,23 +61,26 @@ public class PanelSettings extends JPanel {
 		fieldWANStatus.setForeground(Color.RED);
 		fieldWANStatus.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		
+		buttonLogs = new JButton("Logs");
+		buttonLogs.setFont(new Font("Dialog", Font.PLAIN, 14));
+		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
 						.addGroup(groupLayout.createSequentialGroup()
 							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 								.addComponent(lblNewLabel)
 								.addGroup(groupLayout.createSequentialGroup()
 									.addGap(10)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+									.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING, false)
 										.addGroup(groupLayout.createSequentialGroup()
 											.addComponent(lblInternetConnection, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE)
 											.addPreferredGap(ComponentPlacement.UNRELATED)
 											.addComponent(fieldWANStatus, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-										.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+										.addGroup(groupLayout.createSequentialGroup()
 											.addComponent(lblLocalNetwork, GroupLayout.PREFERRED_SIZE, 156, GroupLayout.PREFERRED_SIZE)
 											.addPreferredGap(ComponentPlacement.UNRELATED)
 											.addComponent(fieldLANStatus, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -83,15 +89,17 @@ public class PanelSettings extends JPanel {
 											.addPreferredGap(ComponentPlacement.UNRELATED)
 											.addComponent(fieldRf433Status, GroupLayout.PREFERRED_SIZE, 207, GroupLayout.PREFERRED_SIZE)))))
 							.addGap(15))
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(buttonLogs)
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							.addComponent(buttonExit)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(buttonReboot)
 							.addGap(55))))
 		);
 		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(lblNewLabel)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
@@ -106,10 +114,11 @@ public class PanelSettings extends JPanel {
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(lblInternetConnection, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE)
 						.addComponent(fieldWANStatus, GroupLayout.PREFERRED_SIZE, 17, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED, 150, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED, 148, Short.MAX_VALUE)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(buttonReboot, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
-						.addComponent(buttonExit, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
+						.addComponent(buttonExit, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE)
+						.addComponent(buttonLogs, GroupLayout.PREFERRED_SIZE, 34, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
 		setLayout(groupLayout);

@@ -7,14 +7,15 @@ import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
 import fr.evolya.javatoolkit.app.event.ApplicationStarted;
-import fr.evolya.javatoolkit.app.event.ApplicationStopped;
 import fr.evolya.javatoolkit.app.event.ApplicationStopping;
-import fr.evolya.javatoolkit.code.Logs;
+import fr.evolya.javatoolkit.code.annotations.AsynchOperation;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
+import fr.evolya.javatoolkit.code.funcint.Action;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.iot.arduilink.Arduilink;
 import fr.evolya.javatoolkit.iot.arduilink.ArduilinkEvents;
+import fr.evolya.javatoolkit.iot.arduilink.Sensor;
 import fr.evolya.javatoolkit.iot.arduino.Arduino;
 import fr.evolya.javatoolkit.iot.arduino.ArduinoEvents;
 import gnu.io.CommPortIdentifier;
@@ -26,7 +27,7 @@ public class ModuleArduino {
 	
 	protected Arduilink arduilink;
 
-	private Arduino arduino;
+	protected Arduino arduino;
 
 	@BindOnEvent(ApplicationBuilding.class)
 	public void onApplicationBuilding(App app) {
@@ -103,6 +104,31 @@ public class ModuleArduino {
 	public void updateRf433ConnectionStateIntoSettings() {
 		view.cardSettings.fieldRf433Status.setText("Disconnected");
 		view.cardSettings.fieldRf433Status.setForeground(Color.RED);
+	}
+	
+	@AsynchOperation
+	public boolean send(String sensorName, String data, Action<String> callback) {
+		return send(sensorName, data, false, callback);
+	}
+
+	@AsynchOperation
+	public boolean send(String sensorName, String data, boolean ack, Action<String> callback) {
+
+		//System.out.println("Set value '" + data + "' to sensor '" + sensorName + "'");
+		
+		final Sensor sensor = arduilink.getSensorByName(sensorName);
+		
+		if (sensor == null) {
+			callback.call("Sensor not found");
+			return false;
+		}
+		
+		new Thread(() -> {
+			callback.call(sensor.set(data, ack) ? null : "Unable to write");
+		}).start();
+		
+		return true;
+		
 	}
 	
 }

@@ -20,6 +20,10 @@ public enum Icons {
 	WINDOW			("text", "004", "048"),
 	LIGHT			("sun", "014", "039"),
 	TEXT			("text", "004", "048"),
+	EMPTY			("empty", "035", "026"),
+	SUN				("sun", "014", "039"),
+	PRINTER			("printer", "051", "051"),
+	MENU			("menu", "018", "040"),
 	SETTINGS		("settings", "005", "047");
 	
 	private String name;

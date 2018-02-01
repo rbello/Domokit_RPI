@@ -1,5 +1,6 @@
 package fr.evolya.domokit.ctrl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -13,8 +14,10 @@ import fr.evolya.domokit.gui.map.iface.IMapComponent;
 import fr.evolya.domokit.gui.map.simple.Device;
 import fr.evolya.domokit.gui.map.simple.IMapContainer;
 import fr.evolya.javatoolkit.app.App;
+import fr.evolya.javatoolkit.code.annotations.AsynchOperation;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
+import fr.evolya.javatoolkit.code.funcint.Action;
 import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.events.fi.EventProvider;
 
@@ -111,6 +114,29 @@ public class ModuleRf433 {
 	@GuiTask
 	public void printLogOnRf433CommandReceived(Device device, Rf433Emitter command, int code, ModuleRf433 ctrl) {
 		view.appendLog("[RF433] Rcvd: " + device + " -> " + command);
-	};
+	}
+
+	@AsynchOperation
+	public boolean send(String functionName, Object value, Action<String> callback) {
+		
+		// TODO Externalize
+		HashMap<String, Integer> map = new HashMap<>();
+		map.put("Light=true", 968768512);
+		map.put("Light=false", 901659648);
+		
+		String key = functionName + "=" + value;
+		if (!map.containsKey(key)) {
+			view.appendLog("[Rf433] Unknown function: " + key);
+			callback.call("Unknown function");
+			return false;
+		}
+		
+		//System.out.println("Send Rf433 code '" + map.get(key) + "' for function '" + key + "'");
+		
+		app.get(ModuleArduino.class)
+			.send("RF433Emitter", map.get(key).toString(), callback);
+		
+		return true;
+	}
 	
 }

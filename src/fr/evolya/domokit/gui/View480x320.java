@@ -17,6 +17,7 @@ import fr.evolya.domokit.gui.icons.Icons;
 import fr.evolya.domokit.gui.icons.Icons.Size;
 import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.panels.PanelConfirmDialog;
+import fr.evolya.domokit.gui.panels.PanelControls;
 import fr.evolya.domokit.gui.panels.PanelCountDown;
 import fr.evolya.domokit.gui.panels.PanelKeyboard;
 import fr.evolya.domokit.gui.panels.PanelLogs;
@@ -26,8 +27,10 @@ import fr.evolya.domokit.gui.panels.PanelPrinter;
 import fr.evolya.domokit.gui.panels.PanelSettings;
 import fr.evolya.domokit.gui.panels.PanelStatus;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
+import fr.evolya.javatoolkit.code.annotations.View;
 import fr.evolya.javatoolkit.code.funcint.Action;
 
+@View
 public class View480x320 extends JFrame {
 
 	private static final long serialVersionUID = -6653570811059565525L;
@@ -51,6 +54,7 @@ public class View480x320 extends JFrame {
 	public final PanelNetwork cardNetwork;
 	public final PanelPrinter cardPrinter;
 	public final PanelKeyboard cardKeyboard;
+	public final PanelControls cardControls;
 	
 	@GuiTask
 	public View480x320() {
@@ -80,10 +84,10 @@ public class View480x320 extends JFrame {
 		});
 		
 		buttonLogs = new JButton();
-		buttonLogs.setToolTipText("Logs");
-		buttonLogs.setIcon(Icons.MESSAGE.getIcon(Size.SIZE24X24));
+		buttonLogs.setToolTipText("Controls");
+		buttonLogs.setIcon(Icons.MENU.getIcon(Size.SIZE24X24));
 		buttonLogs.addActionListener(e -> {
-			showCard("Logs");
+			showCard("Controls");
 		});
 		
 		buttonMap = new JButton();
@@ -95,7 +99,7 @@ public class View480x320 extends JFrame {
 		
 		buttonPrintScan = new JButton();
 		buttonPrintScan.setToolTipText("Printer");
-		buttonPrintScan.setIcon(Icons.TEXT.getIcon(Size.SIZE24X24));
+		buttonPrintScan.setIcon(Icons.PRINTER.getIcon(Size.SIZE24X24));
 		buttonPrintScan.addActionListener(e -> {
 			showCard("Printer");
 		});
@@ -143,6 +147,7 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardNetwork = new PanelNetwork(), "Network");
 		panelMain.add(cardPrinter = new PanelPrinter(), "Printer");
 		panelMain.add(cardKeyboard = new PanelKeyboard(), "Keyboard");
+		panelMain.add(cardControls = new PanelControls(), "Controls");
 		
 		panelStatus = new PanelStatus();
 		panelStatus.setBounds(3, 257, 474, 60);

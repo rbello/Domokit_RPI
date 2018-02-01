@@ -41,6 +41,11 @@ public class ViewController {
 			}
 		});
 		
+		// Logs
+		view.cardSettings.buttonLogs.addActionListener(e -> {
+			view.showCard("Logs");
+		});
+		
 		// Lock button
 		view.buttonLock.addActionListener(e -> {
 			if (app.get(ModuleSecurity.class).isLocked()) {
