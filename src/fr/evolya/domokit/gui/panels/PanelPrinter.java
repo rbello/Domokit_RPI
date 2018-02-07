@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -29,6 +30,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -38,12 +40,24 @@ import javax.swing.SwingUtilities;
 import fr.evolya.domokit.ctrl.Email;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
+import fr.evolya.javatoolkit.app.config.AppConfiguration;
+import fr.evolya.javatoolkit.app.event.ApplicationConfigLoaded;
 import fr.evolya.javatoolkit.code.Logs;
+import fr.evolya.javatoolkit.code.annotations.ConfigDeclare;
+import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.Inject;
 import fr.evolya.javatoolkit.code.funcint.Callback;
+import fr.evolya.javatoolkit.events.fi.BindOnEvent;
 import fr.evolya.javatoolkit.iot.ImageScanner;
 import fr.evolya.javatoolkit.iot.ImageScanner.DetectionCallback;
-import javax.swing.AbstractListModel;
+
+@ConfigDeclare("Scanner.SmtpHost")
+@ConfigDeclare("Scanner.SmtpPort=465")
+@ConfigDeclare("Scanner.SmtpUser")
+@ConfigDeclare("Scanner.SmtpPassword")
+@ConfigDeclare("Scanner.SmtpSender")
+@ConfigDeclare("Scanner.SharedFolder=./")
+@ConfigDeclare("Scanner.BookmarkEmails")
 
 public class PanelPrinter extends JPanel {
 	
@@ -54,164 +68,40 @@ public class PanelPrinter extends JPanel {
 	private ImageScanner scanner = null;
 	private boolean scannerDetection = false;
 
+	@Inject public View480x320 view;
+	
+	@Inject public AppConfiguration config; 
+
 	private JToggleButton buttonModeColor;
 	private JToggleButton buttonModeBW;
 	private JToggleButton buttonModeGray;
 	private JComboBox<String> resolutionComboBox;
 	private JComboBox<String> fileEncodingComboBox;
-
-	private String sharedFolder = "/home/shuttle/Bureau/tmpscan/";
-
 	private JTabbedPane destinationTabPane;
-
 	private JButton btnScan;
-	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HH-mm-ss");
-
-	private JLabel lblTarget;
-	
-	@Inject public View480x320 view;
-
 	private JLabel labelTargetEmail;
+	private JList<String> bookmarkList;
 
-	private JList<String> addressList; 
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HH-mm-ss");
 
 	/**
 	 * Create the panel.
 	 */
 	public PanelPrinter() {
-		
-		// 
+
+		// When panel is shown, run scanner detection if needed
 		addComponentListener(new ComponentAdapter() {
-			@Override
 			public void componentShown(ComponentEvent e) {
-				// Don't run scanner detection
 				if (scanner != null || scannerDetection) return;
-				// Flag current detection
-				scannerDetection = true;
-				// Find scanner
-				ImageScanner.detectFirstScanner(new DetectionCallback() {
-					public void onSuccess(ImageScanner scanner) {
-						scannerDetection = false;
-						PanelPrinter.this.scanner = scanner;
-						LOGGER.log(Logs.INFO, "Scanner found: " + scanner);
-						SwingUtilities.invokeLater(() -> {
-							btnScan.setBackground(Color.GREEN);
-							btnScan.setEnabled(true);
-						});
-					}
-					public void onFailure(String error) {
-						scannerDetection = false;
-						LOGGER.log(Logs.WARNING, "No scanner found (" + error + ")");
-						SwingUtilities.invokeLater(() -> {
-							btnScan.setBackground(Color.RED);
-							btnScan.setEnabled(false);
-						});
-					}
-				});
+				scannerDetection();
 			}
 		});
-		
+
+		// Run the scan
 		btnScan = new JButton("Scan");
 		btnScan.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				// Scanner is not ready
-				if (scanner == null) return;
-					
-				// Pickup configuration
-				String colorMode = ImageScanner.MODE_COLOR;
-				if (buttonModeGray.isSelected()) colorMode = ImageScanner.MODE_GRAYSCALE;
-				if (buttonModeBW.isSelected()) colorMode = ImageScanner.MODE_BW;
-				final String colorMode2 = colorMode;
-				int dpi = new Integer(("" + resolutionComboBox.getSelectedItem()).substring(0, 3));
-				String format = (fileEncodingComboBox.getSelectedItem() + "").toLowerCase();
-				String output = destinationTabPane.getSelectedIndex() == 0 ? "shared-folder" : "email";
-				sharedFolder = "./";
-				String path = sharedFolder + "Scan_" + sdf.format(new Date()) + "." + format.toLowerCase();
-
-				// Log
-				LOGGER.log(Logs.DEBUG, String.format("Run scan task (mode=%s; dpi=%s; format=%s; output=%s)",
-						colorMode, dpi, format, output));
-				
-				// Update GUI state
-				btnScan.setBackground(Color.ORANGE);
-				btnScan.setEnabled(false);
-				lblTarget.setText("Scanning...");
-				
-				String email = labelTargetEmail.getText();
-				
-				// Run scanner
-				ImageScanner.scan(
-						new File(path), // output file
-						scanner.getKey(), // scanner id
-						colorMode, // color mode
-						dpi, // resolution
-						format, // file encoding format
-						// callback
-						new Callback<File, String>() {
-							public void onSuccess(File outputFile) {
-								
-								SwingUtilities.invokeLater(() -> {
-									btnScan.setBackground(Color.GREEN);
-									btnScan.setEnabled(true);
-									lblTarget.setText("Destination:");
-								});
-								
-//								File jpegFile = new File(outputFile.getAbsolutePath() + ".jpeg");
-//								
-//								try {
-//									convertToJpeg(output, jpegFile);
-//								}
-//								catch (Exception ex) {
-//									System.err.println("Unable to convert TIFF to JPEG");
-//								}
-								
-								///- -----------------
-								
-								if (!"email".equals(output)) return;
-								
-								if (labelTargetEmail.getText().length() < 5) return;
-								
-								String to = email.substring(4);
-								
-								LOGGER.log(Logs.DEBUG, String.format("Send scan file to: %s", to));
-								
-								lblTarget.setText("Send email to " + to + " ...");
-								
-								Email.sendEmailAsynch(
-										"SSL0.OVH.NET", // SMTP Host
-										465, // SMTP Port
-										"", // Login
-										"", // Password
-										"Scan from " + scanner.getValue(), // Message title
-										"scanner@evolya.fr", // From
-										to, // To
-										// Message contents
-										String.format("Please find attached file.\n\nDate: %s\nColor mode: %s\nResolution: %s dpi\nFormat: %s\n", sdf.format(new Date()), colorMode2, dpi, format),
-										LOGGER.isLoggable(Logs.DEBUG), // Debug mode
-										outputFile, // Attachment
-										"ScanImage-" + new Random().nextInt(99999), // Attachment name
-										// Handler
-										(error) -> {
-											LOGGER.log(Logs.DEBUG, "Scan result: " + (error == null ? "SUCCESS" : 
-												"FAILURE " + error.getMessage()));
-										}
-								);
-						
-								
-							}
-							
-							public void onFailure(String error) {
-								// TODO Auto-generated method stub
-								System.out.println("Error scan(): " + error);
-								SwingUtilities.invokeLater(() -> {
-									btnScan.setBackground(Color.RED);
-									btnScan.setEnabled(true);
-									lblTarget.setText("Failure:");
-								});
-							}
-						});
+				startScanner();
 			}
 		});
 		
@@ -234,13 +124,13 @@ public class PanelPrinter extends JPanel {
 		resolutionComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {
 				"100 dpi", "150 dpi", "200 dpi", "300 dpi", "400 dpi", "600 dpi", "800 dpi"}));
 		
+		// File format
 		fileEncodingComboBox = new JComboBox<String>();
 		fileEncodingComboBox.setModel(new DefaultComboBoxModel<String>(new String[] {ImageScanner.FILE_TIFF}));
 		
-		lblTarget = new JLabel("Destination :");
-		
+		// Target label
 		destinationTabPane = new JTabbedPane(JTabbedPane.TOP);
-		destinationTabPane.setFont(new Font("Dialog", Font.BOLD, 14));
+		destinationTabPane.setFont(new Font("Dialog", Font.BOLD, 16));
 		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
@@ -253,18 +143,16 @@ public class PanelPrinter extends JPanel {
 							.addComponent(destinationTabPane, GroupLayout.PREFERRED_SIZE, 299, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
 							.addComponent(btnScan))
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-							.addComponent(lblTarget, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(buttonModeColor, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(buttonModeGray)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(buttonModeBW, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.UNRELATED)
-								.addComponent(resolutionComboBox, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(fileEncodingComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(buttonModeColor, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(buttonModeGray, GroupLayout.PREFERRED_SIZE, 57, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(buttonModeBW, GroupLayout.PREFERRED_SIZE, 59, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(resolutionComboBox, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(fileEncodingComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -273,30 +161,30 @@ public class PanelPrinter extends JPanel {
 					.addContainerGap()
 					.addComponent(lblScanner)
 					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(buttonModeGray, GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+						.addComponent(buttonModeBW, GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
+						.addComponent(resolutionComboBox, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
+						.addComponent(buttonModeColor, GroupLayout.PREFERRED_SIZE, 46, GroupLayout.PREFERRED_SIZE)
+						.addComponent(fileEncodingComboBox, GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE))
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(buttonModeGray, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-						.addComponent(buttonModeColor, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(buttonModeBW, GroupLayout.PREFERRED_SIZE, 47, GroupLayout.PREFERRED_SIZE)
-							.addComponent(resolutionComboBox, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
-							.addComponent(fileEncodingComboBox, GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblTarget)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(destinationTabPane, GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-							.addContainerGap())
-						.addGroup(groupLayout.createSequentialGroup()
+							.addGap(33)
 							.addComponent(btnScan, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
-							.addGap(65))))
+							.addGap(65))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(destinationTabPane, GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
+							.addContainerGap())))
 		);
 		
 		JPanel tabPanelNetwork = new JPanel();
-		destinationTabPane.addTab("  Network  ", null, tabPanelNetwork, null);
+		destinationTabPane.addTab(" Save ", null, tabPanelNetwork, null);
 		
 		JRadioButton rdbtnSharedFolder = new JRadioButton("Shared folder");
 		JLabel lblNewLabel = new JLabel("Located at: \\\\PRINTER\\\\Scan");
+		
+		String sharedFolder = null;
 		
 		if (sharedFolder == null) {
 			rdbtnSharedFolder.setEnabled(false);
@@ -331,59 +219,56 @@ public class PanelPrinter extends JPanel {
 		tabPanelNetwork.setLayout(gl_tabPanelNetwork);
 		
 		JPanel tabPanelSendToMail = new JPanel();
-		destinationTabPane.addTab("  Email  ", null, tabPanelSendToMail, null);
+		destinationTabPane.addTab(" Send by email ", null, tabPanelSendToMail, null);
 		
 		labelTargetEmail = new JLabel("To: ");
-		
-		addressList = new JList<String>();
-		addressList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		addressList.setModel(new AbstractListModel<String>() {
-			String[] values = new String[] {""};
-			public int getSize() {
-				return values.length;
-			}
-			public String getElementAt(int index) {
-				return values[index];
-			}
-		});
-		addressList.addListSelectionListener((e) -> {
-			if (e.getValueIsAdjusting()) return;
-			labelTargetEmail.setText("To: " + addressList.getSelectedValue());
-		});
+		labelTargetEmail.setFont(new Font("Dialog", Font.BOLD, 13));
 		
 		JButton btnNewButton = new JButton("+");
 		btnNewButton.addActionListener((e) -> {
 			view.showKeyboardCard(str -> {
 				view.showCard("Printer");
-				addressList.clearSelection();
+				bookmarkList.clearSelection();
 				// TODO Vérifier adresse
 				labelTargetEmail.setText("To: " + str);
 			});
 		});
+		
+		JScrollPane scrollPane = new JScrollPane();
 		GroupLayout gl_tabPanelSendToMail = new GroupLayout(tabPanelSendToMail);
 		gl_tabPanelSendToMail.setHorizontalGroup(
 			gl_tabPanelSendToMail.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_tabPanelSendToMail.createSequentialGroup()
+				.addGroup(Alignment.TRAILING, gl_tabPanelSendToMail.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_tabPanelSendToMail.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, gl_tabPanelSendToMail.createSequentialGroup()
-							.addComponent(addressList, GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+					.addGroup(gl_tabPanelSendToMail.createParallelGroup(Alignment.TRAILING)
+						.addComponent(scrollPane, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+						.addGroup(gl_tabPanelSendToMail.createSequentialGroup()
+							.addComponent(labelTargetEmail, GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
-						.addComponent(labelTargetEmail, GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE))
+							.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap())
 		);
 		gl_tabPanelSendToMail.setVerticalGroup(
 			gl_tabPanelSendToMail.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_tabPanelSendToMail.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(labelTargetEmail)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_tabPanelSendToMail.createParallelGroup(Alignment.LEADING)
+					.addGroup(gl_tabPanelSendToMail.createParallelGroup(Alignment.BASELINE)
 						.addComponent(btnNewButton)
-						.addComponent(addressList, GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE))
+						.addComponent(labelTargetEmail, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
 					.addContainerGap())
 		);
+		
+		bookmarkList = new JList<String>();
+		bookmarkList.setFont(new Font("Dialog", Font.BOLD, 13));
+		bookmarkList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		bookmarkList.setModel(new DefaultListModel<String>());
+		bookmarkList.addListSelectionListener((e) -> {
+			if (e.getValueIsAdjusting()) return;
+			labelTargetEmail.setText("To: " + bookmarkList.getSelectedValue());
+		});
+		scrollPane.setViewportView(bookmarkList);
 		tabPanelSendToMail.setLayout(gl_tabPanelSendToMail);
 		setLayout(groupLayout);
 		
@@ -402,6 +287,140 @@ public class PanelPrinter extends JPanel {
 		destinationTabPane.setEnabled(enabled);
 		btnScan.setEnabled(enabled);
 //		super.setEnabled(enabled);
+	}
+	
+	@BindOnEvent(ApplicationConfigLoaded.class)
+	@GuiTask
+	public void onApplicationConfigLoaded(App app, AppConfiguration config) {
+		// Bookmark emails
+		String[] bookmark = config.getProperty("Scanner.BookmarkEmails").split(";");
+		for (String address : bookmark) {
+			((DefaultListModel<String>)bookmarkList.getModel()).addElement(address);
+		}
+	}
+	
+	private void scannerDetection() {
+		// Flag current detection
+		scannerDetection = true;
+		// Find scanner
+		ImageScanner.detectFirstScanner(new DetectionCallback() {
+			public void onSuccess(ImageScanner scanner) {
+				scannerDetection = false;
+				PanelPrinter.this.scanner = scanner;
+				LOGGER.log(Logs.INFO, "Scanner found: " + scanner);
+				SwingUtilities.invokeLater(() -> {
+					btnScan.setBackground(Color.GREEN);
+					btnScan.setEnabled(true);
+				});
+			}
+			public void onFailure(String error) {
+				scannerDetection = false;
+				LOGGER.log(Logs.WARNING, "No scanner found (" + error + ")");
+				SwingUtilities.invokeLater(() -> {
+					btnScan.setBackground(Color.RED);
+					btnScan.setEnabled(false);
+				});
+			}
+		});
+	}
+	
+	private void startScanner() {
+		// Scanner is not ready
+		if (scanner == null) return;
+			
+		// Pickup configuration
+		String colorMode = ImageScanner.MODE_COLOR;
+		if (buttonModeGray.isSelected()) colorMode = ImageScanner.MODE_GRAYSCALE;
+		if (buttonModeBW.isSelected()) colorMode = ImageScanner.MODE_BW;
+		final String colorMode2 = colorMode;
+		int dpi = new Integer(("" + resolutionComboBox.getSelectedItem()).substring(0, 3));
+		String format = (fileEncodingComboBox.getSelectedItem() + "").toLowerCase();
+		String output = destinationTabPane.getSelectedIndex() == 0 ? "shared-folder" : "email";
+		String sharedFolder = "./"; // TODO
+		String path = sharedFolder + "Scan_" + sdf.format(new Date()) + "." + format.toLowerCase();
+
+		// Log
+		LOGGER.log(Logs.DEBUG, String.format("Run scan task (mode=%s; dpi=%s; format=%s; output=%s)",
+				colorMode, dpi, format, output));
+		
+		// Update GUI state
+		btnScan.setBackground(Color.ORANGE);
+		btnScan.setEnabled(false);
+//		lblTarget.setText("Scanning...");
+		
+		String email = labelTargetEmail.getText();
+		
+		// Run scanner
+		ImageScanner.scan(
+				new File(path), // output file
+				scanner.getKey(), // scanner id
+				colorMode, // color mode
+				dpi, // resolution
+				format, // file encoding format
+				// callback
+				new Callback<File, String>() {
+					public void onSuccess(File outputFile) {
+						
+						SwingUtilities.invokeLater(() -> {
+							btnScan.setBackground(Color.GREEN);
+							btnScan.setEnabled(true);
+//							lblTarget.setText("Destination:");
+						});
+						
+//						File jpegFile = new File(outputFile.getAbsolutePath() + ".jpeg");
+//						
+//						try {
+//							convertToJpeg(output, jpegFile);
+//						}
+//						catch (Exception ex) {
+//							System.err.println("Unable to convert TIFF to JPEG");
+//						}
+						
+						///- -----------------
+						
+						if (!"email".equals(output)) return;
+						
+						if (labelTargetEmail.getText().length() < 5) return;
+						
+						String to = email.substring(4);
+						
+						LOGGER.log(Logs.DEBUG, String.format("Send scan file to: %s", to));
+						
+//						lblTarget.setText("Send email to " + to + " ...");
+
+						Email.sendEmailAsynch(
+								config.getProperty("Scanner.SmtpHost"), // SMTP Host
+								(int)config.getPropertyInt("Scanner.SmtpPort"), // SMTP Port
+								config.getProperty("Scanner.SmtpUser"), // Login
+								config.getProperty("Scanner.SmtpPassword"), // Password
+								"Scan from " + scanner.getValue(), // Message title
+								config.getProperty("Scanner.SmtpSender"), // From
+								to, // To
+								// Message contents
+								String.format("Please find attached file.\n\nDate: %s\nColor mode: %s\nResolution: %s dpi\nFormat: %s\n", sdf.format(new Date()), colorMode2, dpi, format),
+								LOGGER.isLoggable(Logs.DEBUG), // Debug mode
+								outputFile, // Attachment
+								"ScanImage-" + new Random().nextInt(99999), // Attachment name
+								// Handler
+								(error) -> {
+									LOGGER.log(Logs.DEBUG, "Scan result: " + (error == null ? "SUCCESS" : 
+										"FAILURE " + error.getMessage()));
+								}
+						);
+				
+						
+					}
+					
+					public void onFailure(String error) {
+						// TODO Auto-generated method stub
+						System.out.println("Error scan(): " + error);
+						SwingUtilities.invokeLater(() -> {
+							btnScan.setBackground(Color.RED);
+							btnScan.setEnabled(true);
+//							lblTarget.setText("Failure:");
+						});
+					}
+				});
 	}
 	
 	public static void convertToJpeg(String source, File destination) throws IOException {
@@ -435,5 +454,5 @@ public class PanelPrinter extends JPanel {
 		}
 		
 	}
-	
+
 }

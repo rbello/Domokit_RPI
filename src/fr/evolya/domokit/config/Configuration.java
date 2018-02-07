@@ -44,7 +44,7 @@ public class Configuration {
 		}
 		try {
 			// TODO Déplacer le chemin dans le main la config
-			INSTANCE = new Configuration(new XmlConfig(new File("./config/map.xml")));
+			INSTANCE = new Configuration(new XmlConfig(new File(App.getBinaryDirectory(), "config/map.xml")));
 			return INSTANCE;
 		}
 		catch (Exception e) {

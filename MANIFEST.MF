@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.10.1
 Created-By: www.evolya.fr
 Implementation-Version: 1
-Built-Date: January 31 2018
+Built-Date: February 1 2018
 Main-Class: fr.evolya.domokit.Main
 Class-Path: RXTXcomm-linux.jar RXTXcomm-win.jar java-toolkit-4.1.1.jar
   laf-plugin-50.jar laf-widget.jar mail-1.5.0-b01.jar substance-lite-f

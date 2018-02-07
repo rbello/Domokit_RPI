@@ -27,10 +27,10 @@ import fr.evolya.domokit.gui.panels.PanelPrinter;
 import fr.evolya.domokit.gui.panels.PanelSettings;
 import fr.evolya.domokit.gui.panels.PanelStatus;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
-import fr.evolya.javatoolkit.code.annotations.View;
+import fr.evolya.javatoolkit.code.annotations.DeepContainer;
 import fr.evolya.javatoolkit.code.funcint.Action;
 
-@View
+@DeepContainer
 public class View480x320 extends JFrame {
 
 	private static final long serialVersionUID = -6653570811059565525L;

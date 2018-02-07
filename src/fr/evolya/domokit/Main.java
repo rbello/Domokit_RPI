@@ -10,8 +10,10 @@ import fr.evolya.domokit.gui.debug.PanelStatusDebugView;
 import fr.evolya.domokit.gui.debug.Rf433DebugView;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.config.AppConfiguration;
+import fr.evolya.javatoolkit.app.features.FileConfigurationFeature;
 import fr.evolya.javatoolkit.code.Logs;
 import fr.evolya.javatoolkit.gui.swing.DarkSwingApp;
+import fr.evolya.javatoolkit.gui.swing.LogView;
 
 public class Main {
 
@@ -31,6 +33,13 @@ public class Main {
 			.setProperty("Security.DelayToLeaveBeforeLock", "40")
 			.setProperty("Map.DeviceHighlightDelay", "20");
 
+		// Debug views
+		if (app.getDebugLevel() > 2) {
+			app.add(Rf433DebugView.class);
+			app.add(PanelStatusDebugView.class);
+			app.add(LogView.class);
+		}
+				
 		// Arduilink
 		app.add(ModuleArduino.class);
 
@@ -48,11 +57,7 @@ public class Main {
 		// Network monitor
 //		app.add(ModuleNetworkWatcher.class);
 
-		// Debug views
-		if (app.getDebugLevel() > 2) {
-			app.add(Rf433DebugView.class);
-			app.add(PanelStatusDebugView.class);
-		}
+		app.add(FileConfigurationFeature.class);
 		
 		app.start();
 		

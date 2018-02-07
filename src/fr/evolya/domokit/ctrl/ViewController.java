@@ -25,20 +25,51 @@ public class ViewController {
 		
 		// Exit
 		view.cardSettings.buttonExit.addActionListener(e -> {
-			app.notify(WindowCloseIntent.class, app, this, e);
+			view.showConfirmDialogCard("Confirm EXIT order?", new String[] {"Yes", "*No"}, str -> {
+				if ("No".equals(str)) {
+					view.showCard("Settings");
+					return;
+				}
+				app.notify(WindowCloseIntent.class, app, this, e);
+			});
 		});
 		
 		// Reboot
 		view.cardSettings.buttonReboot.addActionListener(e -> {
-			try {
-				Process p = Runtime.getRuntime().exec("sudo reboot");
-				int result = p.waitFor();
-				if (result != 0) throw new Exception("return " + result);
-			}
-			catch (Exception ex) {
-				app.get(ModuleSecurity.class).showWarning("Failure: "
-						+ ex.getMessage());
-			}
+			view.showConfirmDialogCard("Confirm REBOOT order?", new String[] {"Yes", "*No"}, str -> {
+				if ("No".equals(str)) {
+					view.showCard("Settings");
+					return;
+				}
+				try {
+					Process p = Runtime.getRuntime().exec("sudo reboot");
+					int result = p.waitFor();
+					if (result != 0) throw new Exception("return " + result);
+				}
+				catch (Exception ex) {
+					app.get(ModuleSecurity.class).showWarning("Failure: "
+							+ ex.getMessage());
+				}
+			});
+		});
+		
+		// Shutdown
+		view.cardSettings.buttonShutdown.addActionListener(e -> {
+			view.showConfirmDialogCard("Confirm SHUTDOWN order?", new String[] {"Yes", "*No"}, str -> {
+				if ("No".equals(str)) {
+					view.showCard("Settings");
+					return;
+				}
+				try {
+					Process p = Runtime.getRuntime().exec("sudo shutdown -h now");
+					int result = p.waitFor();
+					if (result != 0) throw new Exception("return " + result);
+				}
+				catch (Exception ex) {
+					app.get(ModuleSecurity.class).showWarning("Failure: "
+							+ ex.getMessage());
+				}
+			});
 		});
 		
 		// Logs
