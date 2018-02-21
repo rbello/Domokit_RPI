@@ -32,7 +32,7 @@ public class ModuleArduino {
 	@BindOnEvent(ApplicationBuilding.class)
 	public void onApplicationBuilding(App app) {
 		
-		arduino = Arduino.getFirst();
+		arduino = new Arduino();//Arduino.getFirst();
 		
 		if (!arduino.isBound()) {
 			app.notify(ArduinoEvents.OnDisconnected.class, null, null);
@@ -40,16 +40,16 @@ public class ModuleArduino {
 		
 		// Connection event
 		arduino.when(ArduinoEvents.OnConnected.class)
-			.execute((port) -> {
+			.execute((uno) -> {
 				// Route to application
-				app.notify(ArduinoEvents.OnConnected.class, port);
-				view.appendLog("[Arduino] Connected to " + port.getName());
+				app.notify(ArduinoEvents.OnConnected.class, uno);
+				view.appendLog("[Arduino] Connected to " + uno.getComPort().getName());
 			});
 		arduino.when(ArduinoEvents.OnDisconnected.class)
-			.execute((port, ex) -> {
+			.execute((uno, ex) -> {
 				// Route to application
-				app.notify(ArduinoEvents.OnDisconnected.class, port, ex);
-				view.appendLog("[Arduino] Disconnected from " + port);
+				app.notify(ArduinoEvents.OnDisconnected.class, uno, ex);
+				view.appendLog("[Arduino] Disconnected from " + uno.getComPort().getName());
 			});
 		
 		// When an error occured
