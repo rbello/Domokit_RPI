@@ -19,47 +19,78 @@
 			<!-- ROOMS -->
 			<!--       -->
 			
-			<bean class="${package}.Room" identifier="Salle de bain">
+			<bean class="${package}.Room" identifier="Kitchen">
 				<attr name="x">0</attr>
 				<attr name="y">0</attr>
 				<attr name="width">4</attr>
 				<attr name="height">4</attr>
 				<list name="component" class="${iface}.IMapComponent">
-					<bean class="${package}.Device">
-						<attr name="x">1</attr>
-						<attr name="y">1</attr>
-						<attr name="identifier">Porte</attr>
-						<attr name="icon">WINDOW</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">893534720</attr>
-								<attr name="commandName">TRIGGER</attr>
-							</bean>
-							<!-- Off code: 672768092 -->
-						</list>
-					</bean>
+					
 				</list>
 			</bean>
-			<bean class="${package}.Room" identifier="Salon">
-				<attr name="x">14</attr>
+			
+			<bean class="${package}.Room" identifier="Living room">
+				<attr name="x">4</attr>
 				<attr name="y">0</attr>
-				<attr name="width">5</attr>
-				<attr name="height">10</attr>
+				<attr name="width">8</attr>
+				<attr name="height">8</attr>
 			</bean>
-			<bean class="${package}.Room" identifier="WC">
+			
+			<bean class="${package}.Room" identifier="Bathroom">
 				<attr name="x">0</attr>
 				<attr name="y">4</attr>
+				<attr name="width">3</attr>
+				<attr name="height">2</attr>
+			</bean>
+			
+			<bean class="${package}.Room" identifier="WC">
+				<attr name="x">0</attr>
+				<attr name="y">6</attr>
 				<attr name="width">2</attr>
 				<attr name="height">2</attr>
+			</bean>
+			
+			<bean class="${package}.Room" identifier="Bedroom 2">
+				<attr name="x">0</attr>
+				<attr name="y">8</attr>
+				<attr name="width">4</attr>
+				<attr name="height">4</attr>
+			</bean>
+			
+			<bean class="${package}.Room" identifier="Bedroom 1">
+				<attr name="x">4</attr>
+				<attr name="y">8</attr>
+				<attr name="width">4</attr>
+				<attr name="height">4</attr>
+			</bean>
+			
+			<bean class="${package}.Room" identifier="Workshop">
+				<attr name="x">8</attr>
+				<attr name="y">8</attr>
+				<attr name="width">4</attr>
+				<attr name="height">4</attr>
 				<list name="component" class="${iface}.IMapComponent">
+					<bean class="${package}.GroundMark">
+						<attr name="x">0</attr>
+						<attr name="y">26</attr>
+						<attr name="width">12</attr>
+						<attr name="height">42</attr>
+						<attr name="identifier">Bureau 1</attr>
+					</bean>
+					<bean class="${package}.GroundMark">
+						<attr name="x">26</attr>
+						<attr name="y">61</attr>
+						<attr name="width">42</attr>
+						<attr name="height">12</attr>
+						<attr name="identifier">Bureau 2</attr>
+					</bean>
 					<bean class="${package}.Device">
-						<attr name="identifier">Lumière</attr>
-						<attr name="x">14</attr>
-						<attr name="y">14</attr>
-						<attr name="icon">LIGHT</attr>
+						<attr name="identifier">Detecteur presence</attr>
+						<attr name="x">35</attr>
+						<attr name="y">45</attr>
+						<attr name="icon">LOOK</attr>
 						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433OnOffStates" />
+							<bean class="${features}.Rf433SecurityTrigger" />
 							<bean class="${features}.Rf433Emitter">
 								<attr name="rfCode">548356188</attr>
 								<attr name="commandName">ON</attr>
@@ -68,246 +99,13 @@
 								<attr name="rfCode">682573916</attr>
 								<attr name="commandName">OFF</attr>
 							</bean>
-						</list>
-					</bean>
-				</list>
-			</bean>
-			<bean class="${package}.Room" identifier="Couloir">
-				<attr name="x">2</attr>
-				<attr name="y">4</attr>
-				<attr name="width">12</attr>
-				<attr name="height">2</attr>
-			</bean>
-			<bean class="${package}.Room" identifier="Chambre 1">
-				<attr name="x">9</attr>
-				<attr name="y">0</attr>
-				<attr name="width">5</attr>
-				<attr name="height">4</attr>
-				<list name="component" class="${iface}.IMapComponent">
-					<bean class="${package}.Device">
-						<attr name="x">15</attr>
-						<attr name="y">20</attr>
-						<attr name="identifier">Fenêtre gauche</attr>
-						<attr name="icon">WINDOW</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">-1</attr>
-								<attr name="commandName">TRIGGER</attr>
-							</bean>
-						</list>
-					</bean>
-					<bean class="${package}.Device">
-						<attr name="x">43</attr>
-						<attr name="y">20</attr>
-						<attr name="identifier">Fenêtre droite</attr>
-						<attr name="icon">WINDOW</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">-2</attr>
-								<attr name="commandName">TRIGGER</attr>
-							</bean>
-						</list>
-					</bean>
-				</list>
-			</bean>
-			<bean class="${package}.Room" identifier="Chambre 2">
-				<attr name="x">4</attr>
-				<attr name="y">6</attr>
-				<attr name="width">5</attr>
-				<attr name="height">4</attr>
-				<list name="component" class="${iface}.IMapComponent">
-					<bean class="${package}.GroundMark">
-						<attr name="x">0</attr>
-						<attr name="y">30</attr>
-						<attr name="width">10</attr>
-						<attr name="height">24</attr>
-						<attr name="identifier">Commode 1</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">0</attr>
-						<attr name="y">54</attr>
-						<attr name="width">10</attr>
-						<attr name="height">24</attr>
-						<attr name="identifier">Commode 2</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">35</attr>
-						<attr name="y">43</attr>
-						<attr name="width">34</attr>
-						<attr name="height">36</attr>
-						<attr name="identifier">Lit</attr>
-					</bean>
-					<bean class="${package}.Device">
-						<attr name="x">40</attr>
-						<attr name="y">69</attr>
-						<attr name="identifier">Fenêtre</attr>
-						<attr name="icon">WINDOW</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">-4</attr>
-								<attr name="commandName">TRIGGER</attr>
-							</bean>
-						</list>
-					</bean>
-				</list>
-			</bean>
-			<bean class="${package}.Room" identifier="Chambre 3">
-				<attr name="x">0</attr>
-				<attr name="y">6</attr>
-				<attr name="width">4</attr>
-				<attr name="height">4</attr>
-			</bean>
-			<bean class="${package}.Room" identifier="Cuisine">
-				<attr name="identifier">Cuisine</attr>
-				<attr name="x">9</attr>
-				<attr name="y">6</attr>
-				<attr name="width">5</attr>
-				<attr name="height">4</attr>
-				<list name="component" class="${iface}.IMapComponent">
-					<bean class="${package}.Device">
-						<attr name="x">40</attr>
-						<attr name="y">69</attr>
-						<attr name="identifier">Fenêtre</attr>
-						<attr name="icon">WINDOW</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">-3</attr>
-								<attr name="commandName">TRIGGER</attr>
-							</bean>
-						</list>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">0</attr>
-						<attr name="y">30</attr>
-						<attr name="width">10</attr>
-						<attr name="height">25</attr>
-						<attr name="identifier">Cuisinière</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">0</attr>
-						<attr name="y">55</attr>
-						<attr name="width">10</attr>
-						<attr name="height">10</attr>
-						<attr name="identifier">Lave-vaisselle</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">0</attr>
-						<attr name="y">68</attr>
-						<attr name="width">35</attr>
-						<attr name="height">10</attr>
-						<attr name="identifier">Evier</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">50</attr>
-						<attr name="y">0</attr>
-						<attr name="width">48</attr>
-						<attr name="height">12</attr>
-						<attr name="identifier">Plan de travail 1</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">86</attr>
-						<attr name="y">12</attr>
-						<attr name="width">12</attr>
-						<attr name="height">35</attr>
-						<attr name="identifier">Plan de travail 2</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">86</attr>
-						<attr name="y">67</attr>
-						<attr name="width">12</attr>
-						<attr name="height">12</attr>
-						<attr name="identifier">Frigo</attr>
-					</bean>
-				</list>
-			</bean>
-			<bean class="${package}.Room" identifier="Garage">
-				<attr name="x">4</attr>
-				<attr name="y">0</attr>
-				<attr name="width">5</attr>
-				<attr name="height">4</attr>
-				<attr name="category">protected</attr>
-				<list name="component" class="${iface}.IMapComponent">
-					<bean class="${package}.GroundMark">
-						<attr name="x">0</attr>
-						<attr name="y">34</attr>
-						<attr name="width">12</attr>
-						<attr name="height">32</attr>
-						<attr name="identifier">Bureau</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">12</attr>
-						<attr name="y">34</attr>
-						<attr name="width">20</attr>
-						<attr name="height">12</attr>
-						<attr name="identifier">Table 1</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">32</attr>
-						<attr name="y">34</attr>
-						<attr name="width">20</attr>
-						<attr name="height">12</attr>
-						<attr name="identifier">Table 2</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">20</attr>
-						<attr name="y">70</attr>
-						<attr name="width">15</attr>
-						<attr name="height">8</attr>
-						<attr name="identifier">Etagere 1</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">35</attr>
-						<attr name="y">70</attr>
-						<attr name="width">15</attr>
-						<attr name="height">8</attr>
-						<attr name="identifier">Etagere 2</attr>
-					</bean>
-					<bean class="${package}.GroundMark">
-						<attr name="x">50</attr>
-						<attr name="y">70</attr>
-						<attr name="width">15</attr>
-						<attr name="height">8</attr>
-						<attr name="identifier">Etagere 3</attr>
-					</bean>
-					<bean class="${package}.Device">
-						<attr name="identifier">Detecteur presence</attr>
-						<attr name="x">40</attr>
-						<attr name="y">25</attr>
-						<attr name="icon">LOOK</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">538550364</attr>
-								<attr name="commandName">ON</attr>
-							</bean>
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">672768092</attr>
-								<attr name="commandName">OFF</attr>
-							</bean>
 							<bean class="${features}.Rf433OnOffStates" />
 						</list>
 					</bean>
 					<bean class="${package}.Device">
-						<attr name="identifier">Porte entrée</attr>
-						<attr name="x">73</attr>
-						<attr name="y">56</attr>
-						<attr name="icon">WINDOW</attr>
-						<list name="feature" class="${iface}.IFeature">
-							<bean class="${features}.Rf433SecurityTrigger" />
-							<bean class="${features}.Rf433Emitter">
-								<attr name="rfCode">553451792</attr>
-								<attr name="commandName">TRIGGER</attr>
-							</bean>
-						</list>
-					</bean>
-					<bean class="${package}.Device">
-						<attr name="identifier">Porte garage</attr>
-						<attr name="x">73</attr>
-						<attr name="y">0</attr>
+						<attr name="x">63</attr>
+						<attr name="y">15</attr>
+						<attr name="identifier">Porte-fenêtre</attr>
 						<attr name="icon">WINDOW</attr>
 						<list name="feature" class="${iface}.IFeature">
 							<bean class="${features}.Rf433SecurityTrigger" />
@@ -315,6 +113,7 @@
 								<attr name="rfCode">551330064</attr>
 								<attr name="commandName">TRIGGER</attr>
 							</bean>
+							<!-- Off code: 685547792 -->
 						</list>
 					</bean>
 				</list>
