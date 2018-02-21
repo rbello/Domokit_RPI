@@ -301,7 +301,7 @@ public class ModuleSecurity {
 		if (isLocking()) return;
 		view.showConfirmDialogCard(
 				"<html>You are going to arm the secure system, choose the area to secure:</html>",
-				new String[]{ "*All", "*Partial", "Cancel" },
+				new String[]{ "*HOUSE", "*WORKSHOP", "Cancel" },
 				(choice) -> {
 					// Cancel
 					if ("Cancel".equals(choice)) {
@@ -310,7 +310,7 @@ public class ModuleSecurity {
 						return;
 					}
 					// Protected mode
-					if ("Partial".equals(choice)) {
+					if ("WORKSHOP".equals(choice)) {
 						LOGGER.log(Logs.INFO, "Enabling secure mode: protected");
 						setSecurityLevel(1, "Protected");
 						return;
@@ -322,7 +322,6 @@ public class ModuleSecurity {
 					view.buttonSettings.setEnabled(false);
 					view.buttonLogs.setEnabled(false);
 					locking = true;
-					showWarning("Locking building, please leave now");
 					view.showCountdownCard(
 							"<html>Enabling secure mode, <b>please close the building before leaving</b>...</html>",
 							(int) app.get(AppConfiguration.class).getPropertyInt("Security.DelayToLeaveBeforeLock"),

@@ -4,14 +4,17 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.ctrl.ModuleRf433;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.domokit.gui.icons.Icons;
 import fr.evolya.domokit.gui.icons.Icons.Size;
-import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.code.annotations.Inject;
+import fr.evolya.javatoolkit.gui.swing.JSwitchBox;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
 
 public class PanelControls extends JPanel {
 	
@@ -44,19 +47,25 @@ public class PanelControls extends JPanel {
 			
 		});
 		
+		JSwitchBox btnNewButton_1 = new JSwitchBox("ON", "OFF");
+		
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
 					.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 140, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(298, Short.MAX_VALUE))
+					.addGap(35)
+					.addComponent(btnNewButton_1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(165, Short.MAX_VALUE))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+						.addComponent(btnNewButton_1, GroupLayout.PREFERRED_SIZE, 38, GroupLayout.PREFERRED_SIZE)
+						.addComponent(btnNewButton, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap(233, Short.MAX_VALUE))
 		);
 		setLayout(groupLayout);

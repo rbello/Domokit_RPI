@@ -26,8 +26,8 @@ import fr.evolya.domokit.gui.panels.PanelPin;
 import fr.evolya.domokit.gui.panels.PanelPrinter;
 import fr.evolya.domokit.gui.panels.PanelSettings;
 import fr.evolya.domokit.gui.panels.PanelStatus;
-import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.annotations.DeepContainer;
+import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.funcint.Action;
 
 @DeepContainer
@@ -215,7 +215,7 @@ public class View480x320 extends JFrame {
 
 	public void setButtonLockIcon(boolean locked) {
 		buttonLock.setIcon(
-				Icons.getIcon(locked ? Icons.PLAY : Icons.EXCLAMATION, Size.SIZE24X24)
+				Icons.getIcon(locked ? Icons.PLAY : Icons.SHIELD, Size.SIZE24X24)
 		);
 	}
 
