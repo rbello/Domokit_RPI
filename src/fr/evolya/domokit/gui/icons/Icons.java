@@ -24,6 +24,7 @@ public enum Icons {
 	SUN				("sun", "014", "039"),
 	PRINTER			("printer", "051", "051"),
 	MENU			("menu", "018", "040"),
+	SHIELD			("shield", "052", "052"),
 	SETTINGS		("settings", "005", "047");
 	
 	private String name;
