@@ -1,5 +1,10 @@
 package fr.evolya.domokit.ctrl;
 
+import static fr.evolya.javatoolkit.gui.swing.Autowire.bind;
+
+import javax.swing.JLabel;
+
+import fr.evolya.domokit.config.Model;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
@@ -73,6 +78,8 @@ public class ViewController {
 		view.cardSettings.buttonLogs.addActionListener(e -> {
 			view.showCard("Logs");
 		});
+		
+		bind(view.cardControls, "text").with(app.get(Model.class).failures);
 		
 	}
 	

@@ -15,17 +15,13 @@ import javax.swing.SwingUtilities;
 
 import fr.evolya.domokit.gui.icons.Icons;
 import fr.evolya.domokit.gui.icons.Icons.Size;
-import fr.evolya.domokit.gui.map.MapPanel;
 import fr.evolya.domokit.gui.panels.PanelConfirmDialog;
 import fr.evolya.domokit.gui.panels.PanelControls;
 import fr.evolya.domokit.gui.panels.PanelCountDown;
 import fr.evolya.domokit.gui.panels.PanelKeyboard;
 import fr.evolya.domokit.gui.panels.PanelLogs;
 import fr.evolya.domokit.gui.panels.PanelNetwork;
-import fr.evolya.domokit.gui.panels.PanelPin;
-import fr.evolya.domokit.gui.panels.PanelPrinter;
 import fr.evolya.domokit.gui.panels.PanelSettings;
-import fr.evolya.domokit.gui.panels.PanelStatus;
 import fr.evolya.javatoolkit.code.annotations.DeepContainer;
 import fr.evolya.javatoolkit.code.annotations.GuiTask;
 import fr.evolya.javatoolkit.code.funcint.Action;
@@ -35,7 +31,6 @@ public class View480x320 extends JFrame {
 
 	private static final long serialVersionUID = -6653570811059565525L;
 	
-	public final PanelStatus panelStatus;
 	public final JPanel panelMain;
 	public final JPanel panelMenu;
 
@@ -45,14 +40,11 @@ public class View480x320 extends JFrame {
 	public final JButton buttonMap;
 	public final JButton buttonPrintScan;
 
-	//public final MapPanel cardMap;
 	public final PanelSettings cardSettings;
 	public final PanelLogs cardLogs;
-	//public final PanelPin cardPin;
 	public final PanelConfirmDialog cardConfirm;
 	public final PanelCountDown cardCountdown;
 	public final PanelNetwork cardNetwork;
-	//public final PanelPrinter cardPrinter;
 	public final PanelKeyboard cardKeyboard;
 	public final PanelControls cardControls;
 	
@@ -69,7 +61,7 @@ public class View480x320 extends JFrame {
 		getContentPane().setLayout(null);
 		
 		panelMenu = new JPanel();
-		panelMenu.setBounds(416, 0, 64, 253);
+		panelMenu.setBounds(416, 0, 64, 320);
 		getContentPane().add(panelMenu);
 		
 		buttonLock = new JButton();
@@ -134,7 +126,7 @@ public class View480x320 extends JFrame {
 		panelMenu.setLayout(gl_panelMenu);
 		
 		panelMain = new JPanel();
-		panelMain.setBounds(3, 3, 410, 251);
+		panelMain.setBounds(3, 3, 410, 320);
 		panelMain.setLayout(new CardLayout());
 		getContentPane().add(panelMain);
 		
@@ -149,10 +141,6 @@ public class View480x320 extends JFrame {
 		panelMain.add(cardKeyboard = new PanelKeyboard(), "Keyboard");
 		panelMain.add(cardControls = new PanelControls(), "Controls");
 		
-		panelStatus = new PanelStatus();
-		panelStatus.setBounds(3, 257, 474, 60);
-		panelStatus.setCartoucheInfo("LEVEL");
-		getContentPane().add(panelStatus);
 	}
 		
 	public void showCard(String cardName) {
