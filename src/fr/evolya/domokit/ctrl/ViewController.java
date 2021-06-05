@@ -1,6 +1,5 @@
 package fr.evolya.domokit.ctrl;
 
-import fr.evolya.domokit.ctrl.ModuleSecurity.OnSecurityLevelChanged;
 import fr.evolya.domokit.gui.View480x320;
 import fr.evolya.javatoolkit.app.App;
 import fr.evolya.javatoolkit.app.event.ApplicationBuilding;
@@ -47,8 +46,7 @@ public class ViewController {
 					if (result != 0) throw new Exception("return " + result);
 				}
 				catch (Exception ex) {
-					app.get(ModuleSecurity.class).showWarning("Failure: "
-							+ ex.getMessage());
+					ex.printStackTrace(); // TODO
 				}
 			});
 		});
@@ -66,8 +64,7 @@ public class ViewController {
 					if (result != 0) throw new Exception("return " + result);
 				}
 				catch (Exception ex) {
-					app.get(ModuleSecurity.class).showWarning("Failure: "
-							+ ex.getMessage());
+					ex.printStackTrace(); // TODO
 				}
 			});
 		});
@@ -75,16 +72,6 @@ public class ViewController {
 		// Logs
 		view.cardSettings.buttonLogs.addActionListener(e -> {
 			view.showCard("Logs");
-		});
-		
-		// Lock button
-		view.buttonLock.addActionListener(e -> {
-			if (app.get(ModuleSecurity.class).isLocked()) {
-				app.get(ModuleSecurity.class).unlock();
-			}
-			else {
-				app.get(ModuleSecurity.class).lock();
-			}
 		});
 		
 	}
@@ -102,19 +89,6 @@ public class ViewController {
 		view.setVisible(false);
 		view.dispose();
 		app.stop();
-	}
-	
-	@BindOnEvent(OnSecurityLevelChanged.class)
-	@GuiTask
-	public void makeGuiReadonlyWhenLocked(int level, String label) {
-		// Buttons
-		boolean enabled = (level == 0);
-		view.buttonMap.setEnabled(enabled);
-		view.buttonLogs.setEnabled(enabled);
-		view.buttonLogs.setEnabled(enabled);
-		view.buttonSettings.setEnabled(enabled);
-		view.setButtonLockIcon(!enabled);
-		view.showDefaultCard().setReadonly(!enabled);
 	}
 	
 }

@@ -45,14 +45,14 @@ public class View480x320 extends JFrame {
 	public final JButton buttonMap;
 	public final JButton buttonPrintScan;
 
-	public final MapPanel cardMap;
+	//public final MapPanel cardMap;
 	public final PanelSettings cardSettings;
 	public final PanelLogs cardLogs;
-	public final PanelPin cardPin;
+	//public final PanelPin cardPin;
 	public final PanelConfirmDialog cardConfirm;
 	public final PanelCountDown cardCountdown;
 	public final PanelNetwork cardNetwork;
-	public final PanelPrinter cardPrinter;
+	//public final PanelPrinter cardPrinter;
 	public final PanelKeyboard cardKeyboard;
 	public final PanelControls cardControls;
 	
@@ -140,12 +140,12 @@ public class View480x320 extends JFrame {
 		
 		panelMain.add(cardSettings = new PanelSettings(), "Settings");
 		panelMain.add(cardLogs = new PanelLogs(), "Logs");
-		panelMain.add(cardMap = new MapPanel(), "Map");
-		panelMain.add(cardPin = new PanelPin(), "Pin");
+		//panelMain.add(cardMap = new MapPanel(), "Map");
+		//panelMain.add(cardPin = new PanelPin(), "Pin");
 		panelMain.add(cardConfirm = new PanelConfirmDialog(), "ConfirmDialog");
 		panelMain.add(cardCountdown = new PanelCountDown(), "CountDown");
 		panelMain.add(cardNetwork = new PanelNetwork(), "Network");
-		panelMain.add(cardPrinter = new PanelPrinter(), "Printer");
+		//panelMain.add(cardPrinter = new PanelPrinter(), "Printer");
 		panelMain.add(cardKeyboard = new PanelKeyboard(), "Keyboard");
 		panelMain.add(cardControls = new PanelControls(), "Controls");
 		
@@ -161,19 +161,19 @@ public class View480x320 extends JFrame {
 	}
 	
 	public void showPinCard(Action<String> handler) {
-        if (!isCurrentCard(cardPin)) {
+        /*if (!isCurrentCard(cardPin)) {
         	cardPin.reset();
             cardPin.handler = handler;
             showCard("Pin");
-        }
+        }*/
 	}
 	
 	public void showKeyboardCard(String layout, Action<String> handler) {
-        if (!isCurrentCard(cardPin)) {
-        	cardKeyboard.reset(layout);
-        	cardKeyboard.handler = handler;
-            showCard("Keyboard");
-        }
+        //if (!isCurrentCard(cardPin)) {
+    	cardKeyboard.reset(layout);
+    	cardKeyboard.handler = handler;
+        showCard("Keyboard");
+        //}
 	}
 	
 	public void showKeyboardCard(Action<String> handler) {
@@ -219,9 +219,9 @@ public class View480x320 extends JFrame {
 		);
 	}
 
-	public MapPanel showDefaultCard() {
-		showCard("Map");
-		return cardMap;
+	public PanelSettings showDefaultCard() {
+		showCard("Settings");
+		return cardSettings;
 	}
 
 	public void showConfirmDialogCard(String message, String[] answers, Action<String> callback) {
